@@ -27,7 +27,7 @@ public class LegendaryCardMaker {
 	
 	public boolean exportBasicText = false;
 	public String textOutputFile = "cardCreator/output.txt";
-	public String textErrorFile = "cardCreator/error.txt";
+	public String textErrorFile = "error.txt";
 	public String exportFolder = "cardCreator";
 	
 	public List<Hero> heroes = new ArrayList<Hero>();
