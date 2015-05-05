@@ -1,0 +1,16 @@
+# Format = TEAM VALUE, Image file, draw underlay
+
+AUTOBOT,autobot.png,false
+AVENGERS,avengers.png,false
+DECEPTICON,decepticon.png,false
+DINOBOT,dinobot.png,false
+FANTASTIC_FOUR,fantastic-four.png,false
+GUARDIANS_OF_THE_GALAXY,guardians.png,false
+MARVEL_KNIGHTS,marvel-knights.png,false
+PREDACON,predacon.png,true
+QUINTESSON,quintesson.png,true
+SHIELD,shield.png,false
+SPIDER_FRIENDS,spider-friends.png,false
+US_ARMY,us_army.png,false
+X_FORCE,x-force.png,false
+X_MEN,x-men.png,false
