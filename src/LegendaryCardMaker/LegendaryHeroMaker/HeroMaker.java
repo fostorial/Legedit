@@ -821,6 +821,11 @@ public class HeroMaker {
 	        int h = (int)(imageIcon.getIconHeight() * scale);
 	        int type = BufferedImage.TYPE_INT_ARGB;
 	        
+	        if (w <= 0 || h <= 0)
+	        {
+	        	return null;
+	        }
+	        
 	        BufferedImage image = new BufferedImage(w, h, type);
 	        Graphics g = image.getGraphics();
 	        

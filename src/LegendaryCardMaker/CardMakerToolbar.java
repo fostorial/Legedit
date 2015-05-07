@@ -127,6 +127,18 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 					lcmf.heroListModel.addElement(h);
 				}
 				
+				lcmf.villainListModel.removeAllElements();
+				for (Villain h : lcmf.lcm.villains)
+				{
+					lcmf.villainListModel.addElement(h);
+				}
+				
+				lcmf.schemeListModel.removeAllElements();
+				for (SchemeCard h : lcmf.lcm.schemes)
+				{
+					lcmf.schemeListModel.addElement(h);
+				}
+				
 				lcmf.applicationProps.put("lastExpansion", chooser.getSelectedFile().getAbsolutePath());
 				lcmf.saveProperties();
 				
@@ -281,7 +293,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				
 				try
 				{
-					lcmf.lcm.exportToPng(f);
+					ExportProgressBarDialog exporter = new ExportProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f);
+					exporter.createAndShowGUI();
+					
+					//lcmf.lcm.exportToPng(f);
 				}
 				catch (Exception ex)
 				{

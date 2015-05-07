@@ -34,7 +34,7 @@ public class LegendaryCardMaker {
 	public List<Villain> villains = new ArrayList<Villain>();
 	public List<SchemeCard> schemes = new ArrayList<SchemeCard>();
 	
-	public boolean ignoreGenerate = false;
+	public boolean ignoreGenerate = true;
 	
 	public String textDividerFile = "cardCreator/dividers.txt";
 	public boolean generateDividerFile = false;
@@ -679,6 +679,26 @@ public class LegendaryCardMaker {
 		}
 	}
 	
+	public int getCardCount() throws Exception
+	{
+		int count = 0;
+		for (Hero h : heroes)
+		{
+			count++;
+		}
+		
+		for (Villain v : villains)
+		{
+			count++;
+		}
+		
+		for (SchemeCard s : schemes)
+		{
+			count++;
+		}
+		return count;
+	}
+	
 	public void exportHeroToPng(Hero h, File folder) throws Exception
 	{
 		for (HeroCard hc : h.cards)
@@ -698,7 +718,8 @@ public class LegendaryCardMaker {
 			VillainMaker vm = new VillainMaker();
 			vm.exportFolder = folder.getAbsolutePath();
 			vm.setCard(vc);
-			vm.generateCard();
+			BufferedImage image = vm.generateCard();
+			vm.exportImage(image);
 		}
 	}
 	
