@@ -112,6 +112,7 @@ public class VillainCardSelectorToolbar extends JMenuBar implements ActionListen
 		if (e.getSource().equals(newCard))
 		{
 			VillainCard hc = VillainMaker.getBlankVillainCard();
+			hc.villain = hm.h;
 			hc.villainGroup = hm.h.name;
 			hc.changed = true;
 			hm.h.cards.add(hc);

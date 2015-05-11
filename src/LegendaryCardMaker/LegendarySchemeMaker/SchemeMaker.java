@@ -16,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -31,6 +32,7 @@ import org.w3c.dom.Element;
 
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
+import LegendaryCardMaker.WordDefinition;
 
 public class SchemeMaker {
 	
@@ -44,7 +46,7 @@ public class SchemeMaker {
 	
 	boolean exportToPNG = true;
 	
-	int cardNameSize = 40;
+	public int cardNameSize = 40;
 	int cardNameMinSize = 30;
 	int cardNameY = 50;
 	Color cardNameColor = Color.white;
@@ -53,7 +55,7 @@ public class SchemeMaker {
 	int cardNameBlurRadius = 5;
 	boolean cardNameBlurDouble = true;
 	
-	int subCategorySize = 33;
+	public int subCategorySize = 33;
 	int subCategoryMinSize = 30;
 	int subCategoryY = 85;
 	Color subCategoryColor = Color.WHITE;
@@ -121,12 +123,22 @@ public class SchemeMaker {
 		card.name = "Scheme Name";
 		card.subCategory = "";
 		card.cardType = SchemeCardType.valueOf("SCHEME");
-		card.cardText = "Card Text";
+		card.cardText = "<k>Always Leads: <r>Villain Group <g> <k>Master Strike: <r>Some effect.";
 		return card;
 	}
 	
-	public void generateCard() throws FontFormatException, IOException
+	public void populateBlankSchemeCard()
 	{
+		card = new SchemeCard();
+		card.name = "Scheme Name";
+		card.subCategory = "";
+		card.cardType = SchemeCardType.valueOf("SCHEME");
+		card.cardText = "<k>Always Leads: <r>Villain Group <g> <k>Master Strike: <r>Some effect.";
+	}
+	
+	public BufferedImage generateCard()
+	{
+		
 		int type = BufferedImage.TYPE_INT_RGB;
 		if (exportToPNG)
 		{
@@ -140,6 +152,12 @@ public class SchemeMaker {
 
 	    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    
+	    if (card.imagePath != null)
+	    {
+	    	BufferedImage bi = resizeImage(new ImageIcon(card.imagePath), card.imageZoom);
+	    	g.drawImage(bi, card.imageOffsetX, card.imageOffsetY, null);
+	    }
 		
 	 // Card Text
 	    if (card.cardText != null)
@@ -210,9 +228,16 @@ public class SchemeMaker {
 			    		drawHeader(g2, headerStr, fontHeader, card.cardType.getBgColor(), y, headerHeight, getPercentage(cardWidth, 0.2d));
 			    		y += headerHeight + metrics.getHeight() + getPercentage(metrics.getHeight(), 0.5d);
 			    		
-			    		String[] words = cardStr.split(" ");
-			    		for (String s : words)
+			    		List<WordDefinition> words = WordDefinition.getWordDefinitionList(cardStr);
+			    		for (WordDefinition wd : words)
 			    		{
+			    			String s = wd.word;
+							String spaceChar = "";
+							if (wd.space)
+							{
+								spaceChar = " ";
+							}
+							
 			    			if (s.startsWith("<k>"))
 			    			{
 			    				g2.setFont(fontBold);
@@ -250,7 +275,7 @@ public class SchemeMaker {
 			    					}
 			    					
 			    				g2.drawString(s + " ", x, y);
-			    				x += stringLength + SwingUtilities.computeStringWidth(metrics, " ");
+			    				x += stringLength + SwingUtilities.computeStringWidth(metrics, spaceChar);
 			    			}
 			    			else if (icon != null)
 			    			{
@@ -273,7 +298,7 @@ public class SchemeMaker {
 			    					drawUnderlay(i, g2, BufferedImage.TYPE_INT_ARGB, x, modifiedY, textIconBlurRadius, textIconBlurDouble, expandTextIcon);
 			    				}
 			    				g2.drawImage(i, x, modifiedY, null);
-			    				x += i.getWidth() + SwingUtilities.computeStringWidth(metrics, " ");
+			    				x += i.getWidth() + SwingUtilities.computeStringWidth(metrics, spaceChar);
 			    			}
 			    		}
 			    		
@@ -314,9 +339,18 @@ public class SchemeMaker {
 	        Graphics g2 = bi.getGraphics();
 	        
 	    	g2.setColor(cardNameColor);
-	        //Font font = new Font("Percolator", Font.PLAIN, cardNameSize);
-	        Font font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
-	        font = font.deriveFont((float)cardNameSize);
+	    	Font font = null;
+	    	try
+	    	{
+	        	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
+	        	font = font.deriveFont((float)cardNameSize);
+	    	}
+	    	catch (Exception e)
+	    	{
+    			e.printStackTrace();
+    		
+    			font = new Font("Sylfaen", Font.PLAIN, cardNameSize);
+    		}
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.name.toUpperCase());
@@ -343,15 +377,24 @@ public class SchemeMaker {
 	        Graphics g2 = bi.getGraphics();
 	        
 	    	g2.setColor(subCategoryColor);
-	        //Font font = new Font("Percolator", Font.PLAIN, subCategorySize);
-	    	Font font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
-	        font = font.deriveFont((float)subCategorySize);
+	    	Font font = null;
+	    	try
+	    	{
+	    		font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
+		        font = font.deriveFont((float)subCategorySize);
+	    	}
+	    	catch (Exception e)
+	    	{
+    			e.printStackTrace();
+    		
+    			font = new Font("Sylfaen", Font.PLAIN, cardNameSize);
+    		}
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.subCategory);
 	        int x = (cardWidth / 2) - (stringLength / 2);
 	        
-	        g2.drawString(card.subCategory, x, subCategoryY);
+	        g2.drawString(card.subCategory.toUpperCase(), x, subCategoryY);
 	    	if (includeBlurredBGsubCategory)
 	    	{
 	    		drawUnderlay(bi, g2, type, 0, 0, subCategoryBlurRadius, subCategoryBlurDouble, expandSubCategory);
@@ -363,10 +406,15 @@ public class SchemeMaker {
 	    	
 	    	g2.dispose();
 	    }
-	    
-	    
-	   
-	    try
+		
+		g.dispose();
+		
+		return image;
+	}
+	
+	public void exportImage(BufferedImage image)
+	{
+		try
 		{
 			//ImageIO.write(image, "jpg", newFile);
 			if (exportToPNG)
@@ -381,8 +429,6 @@ public class SchemeMaker {
 			}
 		}
 		catch (Exception e) { e.printStackTrace(); }
-		
-		g.dispose();
 	}
 	
 	public void exportToJPEG(BufferedImage image, File newFile) throws Exception
@@ -716,5 +762,40 @@ public class SchemeMaker {
 		
 		g2.dispose();
 		g3.dispose();
+	}
+	
+	public BufferedImage resizeImagePS(BufferedImage bi)
+	{
+		//Resize for printer studio
+		double scale = 2.0;
+		double xPadding = 0.043;
+		double yPadding = 0.08;
+		String exportType = "jpg"; //png or jpg
+		
+		ImageIcon imageIcon = new ImageIcon(bi);
+		
+		int w = (int)(imageIcon.getIconWidth() * scale);
+		int xPad = (int)((imageIcon.getIconWidth() * scale) * xPadding);
+		int fullW = w + xPad + xPad;
+        int h = (int)(imageIcon.getIconHeight() * scale);
+        int yPad = (int)((imageIcon.getIconHeight() * scale) * yPadding);
+        int fullH = h + yPad + yPad;
+        int type = BufferedImage.TYPE_INT_ARGB;
+        if (exportType.equals("jpg"))
+        {
+        	type = BufferedImage.TYPE_INT_RGB;
+        }
+        BufferedImage image = new BufferedImage(fullW, fullH, type);
+        Graphics g = image.getGraphics();
+        
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, fullW, fullH);
+        
+        g.drawImage(imageIcon.getImage(), xPad, yPad, w + xPad, h + yPad, 
+        		0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
+        
+        g.dispose();
+        
+        return image;
 	}
 }

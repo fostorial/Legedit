@@ -8,10 +8,17 @@ import LegendaryCardMaker.Icon;
 public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard> {
 
 	public String name;
+	public int cardNameSize;
 	public String subCategory = "";
+	public int subCategorySize;
 	public SchemeCardType cardType;
 	public String cardText;
+	public int cardTextSize;
 	public boolean changed = false;
+	public String imagePath;
+	public double imageZoom = 1.0d;
+	public int imageOffsetX = 0;
+	public int imageOffsetY = 0;
 	
 	public String getCardName(String exportDir)
 	{
@@ -39,14 +46,23 @@ public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard
 		
 		str += "SCHEME;" + name + "\n";
 		
+		if (name != null)
+			str += "SCNAMESIZE;" + cardNameSize + "\n";
+		
 		if (subCategory != null)
 			str += "SCSUBNAME;" + subCategory.toString() + "\n";
+		
+		if (name != null)
+			str += "SCSUBCATSIZE;" + subCategorySize + "\n";
 		
 		if (cardType != null)
 			str += "SCTYPE;" + cardType.toString() + "\n";
 		
 		if (cardText != null)
 			str += "SCTEXT;" + cardText + "\n";
+		
+		if (cardText != null)
+			str += "SCTEXTSIZE;" + cardTextSize + "\n";
 		
 		str += "SCGENERATE;\n";
 		

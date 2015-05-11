@@ -14,7 +14,10 @@ import java.awt.image.Kernel;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -30,6 +33,7 @@ import org.w3c.dom.Element;
 
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
+import LegendaryCardMaker.WordDefinition;
 
 public class VillainMaker {
 	
@@ -125,6 +129,7 @@ public class VillainMaker {
 	double rarePaddingRatio = 0.06d;
 	int rareBlurRadius = 25;
 	public int textStartOffset = 0;
+	public double yOffsetRatio = 0.10d;
 	
 	static VillainCard card;
 	
@@ -176,6 +181,9 @@ public class VillainMaker {
 	
 	public BufferedImage generateCard()
 	{
+		int timeCount = 0;
+		//System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
+		
 		int type = BufferedImage.TYPE_INT_RGB;
 		if (exportToPNG)
 		{
@@ -189,6 +197,8 @@ public class VillainMaker {
 
 	    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 				
 		//g.setRenderingHint(
 		 //       RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -199,6 +209,8 @@ public class VillainMaker {
 	    	BufferedImage bi = resizeImage(new ImageIcon(card.imagePath), card.imageZoom);
 	    	g.drawImage(bi, card.imageOffsetX, card.imageOffsetY, null);
 	    }
+	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 
 	    // Template back
 	    if (card.cardType != null && card.cardType.equals(VillainCardType.VILLAIN))
@@ -215,6 +227,8 @@ public class VillainMaker {
 	    {	
 	    	
 	    }
+	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 	    
 	    // Card Team
 	    if (card.cardTeam != null && card.cardTeam.getImagePath() != null)
@@ -236,6 +250,8 @@ public class VillainMaker {
 	    	
 	    	g.drawImage(bi, x, y, null);
 	    }
+	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 	    
 	    // Card Name
 	    if (card.name != null)
@@ -276,6 +292,8 @@ public class VillainMaker {
 	    	
 	    	g2.dispose();
 	    }
+	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 	    
 	    // Hero Name
 	    if (card.villainGroup != null)
@@ -339,6 +357,8 @@ public class VillainMaker {
 	    	g2.dispose();
 	    }
 	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
+	    
 	    // Recruit
 	    if (card.victory != null)
 	    {
@@ -388,6 +408,272 @@ public class VillainMaker {
 	    	
 	    	g2.dispose();
 	    }
+	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
+	    
+	    // Card Text
+	    if (card.abilityText != null)
+	    {
+	    	ImageIcon ii = null;
+	    	BufferedImage overlay = null;
+	    	
+	    	if (card.cardType != null && card.cardType.equals(VillainCardType.VILLAIN))
+		    {
+	    		ii = new ImageIcon(templateFolder + File.separator + "villain_normal" + File.separator + "back_text_overlay.png");
+		    	overlay = resizeImage(ii, cardWidth, cardHeight);
+		    	//g.drawImage(overlay, 0, 0, null);
+		    }
+	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.HENCHMEN))
+		    {
+	    		ii = new ImageIcon(templateFolder + File.separator + "villain_henchmen" + File.separator + "back_text_overlay.png");
+		    	overlay = resizeImage(ii, cardWidth, cardHeight);
+		    	//g.drawImage(overlay, 0, 0, null);
+		    }
+	    	else if (card.cardType != null && (card.cardType.equals(VillainCardType.MASTERMIND_TACTIC) || card.cardType.equals(VillainCardType.MASTERMIND)))
+		    {
+	    		ii = new ImageIcon(templateFolder + File.separator + "villain_mastermind" + File.separator + "back_text_overlay.png");
+		    	overlay = resizeImage(ii, cardWidth, cardHeight);
+		    	//g.drawImage(overlay, 0, 0, null);
+		    }
+	    	
+	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
+	        Graphics g2 = bi.getGraphics();
+	        
+	    	g2.setColor(textColor);
+	    	
+	    	int y = 0;
+	    	try
+	    	{
+	    		Font font = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Light Condensed.ttf"));
+	    		font = font.deriveFont((float)textSize);
+	    		g2.setFont(font);
+	    		
+	    		Font fontBold = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Black Condensed.ttf"));
+	    		fontBold = fontBold.deriveFont((float)textSize);
+	    		
+	    		FontMetrics metrics = g2.getFontMetrics(font);
+	    		
+	    		Integer x = textX;
+	    		y = textY;
+	    		int xOrigin = textX;
+	    		int xEnd = textX;
+	    		int yOrigin = textY;
+	    		
+	    		//find first overlay pixel
+	    		int width = overlay.getWidth();
+	            int height = overlay.getHeight();
+	            boolean done = false;
+	            
+	            for (int xx = 0; xx < width; xx++) {
+	                for (int yy = 0; yy < height; yy++) {
+	                    Color originalColor = new Color(overlay.getRGB(xx, yy), true);
+	                    if (originalColor.getAlpha() > 0 && done == false) {
+	                        x = xx;
+	                        y = yy + metrics.getHeight();
+	                        xOrigin = xx;
+	                        yOrigin = yy;
+	                        done = true;
+	                    }
+	                }
+	            }
+	            
+	            //apply modifier
+	            yOrigin = yOrigin + textStartOffset;
+	            y = y + textStartOffset;
+	            
+	            //x end works from right to left but top down
+	            done = false;
+	            int xFullEnd = xEnd;
+	            for (int xx = width - 1; xx >= 0; xx--) {
+	                for (int yy = 0; yy < height; yy++) {
+	                    Color originalColor = new Color(overlay.getRGB(xx, yy), true);
+	                    if (originalColor.getAlpha() > 0 && done == false) {
+	                        xFullEnd = xx;
+	                        done = true;
+	                    }
+	                }
+	            }
+	            
+	    		List<WordDefinition> words = WordDefinition.getWordDefinitionList(card.abilityText);
+	    		
+	    		for (WordDefinition wd : words)
+	    		{
+	    			{
+	    				String s = wd.word;
+	    				String spaceChar = "";
+	    				if (wd.space)
+	    				{
+	    					spaceChar = " ";
+	    				}
+	    				
+	    				if (s.startsWith("<k>"))
+	    				{
+	    					g2.setFont(fontBold);
+	    					metrics = g2.getFontMetrics(fontBold);
+	    					s = s.replace("<k>", "");
+	    				}
+	    				
+	    				if (s.startsWith("<r>"))
+	    				{
+	    					g2.setFont(font);
+	    					metrics = g2.getFontMetrics(font);
+	    					s = s.replace("<r>", "");
+	    				}
+	    				
+	    				boolean gap = false;
+	    				if (s.equals("<g>"))
+	    				{
+	    					gap = true;
+	    				}
+	    				
+	    				Icon icon = isIcon(s);
+	    				if (gap == true)
+	    				{
+	    					x = xOrigin;
+	    					for (int i = 0; i < overlay.getWidth(); i++)
+	    					{
+	    						Color c = new Color(overlay.getRGB(i, y), true);
+	    						if (c.getAlpha() > 0)
+	    						{
+	    							x = i;
+	    							i = overlay.getWidth();
+	    						}
+	    					}
+	    					y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textGapHeight);
+	    				}
+	    				else if (icon == null)
+	    				{
+	    					int stringLength = SwingUtilities.computeStringWidth(metrics, s);
+	    					Color color = null;
+	    					try
+	    					{
+	    						color = new Color(overlay.getRGB(x + stringLength, y), true);
+	    					}
+	    					catch (ArrayIndexOutOfBoundsException e)
+	    					{
+	    						color = new Color(overlay.getRGB(0, 0), true);
+	    					}
+	    					if (color.getAlpha() == 0)
+	    					{
+	    						//System.out.println("String: " + s + ", " + x + ":" + xEnd + ":" + xFullEnd);
+	    						if ((x > xEnd && x <= xFullEnd) || (x > xFullEnd))
+	    						{
+	    							xEnd = x;
+	    						}
+	    						x = xOrigin;
+	    						for (int i = 0; i < overlay.getWidth(); i++)
+	    						{
+	    							Color c = new Color(overlay.getRGB(i, y), true);
+	    							if (c.getAlpha() > 0)
+	    							{
+	    								x = i;
+	    								i = overlay.getWidth();
+	    							}
+	    						}
+	    						y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textDefaultGapHeight);
+	    					}
+	    					g2.drawString(s + " ", x, y);
+	    					x += stringLength + SwingUtilities.computeStringWidth(metrics, spaceChar);
+	    				}
+	    				else if (icon != null)
+	    				{
+	    					BufferedImage i = getIconMaxHeight(icon, getPercentage(metrics.getHeight(), textIconHeight));
+	    					
+	    					Color color = new Color(overlay.getRGB(x + i.getWidth(), y + i.getHeight()), true);
+	    					if (color.getAlpha() == 0)
+	    					{
+	    						//System.out.println("Icon: " + icon.toString() + ", " + x + ":" + xEnd + ":" + xFullEnd);
+	    						if ((x > xEnd && x <= xFullEnd) || (x > xFullEnd))
+	    						{
+	    							xEnd = x;
+	    						}
+	    						x = xOrigin;
+	    						for (int j = 0; j < overlay.getWidth(); j++)
+	    						{
+	    							Color c = new Color(overlay.getRGB(j, y), true);
+	    							if (c.getAlpha() > 0)
+	    							{
+	    								x = j;
+	    								j = overlay.getWidth();
+	    							}
+	    						}
+	    						y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textDefaultGapHeight);
+	    					}
+	    					
+	    					double offsetRatio = ((textIconHeight - 1d));
+	    					int offset = getPercentage(i.getHeight(), offsetRatio);
+	    					int modifiedY = (int)(y - i.getHeight() + offset);
+	    					
+	    					//System.out.println(offsetRatio + " " + offset + " " + modifiedY + " " + i.getHeight() + " " + metrics.getHeight());
+	    					
+	    					if (icon.isUnderlayMinimized())
+	    					{
+	    						drawUnderlay(i, g2, BufferedImage.TYPE_INT_ARGB, x, modifiedY, textIconBlurRadius, textIconBlurDouble, expandTextIcon);
+	    					}
+	    					g2.drawImage(i, x, modifiedY, null);
+	    					x += i.getWidth() + SwingUtilities.computeStringWidth(metrics, spaceChar);
+	    				}
+	    			}
+	    		}
+	    		
+	    		{
+	    			if (card.cardType.equals(VillainCardType.MASTERMIND) || card.cardType.equals(VillainCardType.MASTERMIND_TACTIC))
+	    	    	{
+	        			if (xEnd < getPercentage((xFullEnd - xOrigin), 0.65d))
+	        			{
+	        				xEnd = xFullEnd;
+	        			}
+	        			
+	        			//System.out.println("BG Blur:, " + x + ":" + xEnd + ":" + xFullEnd + ":" + xOrigin);
+	        			
+	        			int padding = getPercentage(xEnd - xOrigin, rarePaddingRatio);
+	        			
+	        			yOrigin = yOrigin + (metrics.getHeight() / 3);
+	    	    		BufferedImage blurBG = createRareBacking(xOrigin - padding, yOrigin - padding, xEnd + padding, y + padding);
+	    	    		blurBG = makeTransparent(blurBG, 0.85d);
+	    	    		blurBG = blurImage(blurBG, g2, rareBlurRadius);
+	    	    		
+	    	    		int yOffsetValue = 0;
+	    		    	if (y < cardHeight - getPercentage(cardHeight, yOffsetRatio))
+	    		    	{
+	    		    		yOffsetValue = (cardHeight - getPercentage(cardHeight, yOffsetRatio)) - y;
+	    		    	}
+	    		    	
+	    	    		g.drawImage(blurBG, 0, yOffsetValue, null);
+	    	    	}
+	    		}
+	    	}
+	    	catch (Exception e)
+	    	{
+	    		e.printStackTrace();
+	    		
+	    		if (bwErr != null)
+	    		{
+	    			try
+	    			{
+	    				bwErr.write(e.getMessage());
+					   for (StackTraceElement s : e.getStackTrace())
+					   {
+						   bwErr.write(s.toString());
+					   }
+	    			}
+	    			catch (Exception ex)
+	    			{
+	    				ex.printStackTrace();
+	    			}
+	    		}
+	    	}
+	        
+	    	int yOffsetValue = 0;
+	    	if (y < cardHeight - getPercentage(cardHeight, yOffsetRatio))
+	    	{
+	    		yOffsetValue = (cardHeight - getPercentage(cardHeight, yOffsetRatio)) - y;
+	    	}
+	    	
+	        g.drawImage(bi, 0, yOffsetValue, null);
+	    }
+	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 	    
 	    // Attack
 	    if (card.attack != null)
@@ -443,241 +729,7 @@ public class VillainMaker {
 	    	g2.dispose();
 	    }
 	    
-	    // Card Text
-	    if (card.abilityText != null)
-	    {
-	    	ImageIcon ii = null;
-	    	BufferedImage overlay = null;
-	    	
-	    	if (card.cardType != null && card.cardType.equals(VillainCardType.VILLAIN))
-		    {
-	    		ii = new ImageIcon(templateFolder + File.separator + "villain_normal" + File.separator + "back_text_overlay.png");
-		    	overlay = resizeImage(ii, cardWidth, cardHeight);
-		    	//g.drawImage(overlay, 0, 0, null);
-		    }
-	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.HENCHMEN))
-		    {
-	    		ii = new ImageIcon(templateFolder + File.separator + "villain_henchmen" + File.separator + "back_text_overlay.png");
-		    	overlay = resizeImage(ii, cardWidth, cardHeight);
-		    	//g.drawImage(overlay, 0, 0, null);
-		    }
-	    	else if (card.cardType != null && (card.cardType.equals(VillainCardType.MASTERMIND_TACTIC) || card.cardType.equals(VillainCardType.MASTERMIND)))
-		    {
-	    		ii = new ImageIcon(templateFolder + File.separator + "villain_mastermind" + File.separator + "back_text_overlay.png");
-		    	overlay = resizeImage(ii, cardWidth, cardHeight);
-		    	//g.drawImage(overlay, 0, 0, null);
-		    }
-	    	
-	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
-	        
-	    	g2.setColor(textColor);
-	    	try
-	    	{
-	    		Font font = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Light Condensed.ttf"));
-	    		font = font.deriveFont((float)textSize);
-	    		g2.setFont(font);
-	    		
-	    		Font fontBold = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Black Condensed.ttf"));
-	    		fontBold = fontBold.deriveFont((float)textSize);
-	    		
-	    		FontMetrics metrics = g2.getFontMetrics(font);
-	    		
-	    		int x = textX;
-	    		int y = textY;
-	    		int xOrigin = textX;
-	    		int xEnd = textX;
-	    		int yOrigin = textY;
-	    		
-	    		//find first overlay pixel
-	    		int width = overlay.getWidth();
-	            int height = overlay.getHeight();
-	            boolean done = false;
-	            
-	            for (int xx = 0; xx < width; xx++) {
-	                for (int yy = 0; yy < height; yy++) {
-	                    Color originalColor = new Color(overlay.getRGB(xx, yy), true);
-	                    if (originalColor.getAlpha() > 0 && done == false) {
-	                        x = xx;
-	                        y = yy + metrics.getHeight();
-	                        xOrigin = xx;
-	                        yOrigin = yy;
-	                        done = true;
-	                    }
-	                }
-	            }
-	            
-	            //apply modifier
-	            yOrigin = yOrigin + textStartOffset;
-	            y = y + textStartOffset;
-	            
-	            //x end works from right to left but top down
-	            done = false;
-	            int xFullEnd = xEnd;
-	            for (int xx = width - 1; xx >= 0; xx--) {
-	                for (int yy = 0; yy < height; yy++) {
-	                    Color originalColor = new Color(overlay.getRGB(xx, yy), true);
-	                    if (originalColor.getAlpha() > 0 && done == false) {
-	                        xFullEnd = xx;
-	                        done = true;
-	                    }
-	                }
-	            }
-	            
-	    		
-	    		String[] words = card.abilityText.split(" ");
-	    		for (String s : words)
-	    		{
-	    			if (s.startsWith("<k>"))
-	    			{
-	    				g2.setFont(fontBold);
-	    				metrics = g2.getFontMetrics(fontBold);
-	    				s = s.replace("<k>", "");
-	    			}
-	    			
-	    			if (s.startsWith("<r>"))
-	    			{
-	    				g2.setFont(font);
-	    				metrics = g2.getFontMetrics(font);
-	    				s = s.replace("<r>", "");
-	    			}
-	    			
-	    			boolean gap = false;
-	    			if (s.equals("<g>"))
-	    			{
-	    				gap = true;
-	    			}
-	    			
-	    			Icon icon = isIcon(s);
-	    			if (gap == true)
-	    			{
-	    				x = xOrigin;
-	    				for (int i = 0; i < overlay.getWidth(); i++)
-    					{
-    						Color c = new Color(overlay.getRGB(i, y), true);
-    						if (c.getAlpha() > 0)
-    						{
-    							x = i;
-    							i = overlay.getWidth();
-    						}
-    					}
-	    				y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textGapHeight);
-	    			}
-	    			else if (icon == null)
-	    			{
-	    				int stringLength = SwingUtilities.computeStringWidth(metrics, s);
-	    				Color color = null;
-	    				try
-	    				{
-	    					color = new Color(overlay.getRGB(x + stringLength, y), true);
-	    				}
-	    				catch (ArrayIndexOutOfBoundsException e)
-	    				{
-	    					color = new Color(overlay.getRGB(0, 0), true);
-	    				}
-	    				if (color.getAlpha() == 0)
-	    				{
-	    					System.out.println("String: " + s + ", " + x + ":" + xEnd + ":" + xFullEnd);
-	    					if ((x > xEnd && x <= xFullEnd) || (x > xFullEnd))
-	    					{
-	    						xEnd = x;
-	    					}
-	    					x = xOrigin;
-	    					for (int i = 0; i < overlay.getWidth(); i++)
-	    					{
-	    						Color c = new Color(overlay.getRGB(i, y), true);
-	    						if (c.getAlpha() > 0)
-	    						{
-	    							x = i;
-	    							i = overlay.getWidth();
-	    						}
-	    					}
-	    					y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textDefaultGapHeight);
-	    				}
-	    				g2.drawString(s + " ", x, y);
-	    				x += stringLength + SwingUtilities.computeStringWidth(metrics, " ");
-	    			}
-	    			else if (icon != null)
-	    			{
-	    				BufferedImage i = getIconMaxHeight(icon, getPercentage(metrics.getHeight(), textIconHeight));
-	    				
-	    				Color color = new Color(overlay.getRGB(x + i.getWidth(), y + i.getHeight()), true);
-	    				if (color.getAlpha() == 0)
-	    				{
-	    					System.out.println("Icon: " + icon.toString() + ", " + x + ":" + xEnd + ":" + xFullEnd);
-	    					if ((x > xEnd && x <= xFullEnd) || (x > xFullEnd))
-	    					{
-	    						xEnd = x;
-	    					}
-	    					x = xOrigin;
-	    					for (int j = 0; j < overlay.getWidth(); j++)
-	    					{
-	    						Color c = new Color(overlay.getRGB(j, y), true);
-	    						if (c.getAlpha() > 0)
-	    						{
-	    							x = j;
-	    							j = overlay.getWidth();
-	    						}
-	    					}
-	    					y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textDefaultGapHeight);
-	    				}
-	    				
-	    				double offsetRatio = ((textIconHeight - 1d));
-	    				int offset = getPercentage(i.getHeight(), offsetRatio);
-	    				int modifiedY = (int)(y - i.getHeight() + offset);
-	    				
-	    				//System.out.println(offsetRatio + " " + offset + " " + modifiedY + " " + i.getHeight() + " " + metrics.getHeight());
-	    				
-	    				if (icon.isUnderlayMinimized())
-	    				{
-	    					drawUnderlay(i, g2, BufferedImage.TYPE_INT_ARGB, x, modifiedY, textIconBlurRadius, textIconBlurDouble, expandTextIcon);
-	    				}
-	    				g2.drawImage(i, x, modifiedY, null);
-	    				x += i.getWidth() + SwingUtilities.computeStringWidth(metrics, " ");
-	    			}
-	    		}
-	    		
-	    		if (card.cardType.equals(VillainCardType.MASTERMIND) || card.cardType.equals(VillainCardType.MASTERMIND_TACTIC))
-		    	{
-	    			if (xEnd < getPercentage((xFullEnd - xOrigin), 0.65d))
-	    			{
-	    				xEnd = xFullEnd;
-	    			}
-	    			
-	    			//System.out.println("BG Blur:, " + x + ":" + xEnd + ":" + xFullEnd + ":" + xOrigin);
-	    			
-	    			int padding = getPercentage(xEnd - xOrigin, rarePaddingRatio);
-	    			yOrigin = yOrigin + (metrics.getHeight() / 3);
-		    		BufferedImage blurBG = createRareBacking(xOrigin - padding, yOrigin - padding, xEnd + padding, y + padding);
-		    		blurBG = makeTransparent(blurBG, 0.85d);
-		    		blurBG = blurImage(blurBG, g2, rareBlurRadius);
-		    		
-		    		g.drawImage(blurBG, 0, 0, null);
-		    	}
-	    	}
-	    	catch (Exception e)
-	    	{
-	    		e.printStackTrace();
-	    		
-	    		if (bwErr != null)
-	    		{
-	    			try
-	    			{
-	    				bwErr.write(e.getMessage());
-					   for (StackTraceElement s : e.getStackTrace())
-					   {
-						   bwErr.write(s.toString());
-					   }
-	    			}
-	    			catch (Exception ex)
-	    			{
-	    				ex.printStackTrace();
-	    			}
-	    		}
-	    	}
-	        
-	        g.drawImage(bi, 0, 0, null);
-	    }
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 	    
 	    // Cost
 	    if (card.cost != null)
@@ -714,7 +766,7 @@ public class VillainMaker {
 	        	if (offset != null) { primitiveOffset += offset.intValue(); }
 	        }
 	        int x = costX - (stringLength / 2) + primitiveOffset;
-	        System.out.println("cost x =" + x);
+	        //System.out.println("cost x =" + x);
 	        
 	        g2.drawString(card.cost.toUpperCase(), x, costY);
 	    	if (includeBlurredBGCost)
@@ -729,6 +781,8 @@ public class VillainMaker {
 	    	
 	    	g2.dispose();
 	    }
+	    
+	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 		
 		if (exportImage)
 	    {

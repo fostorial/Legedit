@@ -31,6 +31,8 @@ import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCardSelector;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
+import LegendaryCardMaker.LegendarySchemeMaker.SchemeMaker;
+import LegendaryCardMaker.LegendarySchemeMaker.SchemeMakerFrame;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCard;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCardSelector;
@@ -177,6 +179,7 @@ public class LegendaryCardMakerFrame extends JFrame {
 		            if (index >= 0)
 		            {
 		            	//new HeroCardSelector((Hero)list.getSelectedValue(), lcmf);
+		            	SchemeMakerFrame smf = new SchemeMakerFrame((SchemeCard)list.getSelectedValue());
 		            }
 		        }
 		    }

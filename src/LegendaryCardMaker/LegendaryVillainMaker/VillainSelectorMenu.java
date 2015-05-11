@@ -8,6 +8,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.xml.crypto.dsig.spec.HMACParameterSpec;
 
 import LegendaryCardMaker.CardMakerToolbar;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
@@ -67,24 +68,28 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			h.changed = true;
 			
 			VillainCard hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.VILLAIN;
 			hc.changed = true;
 			h.cards.add(hc);
 			
 			hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.VILLAIN;
 			hc.changed = true;
 			h.cards.add(hc);
 			
 			hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.VILLAIN;
 			hc.changed = true;
 			h.cards.add(hc);
 			
 			hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.VILLAIN;
 			hc.changed = true;
@@ -105,6 +110,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			h.changed = true;
 			
 			VillainCard hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.HENCHMEN;
 			hc.changed = true;
@@ -125,30 +131,35 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			h.changed = true;
 			
 			VillainCard hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.MASTERMIND;
 			hc.changed = true;
 			h.cards.add(hc);
 			
 			hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hc.changed = true;
 			h.cards.add(hc);
 			
 			hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hc.changed = true;
 			h.cards.add(hc);
 			
 			hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hc.changed = true;
 			h.cards.add(hc);
 			
 			hc = VillainMaker.getBlankVillainCard();
+			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hc.changed = true;

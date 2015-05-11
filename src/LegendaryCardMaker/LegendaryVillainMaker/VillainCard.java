@@ -6,6 +6,8 @@ import LegendaryCardMaker.Icon;
 
 public class VillainCard {
 
+	public Villain villain;
+	
 	public String name;
 	public int nameSize;
 	public String villainGroup;

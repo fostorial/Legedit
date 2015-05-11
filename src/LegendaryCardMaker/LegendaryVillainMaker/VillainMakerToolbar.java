@@ -348,6 +348,8 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			hm.card.victory = s;
 			hmf.reRenderCard();
 			hm.card.changed = true;
+			
+			hmf.updateLinkedCards();
 		}
 		
 		if (e.getSource().equals(setAttack))
@@ -358,6 +360,8 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			hm.card.attack = s;
 			hmf.reRenderCard();
 			hm.card.changed = true;
+			
+			hmf.updateLinkedCards();
 		}
 		
 		if (e.getSource().equals(setAbilityText))
@@ -439,6 +443,8 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 					
 					hmf.reRenderCard();
 					hm.card.changed = true;
+					
+					hmf.updateLinkedCards();
 				}
 				catch (Exception ex)
 				{
@@ -462,6 +468,8 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			}
 			hmf.reRenderCard();
 			hm.card.changed = true;
+			
+			hmf.updateLinkedCards();
 		}
 	}
 

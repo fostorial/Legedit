@@ -54,6 +54,8 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	SchemeSelectorMenu schemeSelectorMenu = null;
 	TeamIconSelectorMenu teamSelectorMenu = null;
 	
+	JMenu help = new JMenu("Help");
+	
 	LegendaryCardMakerFrame lcmf;
 	
 	static CardMakerToolbar tb = null;
@@ -103,11 +105,25 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		
 		heroSelectorMenu = new HeroSelectorMenu(lcmf, tb);
-		villainSelectorMenu = new VillainSelectorMenu(lcmf, tb);
-		schemeSelectorMenu = new SchemeSelectorMenu(lcmf, tb);
-		teamSelectorMenu = new TeamIconSelectorMenu(lcmf, tb);
+		this.add(heroSelectorMenu);
 		
+		villainSelectorMenu = new VillainSelectorMenu(lcmf, tb);
+		this.add(villainSelectorMenu);
+		
+		schemeSelectorMenu = new SchemeSelectorMenu(lcmf, tb);
+		this.add(schemeSelectorMenu);
+		
+		teamSelectorMenu = new TeamIconSelectorMenu(lcmf, tb);
+		this.add(teamSelectorMenu);
+		
+		removeEditMenus();
 		setEditMenu();
+		
+		
+		JMenuItem version = new JMenuItem("Version: " + LegendaryCardMaker.version);
+		version.setEnabled(false);
+		help.add(version);
+		this.add(help);
 	}
 
 	@Override
@@ -561,27 +577,27 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		if (str.equals("Heroes"))
 		{
-			add(heroSelectorMenu);
+			heroSelectorMenu.setVisible(true);
 		}
 		if (str.equals("Villains"))
 		{
-			add(villainSelectorMenu);
+			villainSelectorMenu.setVisible(true);
 		}
 		if (str.equals("Schemes"))
 		{
-			add(schemeSelectorMenu);
+			schemeSelectorMenu.setVisible(true);
 		}
 		if (str.equals("Teams"))
 		{
-			add(teamSelectorMenu);
+			teamSelectorMenu.setVisible(true);
 		}
 	}
 	
 	public void removeEditMenus()
 	{
-		this.remove(heroSelectorMenu);
-		this.remove(villainSelectorMenu);
-		this.remove(schemeSelectorMenu);
-		this.remove(teamSelectorMenu);
+		heroSelectorMenu.setVisible(false);
+		villainSelectorMenu.setVisible(false);
+		schemeSelectorMenu.setVisible(false);
+		teamSelectorMenu.setVisible(false);
 	}
 }

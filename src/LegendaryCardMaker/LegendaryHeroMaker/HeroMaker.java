@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -34,6 +35,7 @@ import org.w3c.dom.Element;
 
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
+import LegendaryCardMaker.WordDefinition;
 
 public class HeroMaker {
 	
@@ -537,10 +539,18 @@ public class HeroMaker {
 	                    }
 	                }
 	            }
-	    		
-	    		String[] words = card.abilityText.split(" ");
-	    		for (String s : words)
+	            
+	            List<WordDefinition> words = WordDefinition.getWordDefinitionList(card.abilityText);
+
+	    		for (WordDefinition wd : words)
 	    		{
+	    			String s = wd.word;
+					String spaceChar = "";
+					if (wd.space)
+					{
+						spaceChar = " ";
+					}
+					
 	    			if (s.startsWith("<k>"))
 	    			{
 	    				g2.setFont(fontBold);
@@ -589,7 +599,7 @@ public class HeroMaker {
 	    					y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textDefaultGapHeight);
 	    				}
 	    				g2.drawString(s + " ", x, y);
-	    				x += stringLength + SwingUtilities.computeStringWidth(metrics, " ");
+	    				x += stringLength + SwingUtilities.computeStringWidth(metrics, spaceChar);
 	    			}
 	    			else if (icon != null)
 	    			{
@@ -617,7 +627,7 @@ public class HeroMaker {
 	    					drawUnderlay(i, g2, BufferedImage.TYPE_INT_ARGB, x, modifiedY, textIconBlurRadius, textIconBlurDouble, expandTextIcon);
 	    				}
 	    				g2.drawImage(i, x, modifiedY, null);
-	    				x += i.getWidth() + SwingUtilities.computeStringWidth(metrics, " ");
+	    				x += i.getWidth() + SwingUtilities.computeStringWidth(metrics, spaceChar);
 	    			}
 	    		}
 	    		

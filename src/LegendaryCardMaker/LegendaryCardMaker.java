@@ -22,6 +22,8 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainCardType;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
+	
+	public static String version = "0.3";
 
 	public String inputFile = "cardCreator/input.txt";
 	
@@ -266,6 +268,7 @@ public class LegendaryCardMaker {
 					   vm.exportFolder = exportFolder;
 					   vc = new VillainCard();
 					   vc.villainGroup = v.name;
+					   vc.villain = v;
 					   v.cards.add(vc);
 				   }
 				   
@@ -379,9 +382,21 @@ public class LegendaryCardMaker {
 					   schemes.add(sc);
 				   }
 				   
+				   if (line.startsWith("SCNAMESIZE;"))
+				   {
+					   sm.cardNameSize = Integer.parseInt(line.replace("SCNAMESIZE;", ""));
+					   sc.cardNameSize = Integer.parseInt(line.replace("SCNAMESIZE;", ""));
+				   }
+				   
 				   if (line.startsWith("SCSUBNAME;"))
 				   {
 					   sc.subCategory = line.replace("SCSUBNAME;", "").toUpperCase();
+				   }
+				   
+				   if (line.startsWith("SCSUBCATSIZE;"))
+				   {
+					   sm.subCategorySize = Integer.parseInt(line.replace("SCSUBCATSIZE;", ""));
+					   sc.subCategorySize = Integer.parseInt(line.replace("SCSUBCATSIZE;", ""));
 				   }
 				   
 				   if (line.startsWith("SCTYPE;"))
@@ -394,6 +409,12 @@ public class LegendaryCardMaker {
 					   sc.cardText = line.replace("SCTEXT;", "");
 				   }
 				   
+				   if (line.startsWith("SCTEXTSIZE;"))
+				   {
+					   sm.textSize = Integer.parseInt(line.replace("SCTEXTSIZE;", ""));
+					   sc.cardTextSize = Integer.parseInt(line.replace("SCTEXTSIZE;", ""));
+				   }
+				   
 				   if (!ignoreGenerate && line.startsWith("SCGENERATE;"))
 				   {
 					   try
@@ -401,7 +422,8 @@ public class LegendaryCardMaker {
 						   bwErr.write("Generating: " + sc.getCardName(exportFolder) + "\n");
 						   
 						   sm.setCard(sc);
-						   sm.generateCard();
+						   BufferedImage image = sm.generateCard();
+						   sm.exportImage(image);
 						   
 						   if (exportBasicText)
 							{

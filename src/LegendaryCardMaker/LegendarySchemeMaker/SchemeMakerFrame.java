@@ -1,50 +1,52 @@
-package LegendaryCardMaker.LegendaryVillainMaker;
+package LegendaryCardMaker.LegendarySchemeMaker;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
-import LegendaryCardMaker.LegendaryCardMakerBasicFrame;
-import LegendaryCardMaker.LegendaryCardMakerFrame;
-
-public class VillainMakerFrame extends JDialog {
+public class SchemeMakerFrame extends JDialog {
 	
-	VillainMaker hm;
+	SchemeMaker hm;
 	JLabel label;
 	JLabel backLabel;
 	JLayeredPane layers;
 	
 	//JLabel imageLabel;
 	
-	VillainMakerToolbar hmt;
-
-	public VillainMakerFrame(VillainCard hc)
+	SchemeMakerToolbar hmt;
+	
+	public SchemeMakerFrame(SchemeCard hc)
 	{
-
-		hm = new VillainMaker();
+		hm = new SchemeMaker();
 		
-		if (hc.nameSize > 0)
-			hm.cardNameSize = hc.nameSize;
+		if (hc.cardNameSize > 0)
+			hm.cardNameSize = hc.cardNameSize;
 		
-		if (hc.abilityTextSize > 0)
-			hm.textSize = hc.abilityTextSize;
+		if (hc.subCategorySize > 0)
+			hm.subCategorySize = hc.subCategorySize;
+		
+		if (hc.cardTextSize > 0)
+			hm.textSize = hc.cardTextSize;
 		
 		hm.setCard(hc);
 		if (hc == null)
 		{
-			hm.getBlankVillainCard();
+			hm.populateBlankSchemeCard();
 		}
 		
-		setTitle("Card Editor: " + hc.villainGroup);
+		setTitle("Card Editor: " + hc.name);
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		
@@ -67,7 +69,7 @@ public class VillainMakerFrame extends JDialog {
 		imageLabel.setOpaque(true);
 		*/
 		
-		//hm.populateVillainCard();
+		//hm.populateSchemeCard();
 		BufferedImage bi = hm.generateCard();
 		ImageIcon icon = new ImageIcon(resizeImage(new ImageIcon(bi), 0.5d));
 		//ImageIcon icon = new ImageIcon(new ImageIcon(bi));
@@ -96,15 +98,17 @@ public class VillainMakerFrame extends JDialog {
 				hm.card.imageOffsetX += e.getX() - startX;
 				hm.card.imageOffsetY += e.getY() - startY;
 				
-				reRenderCard();
+				System.out.println("Released: " + hm.card.imageOffsetX + ":" + hm.card.imageOffsetY);
 				
-				updateLinkedCards();
+				reRenderCard();
 			}
 			
 			@Override
 			public void mousePressed(MouseEvent e) {
 				startX = e.getX();
-				startY = e.getY();	
+				startY = e.getY();
+				
+				System.out.println("Pressed: " + startX + ":" + startY);
 			}
 
 			@Override
@@ -134,7 +138,7 @@ public class VillainMakerFrame extends JDialog {
 		setSize((int)(hm.cardWidth / 1.8), (int)(hm.cardHeight / 1.8));
 		//setSize(icon.getIconWidth(), icon.getIconHeight());
 		
-		hmt = new VillainMakerToolbar(hm, this);
+		hmt = new SchemeMakerToolbar(hm, this);
 		this.setJMenuBar(hmt);
 		
 		setVisible(true);
@@ -179,29 +183,4 @@ public class VillainMakerFrame extends JDialog {
 		//ImageIcon icon = new ImageIcon(new ImageIcon(bi));
 		label.setIcon(icon);
 	}
-	
-	public void updateLinkedCards()
-	{
-		if (hm.card.cardType != null && (hm.card.cardType.equals(VillainCardType.MASTERMIND) || hm.card.cardType.equals(VillainCardType.MASTERMIND_TACTIC)))
-	    {	
-			Villain villain = hm.card.villain;
-	    	
-	    	if (villain != null)
-	    	{
-	    		for (VillainCard vc : villain.cards)
-	    		{
-	    			vc.imageOffsetX = hm.card.imageOffsetX;
-	    			vc.imageOffsetY = hm.card.imageOffsetY;
-	    			vc.imagePath = hm.card.imagePath;
-	    			vc.imageZoom = hm.card.imageZoom;
-	    			vc.victory = hm.card.victory;
-	    			vc.attack = hm.card.attack;
-	    			vc.villainGroup = hm.card.villainGroup;
-	    			vc.cardTeam = hm.card.cardTeam;
-	    			vc.changed = true;
-	    		}
-	    	}
-	    }
-	}
-	
 }
