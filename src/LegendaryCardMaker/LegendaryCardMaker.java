@@ -23,7 +23,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.3";
+	public static String version = "0.4";
 
 	public String inputFile = "cardCreator/input.txt";
 	
@@ -35,6 +35,7 @@ public class LegendaryCardMaker {
 	public List<Hero> heroes = new ArrayList<Hero>();
 	public List<Villain> villains = new ArrayList<Villain>();
 	public List<SchemeCard> schemes = new ArrayList<SchemeCard>();
+	public Villain bystanderVillain = new Villain();
 	
 	public boolean ignoreGenerate = true;
 	
@@ -68,6 +69,9 @@ public class LegendaryCardMaker {
 		//new VillainMaker();
 		
 		//new SchemeMaker();
+		
+		bystanderVillain.name = "system_bystander_villain";
+		villains.add(bystanderVillain);
 	}
 	
 	public void processInput(String inputFile)
@@ -75,6 +79,10 @@ public class LegendaryCardMaker {
 		heroes = new ArrayList<Hero>();
 		villains = new ArrayList<Villain>();
 		schemes = new ArrayList<SchemeCard>();
+		
+		bystanderVillain = new Villain();
+		bystanderVillain.name = "system_bystander_villain";
+		villains.add(bystanderVillain);
 		
 		Hero h = new Hero();
 		HeroCard hc = new HeroCard();
@@ -252,8 +260,15 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("VILLAIN;"))
 				   {
 					   v = new Villain();
-					   v.name = line.replace("VILLAIN;", "");
-					   villains.add(v);
+					   if (line.replace("VILLAIN;", "").equals("system_bystander_villain"))
+					   {
+						   v = bystanderVillain;
+					   }
+					   else
+					   {
+						   v.name = line.replace("VILLAIN;", "");
+						   villains.add(v);
+					   }
 					   
 					   if (exportBasicText)
 						{
@@ -286,6 +301,11 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("VCTYPE;"))
 				   {
 					   vc.cardType = VillainCardType.valueOf(line.replace("VCTYPE;", ""));
+					   if (vc.cardType.equals(VillainCardType.BYSTANDER))
+					   {
+						   bystanderVillain.cards.add(vc);
+						   v.cards.remove(vc);
+					   }
 				   }
 				   
 				   if (line.startsWith("VCTEAM;"))

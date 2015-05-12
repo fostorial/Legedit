@@ -227,16 +227,29 @@ public class VillainMaker {
 	    {	
 	    	
 	    }
+	    if (card.cardType != null && card.cardType.equals(VillainCardType.BYSTANDER))
+	    {
+	    	ImageIcon ii = new ImageIcon(templateFolder + File.separator + "bystander" + File.separator + "back_underlay.png");
+	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+	    }
 	    
 	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 	    
 	    // Card Team
 	    if (card.cardTeam != null && card.cardTeam.getImagePath() != null)
 	    {
+	    	teamIconX = 700;
+	    	teamIconY = 785;
+	    	
 	    	if (card.cardType != null && card.cardType.equals(VillainCardType.HENCHMEN))
 		    {
 	    		teamIconX = teamIconX + 17;
 	    		teamIconY = teamIconY - 90;
+		    }
+	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.BYSTANDER))
+		    {
+	    		teamIconX = teamIconX + 17;
+	    		teamIconY = teamIconY - 25;
 		    }
 	    	
 	    	BufferedImage bi = getIcon(card.cardTeam, teamMaxWidth, teamMaxHeight);
@@ -260,6 +273,12 @@ public class VillainMaker {
 	        Graphics g2 = bi.getGraphics();
 	        
 	    	g2.setColor(cardNameColor);
+	    	
+	    	if (card.cardType != null && card.cardType.equals(VillainCardType.BYSTANDER))
+		    {
+		    	g2.setColor(Color.WHITE);
+		    }
+	    	
 	        //Font font = new Font("Percolator", Font.PLAIN, cardNameSize);
 	    	Font font = null;
 	    	try
@@ -319,42 +338,49 @@ public class VillainMaker {
 		    	villainGroup = "Mastermind Tactic";
 		    	villainGroup = villainGroup.toUpperCase();
 		    }
+		    if (card.cardType != null && card.cardType.equals(VillainCardType.BYSTANDER))
+		    {
+		    	villainGroup = null;
+		    }
 		    
-	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
-	        
-	    	g2.setColor(villainGroupColor);
-	        //Font font = new Font("Percolator", Font.PLAIN, villainGroupSize);
-	    	Font font = null;
-	    	try
-	    	{
-	    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
-	        font = font.deriveFont((float)villainGroupSize);
-	        g2.setFont(font);
-	    	}
-	    	catch (Exception e)
-	    	{
-	    		e.printStackTrace();
-	    		
-	    		font = new Font("Percolator", Font.PLAIN, villainGroupSize);
-	    		g2.setFont(font);
-	    	}
-	        g2.setFont(font);
-	        FontMetrics metrics = g2.getFontMetrics(font);
-	        int stringLength = SwingUtilities.computeStringWidth(metrics, villainGroup);
-	        int x = (cardWidth / 2) - (stringLength / 2);
-	        
-	        g2.drawString(villainGroup, x, villainGroupY);
-	    	if (includeBlurredBGvillainGroup)
-	    	{
-	    		drawUnderlay(bi, g2, type, 0, 0, villainGroupBlurRadius, villainGroupBlurDouble, expandvillainGroup);
-	    	}
-	    	
-	    	g2.drawString(villainGroup, x, villainGroupY);
-	    	
-	    	g.drawImage(bi, 0, 0, null);
-	    	
-	    	g2.dispose();
+		    if (villainGroup != null)
+		    {
+		    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
+		        Graphics g2 = bi.getGraphics();
+		        
+		    	g2.setColor(villainGroupColor);
+		        //Font font = new Font("Percolator", Font.PLAIN, villainGroupSize);
+		    	Font font = null;
+		    	try
+		    	{
+		    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
+		        font = font.deriveFont((float)villainGroupSize);
+		        g2.setFont(font);
+		    	}
+		    	catch (Exception e)
+		    	{
+		    		e.printStackTrace();
+		    		
+		    		font = new Font("Percolator", Font.PLAIN, villainGroupSize);
+		    		g2.setFont(font);
+		    	}
+		        g2.setFont(font);
+		        FontMetrics metrics = g2.getFontMetrics(font);
+		        int stringLength = SwingUtilities.computeStringWidth(metrics, villainGroup);
+		        int x = (cardWidth / 2) - (stringLength / 2);
+		        
+		        g2.drawString(villainGroup, x, villainGroupY);
+		    	if (includeBlurredBGvillainGroup)
+		    	{
+		    		drawUnderlay(bi, g2, type, 0, 0, villainGroupBlurRadius, villainGroupBlurDouble, expandvillainGroup);
+		    	}
+		    	
+		    	g2.drawString(villainGroup, x, villainGroupY);
+		    	
+		    	g.drawImage(bi, 0, 0, null);
+		    	
+		    	g2.dispose();
+		    }
 	    }
 	    
 	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
@@ -362,10 +388,18 @@ public class VillainMaker {
 	    // Recruit
 	    if (card.victory != null)
 	    {
+	    	vpX = 638;
+	    	vpY = 795;
+	    	
 	    	if (card.cardType != null && card.cardType.equals(VillainCardType.HENCHMEN))
 		    {
 	    		vpX = vpX + 23;
 	    		vpY = vpY - 87;
+		    }
+	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.BYSTANDER))
+		    {
+	    		vpX = vpX + 25;
+	    		vpY = vpY - 21;
 		    }
 	    	else
 	    	{
@@ -432,6 +466,12 @@ public class VillainMaker {
 	    	else if (card.cardType != null && (card.cardType.equals(VillainCardType.MASTERMIND_TACTIC) || card.cardType.equals(VillainCardType.MASTERMIND)))
 		    {
 	    		ii = new ImageIcon(templateFolder + File.separator + "villain_mastermind" + File.separator + "back_text_overlay.png");
+		    	overlay = resizeImage(ii, cardWidth, cardHeight);
+		    	//g.drawImage(overlay, 0, 0, null);
+		    }
+	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.BYSTANDER))
+		    {
+	    		ii = new ImageIcon(templateFolder + File.separator + "bystander" + File.separator + "back_text_overlay.png");
 		    	overlay = resizeImage(ii, cardWidth, cardHeight);
 		    	//g.drawImage(overlay, 0, 0, null);
 		    }
@@ -665,9 +705,12 @@ public class VillainMaker {
 	    	}
 	        
 	    	int yOffsetValue = 0;
-	    	if (y < cardHeight - getPercentage(cardHeight, yOffsetRatio))
+	    	if (card.cardType != null && (card.cardType.equals(VillainCardType.MASTERMIND_TACTIC) || card.cardType.equals(VillainCardType.MASTERMIND)))
 	    	{
-	    		yOffsetValue = (cardHeight - getPercentage(cardHeight, yOffsetRatio)) - y;
+	    		if (y < cardHeight - getPercentage(cardHeight, yOffsetRatio))
+		    	{
+		    		yOffsetValue = (cardHeight - getPercentage(cardHeight, yOffsetRatio)) - y;
+		    	}
 	    	}
 	    	
 	        g.drawImage(bi, 0, yOffsetValue, null);

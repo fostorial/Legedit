@@ -28,6 +28,7 @@ import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroSelectorMenu;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeSelectorMenu;
+import LegendaryCardMaker.LegendaryVillainMaker.BystanderSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCard;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainSelectorMenu;
@@ -53,6 +54,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	VillainSelectorMenu villainSelectorMenu = null;
 	SchemeSelectorMenu schemeSelectorMenu = null;
 	TeamIconSelectorMenu teamSelectorMenu = null;
+	BystanderSelectorMenu bystanderSelectorMenu = null;
 	
 	JMenu help = new JMenu("Help");
 	
@@ -115,6 +117,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		teamSelectorMenu = new TeamIconSelectorMenu(lcmf, tb);
 		this.add(teamSelectorMenu);
+		
+		bystanderSelectorMenu = new BystanderSelectorMenu(lcmf, tb);
+		this.add(bystanderSelectorMenu);
 		
 		removeEditMenus();
 		setEditMenu();
@@ -591,6 +596,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		{
 			teamSelectorMenu.setVisible(true);
 		}
+		if (str.equals("Bystanders"))
+		{
+			bystanderSelectorMenu.setVisible(true);
+		}
 	}
 	
 	public void removeEditMenus()
@@ -599,5 +608,6 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		villainSelectorMenu.setVisible(false);
 		schemeSelectorMenu.setVisible(false);
 		teamSelectorMenu.setVisible(false);
+		bystanderSelectorMenu.setVisible(false);
 	}
 }

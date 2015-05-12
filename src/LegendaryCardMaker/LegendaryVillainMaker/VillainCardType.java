@@ -6,6 +6,7 @@ public enum VillainCardType {
 	HENCHMEN (10), 
 	MASTERMIND (1),
 	MASTERMIND_TACTIC (1),
+	BYSTANDER (1),
 	;
 	
 	private int count;

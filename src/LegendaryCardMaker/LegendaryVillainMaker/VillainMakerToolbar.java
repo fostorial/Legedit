@@ -38,6 +38,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 	JCheckBoxMenuItem cardTypeVillain = new JCheckBoxMenuItem("Villain");
 	JCheckBoxMenuItem cardTypeMastermind = new JCheckBoxMenuItem("Mastermind");
 	JCheckBoxMenuItem cardTypeMastermindTactic = new JCheckBoxMenuItem("Mastermind Tactic");
+	JCheckBoxMenuItem cardTypeBystander = new JCheckBoxMenuItem("Bystander");
 	
 	JMenu team = new JMenu("Team");
 	List<JCheckBoxMenuItem> teamItems = new ArrayList<JCheckBoxMenuItem>();
@@ -91,7 +92,13 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 		if (hm.card.cardType.equals(VillainCardType.MASTERMIND_TACTIC)) { cardTypeMastermindTactic.setSelected(true); }
 		cardTypeMastermindTactic.addActionListener(this);
 		rarity.add(cardTypeMastermindTactic);
-		edit.add(rarity);
+		if (hm.card.cardType.equals(VillainCardType.BYSTANDER)) { cardTypeBystander.setSelected(true); }
+		cardTypeBystander.addActionListener(this);
+		//rarity.add(cardTypeBystander);
+		if (!hm.card.cardType.equals(VillainCardType.BYSTANDER))
+		{
+			edit.add(rarity);
+		}
 		
 		for (Icon icon : Icon.values())
 		{
@@ -235,6 +242,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeVillain.setSelected(false);
 			cardTypeMastermind.setSelected(false);
 			cardTypeMastermindTactic.setSelected(false);
+			cardTypeBystander.setSelected(false);
 			hm.card.cardType = VillainCardType.HENCHMEN;
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -245,6 +253,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeVillain.setSelected(true);
 			cardTypeMastermind.setSelected(false);
 			cardTypeMastermindTactic.setSelected(false);
+			cardTypeBystander.setSelected(false);
 			hm.card.cardType = VillainCardType.VILLAIN;
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -255,6 +264,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeVillain.setSelected(false);
 			cardTypeMastermind.setSelected(true);
 			cardTypeMastermindTactic.setSelected(false);
+			cardTypeBystander.setSelected(false);
 			hm.card.cardType = VillainCardType.MASTERMIND;
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -265,7 +275,19 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeVillain.setSelected(false);
 			cardTypeMastermind.setSelected(false);
 			cardTypeMastermindTactic.setSelected(true);
+			cardTypeBystander.setSelected(false);
 			hm.card.cardType = VillainCardType.MASTERMIND_TACTIC;
+			hmf.reRenderCard();
+			hm.card.changed = true;
+		}
+		if (e.getSource().equals(cardTypeBystander))
+		{
+			cardTypeHenchmen.setSelected(false);
+			cardTypeVillain.setSelected(false);
+			cardTypeMastermind.setSelected(false);
+			cardTypeMastermindTactic.setSelected(false);
+			cardTypeBystander.setSelected(true);
+			hm.card.cardType = VillainCardType.BYSTANDER;
 			hmf.reRenderCard();
 			hm.card.changed = true;
 		}

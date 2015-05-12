@@ -36,6 +36,8 @@ import LegendaryCardMaker.LegendarySchemeMaker.SchemeMakerFrame;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCard;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCardSelector;
+import LegendaryCardMaker.LegendaryVillainMaker.VillainCardType;
+import LegendaryCardMaker.LegendaryVillainMaker.VillainMakerFrame;
 
 public class LegendaryCardMakerFrame extends JFrame {
 
@@ -50,6 +52,10 @@ public class LegendaryCardMakerFrame extends JFrame {
 	public JList villainList;
 	public DefaultListModel villainListModel;
 	JScrollPane villainScroll = new JScrollPane();
+	
+	public JList bystanderList;
+	public DefaultListModel bystanderListModel;
+	JScrollPane bystanderScroll = new JScrollPane();
 	
 	public JList schemeList;
 	public DefaultListModel schemeListModel;
@@ -137,7 +143,10 @@ public class LegendaryCardMakerFrame extends JFrame {
 		Collections.sort(lcm.villains, new Villain());
 		for (Villain v : lcm.villains)
 		{
-			villainListModel.addElement(v);
+			if (!v.name.equals("system_bystander_villain"))
+			{
+				villainListModel.addElement(v);
+			}
 		}
 		villainList = new JList(villainListModel);
 		villainList.setCellRenderer(new VillainListRenderer());
@@ -159,6 +168,41 @@ public class LegendaryCardMakerFrame extends JFrame {
 		villainScroll.setViewportView(villainList);
 		this.add(villainScroll);
 		tabs.add("Villains", villainScroll);
+		
+		
+		bystanderListModel = new DefaultListModel();
+		Collections.sort(lcm.villains, new Villain());
+		for (Villain v : lcm.villains)
+		{
+			for (VillainCard vc : v.cards)
+			{
+				if (vc.cardType != null && vc.cardType.equals(VillainCardType.BYSTANDER))
+				{
+					bystanderListModel.addElement(vc);
+				}
+			}
+		}
+		bystanderList = new JList(bystanderListModel);
+		bystanderList.setCellRenderer(new BystanderListRenderer());
+		bystanderList.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent evt) {
+		        JList list = (JList)evt.getSource();
+		        if (evt.getClickCount() == 2) {
+
+		            // Double-click detected
+		            int index = list.locationToIndex(evt.getPoint());
+		            if (index >= 0)
+		            {
+		            	VillainMakerFrame vmf = new VillainMakerFrame((VillainCard)list.getSelectedValue());
+		            	//new BystanderCardSelector((Bystander)list.getSelectedValue(), lcmf);
+		            }
+		        }
+		    }
+		});
+		
+		bystanderScroll.setViewportView(bystanderList);
+		this.add(bystanderScroll);
+		tabs.add("Bystanders", bystanderScroll);
 		
 		
 		schemeListModel = new DefaultListModel();
@@ -398,6 +442,28 @@ public class LegendaryCardMakerFrame extends JFrame {
             label.setHorizontalTextPosition(JLabel.RIGHT);
             
             String s = villain.name + " (" +  villain.cardType.toString() + ")";
+            if (villain.changed) { s += " *"; }
+            label.setText(s);
+            
+            return label;
+        }
+    }
+	
+	public class BystanderListRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(
+                JList list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+        	
+        	VillainCard villain = (VillainCard)value;
+
+            JLabel label = (JLabel) super.getListCellRendererComponent(
+                    list, value, index, isSelected, cellHasFocus);
+            //label.setIcon(new ImageIcon(getImageSummary(villain)));
+            label.setHorizontalTextPosition(JLabel.RIGHT);
+            
+            String s = villain.name;
             if (villain.changed) { s += " *"; }
             label.setText(s);
             
