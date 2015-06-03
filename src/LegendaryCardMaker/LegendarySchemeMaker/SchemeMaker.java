@@ -30,11 +30,12 @@ import javax.swing.SwingUtilities;
 
 import org.w3c.dom.Element;
 
+import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.WordDefinition;
 
-public class SchemeMaker {
+public class SchemeMaker extends CardMaker {
 	
 	public String exportFolder = "cardCreator";
 	String templateFolder = "legendary" + File.separator + "templates" + File.separator + LegendaryCardMaker.expansionStyle;
@@ -82,7 +83,7 @@ public class SchemeMaker {
 	int rareBlurRadius = 25;
 	public int textStartOffset = 0;
 	
-	static SchemeCard card;
+	public SchemeCard card;
 	
 	public BufferedWriter bwErr = null;
 

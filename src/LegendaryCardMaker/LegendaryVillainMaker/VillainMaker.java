@@ -31,11 +31,12 @@ import javax.swing.SwingUtilities;
 
 import org.w3c.dom.Element;
 
+import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.WordDefinition;
 
-public class VillainMaker {
+public class VillainMaker extends CardMaker {
 	
 	public String exportFolder = "cardCreator";
 	String templateFolder = "legendary" + File.separator + "templates" + File.separator + LegendaryCardMaker.expansionStyle;
@@ -131,7 +132,7 @@ public class VillainMaker {
 	public int textStartOffset = 0;
 	public double yOffsetRatio = 0.10d;
 	
-	static VillainCard card;
+	public VillainCard card;
 	
 	public BufferedWriter bwErr = null;
 
@@ -232,6 +233,11 @@ public class VillainMaker {
 	    	ImageIcon ii = new ImageIcon(templateFolder + File.separator + "bystander" + File.separator + "back_underlay.png");
 	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    }
+	    if (card.cardType != null && card.cardType.equals(VillainCardType.WOUND))
+	    {
+	    	ImageIcon ii = new ImageIcon(templateFolder + File.separator + "wound" + File.separator + "back_underlay.png");
+	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+	    }
 	    
 	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 	    
@@ -278,6 +284,10 @@ public class VillainMaker {
 		    {
 		    	g2.setColor(Color.WHITE);
 		    }
+	    	if (card.cardType != null && card.cardType.equals(VillainCardType.WOUND))
+		    {
+		    	g2.setColor(Color.WHITE);
+		    }
 	    	
 	        //Font font = new Font("Percolator", Font.PLAIN, cardNameSize);
 	    	Font font = null;
@@ -320,7 +330,7 @@ public class VillainMaker {
 	    	String villainGroup = card.villainGroup;
 	    	if (card.cardType != null && card.cardType.equals(VillainCardType.VILLAIN))
 		    {
-		    	villainGroup += " - Villain";
+		    	villainGroup = "Villain - " + villainGroup;
 		    	villainGroup = villainGroup.toUpperCase();
 		    }
 		    if (card.cardType != null && card.cardType.equals(VillainCardType.HENCHMEN))
@@ -335,10 +345,14 @@ public class VillainMaker {
 		    }
 		    if (card.cardType != null && card.cardType.equals(VillainCardType.MASTERMIND_TACTIC))
 		    {	
-		    	villainGroup = "Mastermind Tactic";
+		    	villainGroup = "Mastermind Tactic - " + card.villain.name;
 		    	villainGroup = villainGroup.toUpperCase();
 		    }
 		    if (card.cardType != null && card.cardType.equals(VillainCardType.BYSTANDER))
+		    {
+		    	villainGroup = null;
+		    }
+		    if (card.cardType != null && card.cardType.equals(VillainCardType.WOUND))
 		    {
 		    	villainGroup = null;
 		    }
@@ -472,6 +486,12 @@ public class VillainMaker {
 	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.BYSTANDER))
 		    {
 	    		ii = new ImageIcon(templateFolder + File.separator + "bystander" + File.separator + "back_text_overlay.png");
+		    	overlay = resizeImage(ii, cardWidth, cardHeight);
+		    	//g.drawImage(overlay, 0, 0, null);
+		    }
+	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.WOUND))
+		    {
+	    		ii = new ImageIcon(templateFolder + File.separator + "wound" + File.separator + "back_text_overlay.png");
 		    	overlay = resizeImage(ii, cardWidth, cardHeight);
 		    	//g.drawImage(overlay, 0, 0, null);
 		    }
@@ -721,6 +741,10 @@ public class VillainMaker {
 	    // Attack
 	    if (card.attack != null)
 	    {
+	    	attackSize = 120;
+	    	attackX = 650;
+	    	expandAttack = 5;
+	    	
 	    	if (card.cardType.equals(VillainCardType.HENCHMEN))
 	    	{
 	    		ImageIcon ii = new ImageIcon(templateFolder + File.separator + "villain_henchmen" + File.separator + "back_attack.png");

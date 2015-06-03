@@ -52,15 +52,14 @@ public class BystanderSelectorMenu extends JMenu implements ActionListener{
 			if (s != null && s.isEmpty()) { return; }
 			
 			Villain h = lcmf.lcm.bystanderVillain;
-			h.name = s;
 			h.changed = true;
 			
 			VillainCard hc = VillainMaker.getBlankVillainCard();
+			hc.name = s;
 			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.BYSTANDER;
 			hc.changed = true;
-			h.cards.add(hc);
 			
 			lcmf.bystanderListModel.addElement(hc);
 			lcmf.lcm.bystanderVillain.cards.add(hc);

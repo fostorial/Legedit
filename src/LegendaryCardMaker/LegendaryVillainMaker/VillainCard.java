@@ -27,6 +27,37 @@ public class VillainCard {
 	
 	public String getCardName(String exportDir)
 	{
+		if (cardType != null && cardType.equals(VillainCardType.BYSTANDER))
+		{
+			int i = 1;
+			String filename = cardType.toString().toLowerCase() + "_" + name + "_" + i;
+			
+			do
+			{
+				filename = cardType.toString().toLowerCase() + "_" + name + "_" + i;
+				i++;
+			}
+			while (new File(exportDir + File.separator + filename + ".jpg").exists() 
+					|| new File(exportDir + File.separator + filename + ".png").exists());
+			
+			return filename;
+		}
+		else if (cardType != null && cardType.equals(VillainCardType.WOUND))
+		{
+			int i = 1;
+			String filename = cardType.toString().toLowerCase() + "_" + name + "_" + i;
+			
+			do
+			{
+				filename = cardType.toString().toLowerCase() + "_" + name + "_" + i;
+				i++;
+			}
+			while (new File(exportDir + File.separator + filename + ".jpg").exists() 
+					|| new File(exportDir + File.separator + filename + ".png").exists());
+			
+			return filename;
+		}
+		else
 		{
 			int i = 1;
 			String filename = cardType.toString().toLowerCase() + "_" + villainGroup.replace(" ", "") + "_" + name + "_" + i;

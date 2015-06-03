@@ -33,11 +33,12 @@ import javax.swing.SwingUtilities;
 
 import org.w3c.dom.Element;
 
+import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.WordDefinition;
 
-public class HeroMaker {
+public class HeroMaker extends CardMaker {
 	
 	public String exportFolder = "cardCreator";
 	String templateFolder = "legendary" + File.separator + "templates" + File.separator + LegendaryCardMaker.expansionStyle;
@@ -132,7 +133,7 @@ public class HeroMaker {
 	int rareBlurRadius = 25;
 	public int textStartOffset = 0;
 	
-	static HeroCard card;
+	public HeroCard card;
 	
 	public BufferedWriter bwErr = null;
 
@@ -264,7 +265,13 @@ public class HeroMaker {
 	    }
 	    if (card.rarity != null && card.rarity.equals(CardRarity.RARE))
 	    {	
+	    	ImageIcon ii = null;
 	    	
+	    	if (new File(templateFolder + File.separator + "hero_rare" + File.separator + "back_text.png").exists())
+	    	{
+	    		ii = new ImageIcon(templateFolder + File.separator + "hero_rare" + File.separator + "back_text.png");
+	    		g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+	    	}
 	    }
 	    
 	    // Card Team
@@ -524,9 +531,12 @@ public class HeroMaker {
 	                }
 	            }
 	            
+	            int yOffset = getYOffset(g2, font, fontBold, x, xOrigin, xEnd, y, yOrigin, metrics, overlay);
+	            //int yOffset = 0;
+	            
 	            //apply modifier
-	            yOrigin = yOrigin + textStartOffset;
-	            y = y + textStartOffset;
+	            yOrigin = yOrigin + textStartOffset + yOffset;
+	            y = y + textStartOffset + yOffset;
 	            
 	            //x end works from right to left but top down to 
 	            done = false;
@@ -1084,5 +1094,144 @@ public class HeroMaker {
         g.dispose();
         
         return image;
+	}
+	
+	public int getYOffset(Graphics g2, Font font, Font fontBold, int x, int xOrigin, int xEnd, int y, int yOrigin, FontMetrics metrics, BufferedImage overlay)
+	{
+		int yOffset = 0;
+		boolean finished = false;
+		do
+		{
+			
+			//find first overlay pixel
+    		int width = overlay.getWidth();
+            int height = overlay.getHeight();
+            boolean done = false;
+            
+            for (int xx = 0; xx < width; xx++) {
+                for (int yy = 0; yy < height; yy++) {
+                    Color originalColor = new Color(overlay.getRGB(xx, yy), true);
+                    if (originalColor.getAlpha() > 0 && done == false) {
+                        x = xx;
+                        y = yy + metrics.getHeight();
+                        xOrigin = xx;
+                        yOrigin = yy;
+                        done = true;
+                    }
+                }
+            }
+            
+            //apply modifier
+            yOrigin = yOrigin + textStartOffset + yOffset;
+            y = y + textStartOffset + yOffset;
+            
+            //x end works from right to left but top down to 
+            done = false;
+            for (int xx = width - 1; xx >= 0; xx--) {
+                for (int yy = 0; yy < height; yy++) {
+                    Color originalColor = new Color(overlay.getRGB(xx, yy), true);
+                    if (originalColor.getAlpha() > 0 && done == false) {
+                        xEnd = xx;
+                        done = true;
+                    }
+                }
+            }
+            
+            List<WordDefinition> words = WordDefinition.getWordDefinitionList(card.abilityText);
+
+    		for (WordDefinition wd : words)
+    		{
+    			String s = wd.word;
+				String spaceChar = "";
+				if (wd.space)
+				{
+					spaceChar = " ";
+				}
+				
+    			if (s.startsWith("<k>"))
+    			{
+    				g2.setFont(fontBold);
+    				metrics = g2.getFontMetrics(fontBold);
+    				s = s.replace("<k>", "");
+    			}
+    			
+    			if (s.startsWith("<r>"))
+    			{
+    				g2.setFont(font);
+    				metrics = g2.getFontMetrics(font);
+    				s = s.replace("<r>", "");
+    			}
+    			
+    			boolean gap = false;
+    			if (s.equals("<g>"))
+    			{
+    				gap = true;
+    			}
+    			
+    			Icon icon = isIcon(s);
+    			if (gap == true)
+    			{
+    				x = xOrigin;
+    				y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textGapHeight);
+    			}
+    			else if (icon == null)
+    			{
+    				int stringLength = SwingUtilities.computeStringWidth(metrics, s);
+    				Color color = null;
+    				try
+    				{
+    					color = new Color(overlay.getRGB(x + stringLength, y), true);
+    				}
+    				catch (ArrayIndexOutOfBoundsException e)
+    				{
+    					color = new Color(overlay.getRGB(0, 0), true);
+    				}
+    				if (color.getAlpha() == 0)
+    				{
+    					if (x > xEnd)
+    					{
+    						xEnd = x;
+    					}
+    					x = xOrigin;
+    					y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textDefaultGapHeight);
+    				}
+    				x += stringLength + SwingUtilities.computeStringWidth(metrics, spaceChar);
+    			}
+    			else if (icon != null)
+    			{
+    				BufferedImage i = getIconMaxHeight(icon, getPercentage(metrics.getHeight(), textIconHeight));
+    				
+    				Color color = new Color(overlay.getRGB(x + i.getWidth(), y + i.getHeight()), true);
+    				if (color.getAlpha() == 0)
+    				{
+    					if (x > xEnd)
+    					{
+    						xEnd = x;
+    					}
+    					x = xOrigin;
+    					y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textDefaultGapHeight);
+    				}
+    				
+    				double offsetRatio = ((textIconHeight - 1d));
+    				int offset = getPercentage(i.getHeight(), offsetRatio);
+    				int modifiedY = (int)(y - i.getHeight() + offset);
+    				
+    				//System.out.println(offsetRatio + " " + offset + " " + modifiedY + " " + i.getHeight() + " " + metrics.getHeight());
+    				x += i.getWidth() + SwingUtilities.computeStringWidth(metrics, spaceChar);
+    			}
+    		}
+    		
+    		if (y >= getPercentage(cardHeight, 0.89d))
+    		{
+    			finished = true;
+    		}
+    		else
+    		{
+    			yOffset += metrics.getHeight();
+    		}
+    		
+		} while (finished == false);
+		
+		return yOffset;
 	}
 }

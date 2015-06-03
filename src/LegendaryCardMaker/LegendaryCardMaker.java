@@ -23,19 +23,20 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.4";
+	public static String version = "0.5";
 
-	public String inputFile = "cardCreator/input.txt";
+	public String inputFile = null;
 	
 	public boolean exportBasicText = false;
-	public String textOutputFile = "cardCreator/output.txt";
+	public String textOutputFile = null;
 	public String textErrorFile = "error.txt";
-	public String exportFolder = "cardCreator";
+	public String exportFolder = null;
 	
 	public List<Hero> heroes = new ArrayList<Hero>();
 	public List<Villain> villains = new ArrayList<Villain>();
 	public List<SchemeCard> schemes = new ArrayList<SchemeCard>();
 	public Villain bystanderVillain = new Villain();
+	public Villain woundVillain = new Villain();
 	
 	public boolean ignoreGenerate = true;
 	
@@ -43,6 +44,9 @@ public class LegendaryCardMaker {
 	public boolean generateDividerFile = false;
 	
 	public String currentFile = null;
+	
+	public String lastSaved = null;
+	public String lastOpened = null;
 	
 	public static String expansionStyle = "default";
 	
@@ -72,6 +76,9 @@ public class LegendaryCardMaker {
 		
 		bystanderVillain.name = "system_bystander_villain";
 		villains.add(bystanderVillain);
+		
+		woundVillain.name = "system_wound_villain";
+		villains.add(woundVillain);
 	}
 	
 	public void processInput(String inputFile)
@@ -83,6 +90,10 @@ public class LegendaryCardMaker {
 		bystanderVillain = new Villain();
 		bystanderVillain.name = "system_bystander_villain";
 		villains.add(bystanderVillain);
+		
+		woundVillain = new Villain();
+		woundVillain.name = "system_wound_villain";
+		villains.add(woundVillain);
 		
 		Hero h = new Hero();
 		HeroCard hc = new HeroCard();
@@ -125,6 +136,11 @@ public class LegendaryCardMaker {
 			while ((line = br.readLine()) != null) {
 			   if (line != null && !line.startsWith("#") && !line.isEmpty())
 			   {
+				   if (line.startsWith("EXPANSIONSTYLE;"))
+				   {
+					   expansionStyle = line.replace("EXPANSIONSTYLE;", "");
+				   }
+				   
 				   if (line.startsWith("HERO;"))
 				   {
 					   h = new Hero();
@@ -263,6 +279,10 @@ public class LegendaryCardMaker {
 					   if (line.replace("VILLAIN;", "").equals("system_bystander_villain"))
 					   {
 						   v = bystanderVillain;
+					   }
+					   else if (line.replace("VILLAIN;", "").equals("system_wound_villain"))
+					   {
+						   v = woundVillain;
 					   }
 					   else
 					   {
@@ -603,6 +623,9 @@ public class LegendaryCardMaker {
 	{
 		String str = "";
 		
+		str += "EXPANSIONSTYLE;" + expansionStyle;
+		str += "\n\n";
+		
 		for (Hero h : heroes)
 		{
 			str += h.generateOutputString();
@@ -770,6 +793,7 @@ public class LegendaryCardMaker {
 		SchemeMaker sm = new SchemeMaker();
 		sm.exportFolder = folder.getAbsolutePath();
 		sm.setCard(s);
-		sm.generateCard();
+		BufferedImage image = sm.generateCard();
+		sm.exportImage(image);
 	}
 }

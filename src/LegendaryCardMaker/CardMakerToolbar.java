@@ -32,6 +32,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.BystanderSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCard;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainSelectorMenu;
+import LegendaryCardMaker.LegendaryVillainMaker.WoundSelectorMenu;
 
 public class CardMakerToolbar extends JMenuBar implements ActionListener{
 
@@ -46,6 +47,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	JMenuItem exportJPG = new JMenuItem("Export to JPEG...");
 	JMenuItem exportPNG = new JMenuItem("Export to PNG...");
 	JMenuItem exportPrinterStudioPNG = new JMenuItem("Export to Printer Studio PNG...");
+	JMenuItem exportPNGHomeprint = new JMenuItem("Export to JPEG for Homeprint...");
 	
 	JMenuItem viewAsText = new JMenuItem("View as Text...");
 	JMenuItem viewStatistics = new JMenuItem("View Statistics...");
@@ -55,6 +57,11 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	SchemeSelectorMenu schemeSelectorMenu = null;
 	TeamIconSelectorMenu teamSelectorMenu = null;
 	BystanderSelectorMenu bystanderSelectorMenu = null;
+	WoundSelectorMenu woundSelectorMenu = null;
+	
+	JMenu expansion = new JMenu("Expansion");
+	JMenu style = new JMenu("Style");
+	List<JCheckBoxMenuItem> styleItems = new ArrayList<JCheckBoxMenuItem>();
 	
 	JMenu help = new JMenu("Help");
 	
@@ -86,6 +93,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		exportPNG.addActionListener(this);
 		file.add(exportPNG);
+		
+		exportPNGHomeprint.addActionListener(this);
+		file.add(exportPNGHomeprint);
 		
 		//exportPrinterStudioPNG.addActionListener(this);
 		//file.add(exportPrinterStudioPNG);
@@ -121,8 +131,16 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		bystanderSelectorMenu = new BystanderSelectorMenu(lcmf, tb);
 		this.add(bystanderSelectorMenu);
 		
+		woundSelectorMenu = new WoundSelectorMenu(lcmf, tb);
+		this.add(woundSelectorMenu);
+		
 		removeEditMenus();
 		setEditMenu();
+		
+		
+		populateExpansionMenu();
+		expansion.add(style);
+		//this.add(expansion);
 		
 		
 		JMenuItem version = new JMenuItem("Version: " + LegendaryCardMaker.version);
@@ -136,7 +154,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		if (e.getSource().equals(open))
 		{
-			JFileChooser chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser(lcmf.lcm.lastOpened);
 			int outcome = chooser.showOpenDialog(this);
 			if (outcome == JFileChooser.APPROVE_OPTION)
 			{
@@ -161,8 +179,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				}
 				
 				lcmf.applicationProps.put("lastExpansion", chooser.getSelectedFile().getAbsolutePath());
+				lcmf.applicationProps.put("lastOpenDirectory", chooser.getSelectedFile().getParent());
+				lcmf.lcm.lastOpened = chooser.getSelectedFile().getParent();
 				lcmf.saveProperties();
-				
 			}
 		}
 		
@@ -181,7 +200,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			}
 			else
 			{
-				JFileChooser chooser = new JFileChooser();
+				JFileChooser chooser = new JFileChooser(lcmf.lcm.lastSaved);
 				int outcome = chooser.showSaveDialog(this);
 				if (outcome == JFileChooser.APPROVE_OPTION)
 				{
@@ -190,6 +209,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 					try
 					{
 						lcmf.lcm.saveExpansion();
+						lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
+						lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
+						lcmf.saveProperties();
 					}
 					catch (Exception ex)
 					{
@@ -201,7 +223,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		if (e.getSource().equals(saveAs))
 		{
-			JFileChooser chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser(lcmf.lcm.lastSaved);
 			int outcome = chooser.showSaveDialog(this);
 			if (outcome == JFileChooser.APPROVE_OPTION)
 			{
@@ -210,6 +232,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				try
 				{
 					lcmf.lcm.saveExpansion();
+					lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
+					lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
+					lcmf.saveProperties();
 				}
 				catch (Exception ex)
 				{
@@ -247,6 +272,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 							try
 							{
 								lcmf.lcm.saveExpansion();
+								lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
+								lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
+								lcmf.saveProperties();
 							}
 							catch (Exception ex)
 							{
@@ -279,7 +307,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 					}
 					else
 					{
-						JFileChooser chooser = new JFileChooser();
+						JFileChooser chooser = new JFileChooser(lcmf.lcm.lastSaved);
 						int outcome2 = chooser.showSaveDialog(this);
 						if (outcome2 == JFileChooser.APPROVE_OPTION)
 						{
@@ -288,6 +316,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 							try
 							{
 								lcmf.lcm.saveExpansion();
+								lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
+								lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
+								lcmf.saveProperties();
 							}
 							catch (Exception ex)
 							{
@@ -302,7 +333,13 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		if (e.getSource().equals(exportPNG))
 		{
-			JFileChooser chooser = new JFileChooser(lcmf.lcm.exportFolder);
+			
+			JFileChooser chooser = new JFileChooser();
+			if (lcmf.lcm.exportFolder != null)
+			{
+				File tf = new File(lcmf.lcm.exportFolder);
+				chooser = new JFileChooser(tf.getParent());
+			}
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int outcome = chooser.showSaveDialog(this);
 			if (outcome == JFileChooser.APPROVE_OPTION)
@@ -314,10 +351,50 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				
 				try
 				{
+					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
+					
 					ExportProgressBarDialog exporter = new ExportProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f);
 					exporter.createAndShowGUI();
 					
 					//lcmf.lcm.exportToPng(f);
+					
+					lcmf.saveProperties();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+				}
+			}
+		}
+		
+		if (e.getSource().equals(exportPNGHomeprint))
+		{
+			
+			JFileChooser chooser = new JFileChooser();
+			if (lcmf.lcm.exportFolder != null)
+			{
+				File tf = new File(lcmf.lcm.exportFolder);
+				chooser = new JFileChooser(tf.getParent());
+			}
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int outcome = chooser.showSaveDialog(this);
+			if (outcome == JFileChooser.APPROVE_OPTION)
+			{
+				File f = chooser.getSelectedFile();
+				lcmf.lcm.exportFolder = f.getAbsolutePath();
+				
+				f.mkdirs();
+				
+				try
+				{
+					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
+					
+					ExportHomeprintProgressBarDialog exporter = new ExportHomeprintProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f);
+					exporter.createAndShowGUI();
+					
+					//lcmf.lcm.exportToPng(f);
+					
+					lcmf.saveProperties();
 				}
 				catch (Exception ex)
 				{
@@ -600,6 +677,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		{
 			bystanderSelectorMenu.setVisible(true);
 		}
+		if (str.equals("Wounds"))
+		{
+			woundSelectorMenu.setVisible(true);
+		}
 	}
 	
 	public void removeEditMenus()
@@ -609,5 +690,51 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		schemeSelectorMenu.setVisible(false);
 		teamSelectorMenu.setVisible(false);
 		bystanderSelectorMenu.setVisible(false);
+		woundSelectorMenu.setVisible(false);
+	}
+	
+	public void populateExpansionMenu()
+	{
+		String templateFolder = "legendary" + File.separator + "templates";
+		File file = new File(templateFolder);
+		if (file.exists())
+		{
+			File[] files = file.listFiles();
+			for (File f : files)
+			{
+				if (f.isDirectory())
+				{
+					JCheckBoxMenuItem item = new JCheckBoxMenuItem(f.getName());
+					if (f.getName().toLowerCase().equals(lcmf.lcm.expansionStyle.toLowerCase()))
+					{
+						item.setSelected(true);
+					}
+					
+					item.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							
+							String enumValue = ((JCheckBoxMenuItem)e.getSource()).getText().replace(" ", "_").toUpperCase();
+							
+							for (JCheckBoxMenuItem item : tb.styleItems)
+							{
+								if (item.getText().replace(" ", "_").toUpperCase().equals(enumValue))
+								{
+									item.setSelected(true);
+									lcmf.lcm.expansionStyle = item.getText();
+								}
+								else
+								{
+									item.setSelected(false);
+								}
+							}
+						}
+					});
+					styleItems.add(item);
+					style.add(item);
+				}
+			}
+		}
 	}
 }

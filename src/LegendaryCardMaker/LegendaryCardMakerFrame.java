@@ -57,6 +57,10 @@ public class LegendaryCardMakerFrame extends JFrame {
 	public DefaultListModel bystanderListModel;
 	JScrollPane bystanderScroll = new JScrollPane();
 	
+	public JList woundList;
+	public DefaultListModel woundListModel;
+	JScrollPane woundScroll = new JScrollPane();
+	
 	public JList schemeList;
 	public DefaultListModel schemeListModel;
 	JScrollPane schemeScroll = new JScrollPane();
@@ -85,6 +89,33 @@ public class LegendaryCardMakerFrame extends JFrame {
 			if (file.exists())
 			{
 				lcm.processInput((String)applicationProps.get("lastExpansion"));
+			}
+		}
+		
+		if (applicationProps.get("lastExportDirectory") != null)
+		{
+			File file = new File((String)applicationProps.get("lastExportDirectory"));
+			if (file.exists())
+			{
+				lcm.exportFolder = (String)applicationProps.get("lastExportDirectory");
+			}
+		}
+		
+		if (applicationProps.get("lastOpenDirectory") != null)
+		{
+			File file = new File((String)applicationProps.get("lastOpenDirectory"));
+			if (file.exists())
+			{
+				lcm.lastOpened = (String)applicationProps.get("lastOpenDirectory");
+			}
+		}
+		
+		if (applicationProps.get("lastSaveDirectory") != null)
+		{
+			File file = new File((String)applicationProps.get("lastSaveDirectory"));
+			if (file.exists())
+			{
+				lcm.lastSaved = (String)applicationProps.get("lastSaveDirectory");
 			}
 		}
 		
@@ -143,7 +174,7 @@ public class LegendaryCardMakerFrame extends JFrame {
 		Collections.sort(lcm.villains, new Villain());
 		for (Villain v : lcm.villains)
 		{
-			if (!v.name.equals("system_bystander_villain"))
+			if (!v.name.equals("system_bystander_villain") && !v.name.equals("system_wound_villain"))
 			{
 				villainListModel.addElement(v);
 			}
@@ -203,6 +234,41 @@ public class LegendaryCardMakerFrame extends JFrame {
 		bystanderScroll.setViewportView(bystanderList);
 		this.add(bystanderScroll);
 		tabs.add("Bystanders", bystanderScroll);
+		
+		
+		woundListModel = new DefaultListModel();
+		Collections.sort(lcm.villains, new Villain());
+		for (Villain v : lcm.villains)
+		{
+			for (VillainCard vc : v.cards)
+			{
+				if (vc.cardType != null && vc.cardType.equals(VillainCardType.WOUND))
+				{
+					woundListModel.addElement(vc);
+				}
+			}
+		}
+		woundList = new JList(woundListModel);
+		woundList.setCellRenderer(new WoundListRenderer());
+		woundList.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent evt) {
+		        JList list = (JList)evt.getSource();
+		        if (evt.getClickCount() == 2) {
+
+		            // Double-click detected
+		            int index = list.locationToIndex(evt.getPoint());
+		            if (index >= 0)
+		            {
+		            	VillainMakerFrame vmf = new VillainMakerFrame((VillainCard)list.getSelectedValue());
+		            	//new WoundCardSelector((Wound)list.getSelectedValue(), lcmf);
+		            }
+		        }
+		    }
+		});
+		
+		woundScroll.setViewportView(woundList);
+		this.add(woundScroll);
+		tabs.add("Wounds", woundScroll);
 		
 		
 		schemeListModel = new DefaultListModel();
@@ -471,6 +537,28 @@ public class LegendaryCardMakerFrame extends JFrame {
         }
     }
 	
+	public class WoundListRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(
+                JList list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+        	
+        	VillainCard villain = (VillainCard)value;
+
+            JLabel label = (JLabel) super.getListCellRendererComponent(
+                    list, value, index, isSelected, cellHasFocus);
+            //label.setIcon(new ImageIcon(getImageSummary(villain)));
+            label.setHorizontalTextPosition(JLabel.RIGHT);
+            
+            String s = villain.name;
+            if (villain.changed) { s += " *"; }
+            label.setText(s);
+            
+            return label;
+        }
+    }
+	
 	public class TeamListRenderer extends DefaultListCellRenderer {
 
         @Override
@@ -589,5 +677,7 @@ public class LegendaryCardMakerFrame extends JFrame {
 		heroListModel.clear();
 		villainListModel.clear();
 		schemeListModel.clear();
+		bystanderListModel.clear();
+		woundListModel.clear();
 	}
 }
