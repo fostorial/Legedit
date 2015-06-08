@@ -15,6 +15,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
+
 public class HeroCardSelectorToolbar extends JMenuBar implements ActionListener{
 
 	HeroCardSelector hm;
@@ -30,6 +32,7 @@ public class HeroCardSelectorToolbar extends JMenuBar implements ActionListener{
 	JMenuItem newCard = new JMenuItem("New Card");
 	JMenuItem editCard = new JMenuItem("Edit Card...");
 	JMenuItem delete = new JMenuItem("Delete Card...");
+	JMenuItem editDivider = new JMenuItem("Edit Divider...");
 	
 	static HeroCardSelectorToolbar tb = null;
 	
@@ -64,6 +67,11 @@ public class HeroCardSelectorToolbar extends JMenuBar implements ActionListener{
 		
 		delete.addActionListener(this);
 		edit.add(delete);
+		
+		edit.addSeparator();
+		
+		editDivider.addActionListener(this);
+		edit.add(editDivider);
 		
 		add(edit);
 	}
@@ -134,6 +142,11 @@ public class HeroCardSelectorToolbar extends JMenuBar implements ActionListener{
 				hm.h.cards.remove(getCurrentHeroCard());
 				getHeroCardListModel().removeElement(getCurrentHeroCard());
 			}
+		}
+		
+		if (e.getSource().equals(editDivider))
+		{			
+			HeroDividerMakerFrame dmf = new HeroDividerMakerFrame(hm.h, this.hm.lcmf.lcm.dividerHorizontal);
 		}
 	}
 	

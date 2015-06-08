@@ -20,6 +20,7 @@ import javax.swing.JPopupMenu;
 import LegendaryCardMaker.CardMakerToolbar;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
+import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 
 public class HeroSelectorMenu extends JMenu implements ActionListener{
@@ -28,6 +29,10 @@ public class HeroSelectorMenu extends JMenu implements ActionListener{
 	JMenuItem edit = new JMenuItem("Edit Hero...");
 	JMenuItem rename = new JMenuItem("Rename Hero...");
 	JMenuItem delete = new JMenuItem("Delete Hero...");
+	JMenuItem editDivider = new JMenuItem("Edit Divider...");
+	
+	JMenu team = new JMenu("Set Team");
+	List<JMenuItem> teamItems = new ArrayList<JMenuItem>();
 	
 	public LegendaryCardMakerFrame lcmf;
 	
@@ -53,6 +58,48 @@ public class HeroSelectorMenu extends JMenu implements ActionListener{
 		
 		delete.addActionListener(this);
 		add(delete);
+		
+		addSeparator();
+		
+		for (Icon icon : Icon.values())
+		{
+			if (icon.getIconType().equals(Icon.ICON_TYPE.TEAM) || icon.getIconType().equals(Icon.ICON_TYPE.NONE))
+			{
+				String s = icon.toString().substring(0, 1).toUpperCase() + icon.toString().substring(1).toLowerCase();
+				s = s.replace("_", " ");
+				JMenuItem m = new JMenuItem(s);
+				m.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+						if (getCurrentHero() == null)
+						{
+							return;
+						}
+						
+						String enumValue = ((JMenuItem)e.getSource()).getText().replace(" ", "_").toUpperCase();
+						Icon icon = Icon.valueOf(enumValue);
+						for (HeroCard hc : getCurrentHero().cards)
+						{
+							hc.cardTeam = icon;
+							hc.changed = true;
+						}
+						
+						getCurrentHero().changed = true;
+					}
+				});
+				
+				teamItems.add(m);
+				team.add(m);
+			}
+		}
+		add(team);
+		
+		addSeparator();
+		
+		editDivider.addActionListener(this);
+		add(editDivider);
 	}
 
 	@Override
@@ -140,6 +187,16 @@ public class HeroSelectorMenu extends JMenu implements ActionListener{
 				lcmf.lcm.heroes.remove(getCurrentHero());
 				getHeroListModel().removeElement(getCurrentHero());
 			}
+		}
+		
+		if (e.getSource().equals(editDivider))
+		{
+			if (getCurrentHero() == null)
+			{
+				return;
+			}
+			
+			HeroDividerMakerFrame dmf = new HeroDividerMakerFrame(getCurrentHero(), lcmf.lcm.dividerHorizontal);
 		}
 	}
 	

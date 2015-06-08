@@ -531,8 +531,11 @@ public class HeroMaker extends CardMaker {
 	                }
 	            }
 	            
-	            int yOffset = getYOffset(g2, font, fontBold, x, xOrigin, xEnd, y, yOrigin, metrics, overlay);
-	            //int yOffset = 0;
+	            int yOffset = 0;
+	            if (card.rarity.equals(CardRarity.RARE))
+	            {
+	            	yOffset = getYOffset(g2, font, fontBold, x, xOrigin, xEnd, y, yOrigin, metrics, overlay);
+	            }
 	            
 	            //apply modifier
 	            yOrigin = yOrigin + textStartOffset + yOffset;

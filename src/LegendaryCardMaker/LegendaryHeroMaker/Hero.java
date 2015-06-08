@@ -17,11 +17,30 @@ public class Hero implements Comparator<Hero>, Comparable<Hero> {
 	public List<HeroCard> cards = new ArrayList<HeroCard>();
 	public boolean changed;
 	
+	public String imagePath;
+	public double imageZoom = 1.0d;
+	public int imageOffsetX = 0;
+	public int imageOffsetY = 0;
+	
 	public String generateOutputString()
 	{
 		String str = "";
 		
 		str += "HERO;" + name + "\n\n";
+		
+		if (imagePath != null)
+			str += "HFIMAGEPATH;" + imagePath + "\n";
+		
+		if (imagePath != null)
+			str += "HFIMAGEZOOM;" + imageZoom + "\n";
+		
+		if (imagePath != null)
+			str += "HFIMAGEOFFSETX;" + imageOffsetX + "\n";
+		
+		if (imagePath != null)
+			str += "HFIMAGEOFFSETY;" + imageOffsetY + "\n";
+		
+		str +="\n";
 		
 		for (HeroCard hc : cards)
 		{

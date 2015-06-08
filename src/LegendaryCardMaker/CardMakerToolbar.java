@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -22,9 +23,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import LegendaryCardMaker.Icon;
+import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.CardRarity;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
+import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroSelectorMenu;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeSelectorMenu;
@@ -47,7 +50,8 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	JMenuItem exportJPG = new JMenuItem("Export to JPEG...");
 	JMenuItem exportPNG = new JMenuItem("Export to PNG...");
 	JMenuItem exportPrinterStudioPNG = new JMenuItem("Export to Printer Studio PNG...");
-	JMenuItem exportPNGHomeprint = new JMenuItem("Export to JPEG for Homeprint...");
+	JMenuItem exportJPEGHomeprint = new JMenuItem("Export to JPEG for Homeprint...");
+	JMenuItem exportDividersJPEGHomeprint = new JMenuItem("Export Dividers to JPEG for Homeprint...");
 	
 	JMenuItem viewAsText = new JMenuItem("View as Text...");
 	JMenuItem viewStatistics = new JMenuItem("View Statistics...");
@@ -58,6 +62,12 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	TeamIconSelectorMenu teamSelectorMenu = null;
 	BystanderSelectorMenu bystanderSelectorMenu = null;
 	WoundSelectorMenu woundSelectorMenu = null;
+	
+	JMenu divider = new JMenu("Divider");
+	JMenu orientation = new JMenu("Direction");
+	JCheckBoxMenuItem orientationHorizontal = new JCheckBoxMenuItem("Horizontal");
+	JCheckBoxMenuItem orientationVertical = new JCheckBoxMenuItem("Vertical");
+	JMenuItem editHeroDividerTemplate = new JMenuItem("Edit Hero Divider Template...");
 	
 	JMenu expansion = new JMenu("Expansion");
 	JMenu style = new JMenu("Style");
@@ -94,11 +104,16 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		exportPNG.addActionListener(this);
 		file.add(exportPNG);
 		
-		exportPNGHomeprint.addActionListener(this);
-		file.add(exportPNGHomeprint);
+		exportJPEGHomeprint.addActionListener(this);
+		file.add(exportJPEGHomeprint);
 		
 		//exportPrinterStudioPNG.addActionListener(this);
 		//file.add(exportPrinterStudioPNG);
+		
+		file.addSeparator();
+		
+		exportDividersJPEGHomeprint.addActionListener(this);
+		file.add(exportDividersJPEGHomeprint);
 		
 		file.addSeparator();
 		
@@ -136,6 +151,20 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		removeEditMenus();
 		setEditMenu();
+		
+		
+		orientationHorizontal.addActionListener(this);
+		orientationHorizontal.setSelected(lcmf.lcm.dividerHorizontal);
+		orientation.add(orientationHorizontal);
+		orientationVertical.addActionListener(this);
+		orientationVertical.setSelected(!lcmf.lcm.dividerHorizontal);
+		orientation.add(orientationVertical);
+		divider.add(orientation);
+		
+		editHeroDividerTemplate.addActionListener(this);
+		divider.add(editHeroDividerTemplate);
+		
+		this.add(divider);
 		
 		
 		populateExpansionMenu();
@@ -209,6 +238,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 					try
 					{
 						lcmf.lcm.saveExpansion();
+						lcmf.applicationProps.put("lastExpansion", chooser.getSelectedFile().getAbsolutePath());
 						lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
 						lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
 						lcmf.saveProperties();
@@ -232,6 +262,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				try
 				{
 					lcmf.lcm.saveExpansion();
+					lcmf.applicationProps.put("lastExpansion", chooser.getSelectedFile().getAbsolutePath());
 					lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
 					lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
 					lcmf.saveProperties();
@@ -367,7 +398,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			}
 		}
 		
-		if (e.getSource().equals(exportPNGHomeprint))
+		if (e.getSource().equals(exportJPEGHomeprint))
 		{
 			
 			JFileChooser chooser = new JFileChooser();
@@ -390,6 +421,42 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
 					
 					ExportHomeprintProgressBarDialog exporter = new ExportHomeprintProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f);
+					exporter.createAndShowGUI();
+					
+					//lcmf.lcm.exportToPng(f);
+					
+					lcmf.saveProperties();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+				}
+			}
+		}
+		
+		if (e.getSource().equals(exportDividersJPEGHomeprint))
+		{
+			
+			JFileChooser chooser = new JFileChooser();
+			if (lcmf.lcm.exportFolder != null)
+			{
+				File tf = new File(lcmf.lcm.exportFolder);
+				chooser = new JFileChooser(tf.getParent());
+			}
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int outcome = chooser.showSaveDialog(this);
+			if (outcome == JFileChooser.APPROVE_OPTION)
+			{
+				File f = chooser.getSelectedFile();
+				lcmf.lcm.exportFolder = f.getAbsolutePath();
+				
+				f.mkdirs();
+				
+				try
+				{
+					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
+					
+					ExportDividersHomeprintProgressBarDialog exporter = new ExportDividersHomeprintProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f);
 					exporter.createAndShowGUI();
 					
 					//lcmf.lcm.exportToPng(f);
@@ -453,6 +520,25 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			
 			TextOutputDialog dialog = new TextOutputDialog(str);
 			dialog.setVisible(true);
+		}
+		
+		if (e.getSource().equals(orientationHorizontal))
+		{
+			orientationHorizontal.setSelected(true);
+			orientationVertical.setSelected(false);
+			lcmf.lcm.dividerHorizontal = true;
+		}
+		
+		if (e.getSource().equals(orientationVertical))
+		{
+			orientationHorizontal.setSelected(false);
+			orientationVertical.setSelected(true);
+			lcmf.lcm.dividerHorizontal = false;
+		}
+		
+		if (e.getSource().equals(editHeroDividerTemplate))
+		{
+			HeroDividerMakerFrame dmf = new HeroDividerMakerFrame(null, lcmf.lcm.dividerHorizontal);
 		}
 	}
 	

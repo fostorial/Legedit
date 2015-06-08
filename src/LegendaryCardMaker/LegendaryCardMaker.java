@@ -1,5 +1,6 @@
 package LegendaryCardMaker;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,7 +24,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.5";
+	public static String version = "0.6";
 
 	public String inputFile = null;
 	
@@ -49,6 +50,18 @@ public class LegendaryCardMaker {
 	public String lastOpened = null;
 	
 	public static String expansionStyle = "default";
+	
+	public boolean dividerHorizontal = true;
+	public String dfImagePath;
+	public double dfImageZoom = 1.0d;
+	public int dfImageOffsetX = 0;
+	public int dfImageOffsetY = 0;
+	public String dbImagePath;
+	public double dbImageZoom = 1.0d;
+	public int dbImageOffsetX = 0;
+	public int dbImageOffsetY = 0;
+	public boolean dividerTitleBarVisible = true;
+	public Color dividerTitleBarColour = Color.WHITE;
 	
 	public static void main(String[] args)
 	{
@@ -141,6 +154,74 @@ public class LegendaryCardMaker {
 					   expansionStyle = line.replace("EXPANSIONSTYLE;", "");
 				   }
 				   
+				   if (line.startsWith("DIVIDERORIENTATION;"))
+				   {
+					   String orientation = line.replace("DIVIDERORIENTATION;", "");
+					   if (orientation != null && orientation.equals("VERTICAL"))
+					   {
+						   dividerHorizontal = false;
+					   }
+					   else
+					   {
+						   dividerHorizontal = true;
+					   }
+				   }
+				   
+				   if (line.startsWith("DFIMAGEZOOM;"))
+				   {
+					   dfImageZoom = Double.parseDouble(line.replace("DFIMAGEZOOM;", ""));
+				   }
+				   
+				   if (line.startsWith("DFIMAGEPATH;"))
+				   {
+					   dfImagePath = line.replace("DFIMAGEPATH;", "");
+				   }
+				   
+				   if (line.startsWith("DFIMAGEOFFSETX;"))
+				   {
+					   dfImageOffsetX = Integer.parseInt(line.replace("DFIMAGEOFFSETX;", ""));
+				   }
+				   
+				   if (line.startsWith("DFIMAGEOFFSETY;"))
+				   {
+					   dfImageOffsetY = Integer.parseInt(line.replace("DFIMAGEOFFSETY;", ""));
+				   }
+				   
+				   if (line.startsWith("DBIMAGEZOOM;"))
+				   {
+					   dbImageZoom = Double.parseDouble(line.replace("DBIMAGEZOOM;", ""));
+				   }
+				   
+				   if (line.startsWith("DBIMAGEPATH;"))
+				   {
+					   dbImagePath = line.replace("DBIMAGEPATH;", "");
+				   }
+				   
+				   if (line.startsWith("DBIMAGEOFFSETX;"))
+				   {
+					   dbImageOffsetX = Integer.parseInt(line.replace("DBIMAGEOFFSETX;", ""));
+				   }
+				   
+				   if (line.startsWith("DBIMAGEOFFSETY;"))
+				   {
+					   dbImageOffsetY = Integer.parseInt(line.replace("DBIMAGEOFFSETY;", ""));
+				   }
+				   
+				   if (line.startsWith("DTITLEBARVISIBLE;"))
+				   {
+					   dividerTitleBarVisible = Boolean.parseBoolean(line.replace("DTITLEBARVISIBLE;", ""));
+				   }
+				   
+				   if (line.startsWith("DTITLEBARCOLOUR;"))
+				   {
+					   Integer rgb = Integer.parseInt(line.replace("DTITLEBARCOLOUR;", ""));
+					   Color c = new Color(rgb);
+					   if (c != null)
+					   {
+						   dividerTitleBarColour = c;
+					   }
+				   }
+				   
 				   if (line.startsWith("HERO;"))
 				   {
 					   h = new Hero();
@@ -151,6 +232,26 @@ public class LegendaryCardMaker {
 						{
 							outputHero(bw, h);
 						}
+				   }
+				   
+				   if (line.startsWith("HFIMAGEZOOM;"))
+				   {
+					   h.imageZoom = Double.parseDouble(line.replace("HFIMAGEZOOM;", ""));
+				   }
+				   
+				   if (line.startsWith("HFIMAGEPATH;"))
+				   {
+					   h.imagePath = line.replace("HFIMAGEPATH;", "");
+				   }
+				   
+				   if (line.startsWith("HFIMAGEOFFSETX;"))
+				   {
+					   h.imageOffsetX = Integer.parseInt(line.replace("HFIMAGEOFFSETX;", ""));
+				   }
+				   
+				   if (line.startsWith("HFIMAGEOFFSETY;"))
+				   {
+					   h.imageOffsetY = Integer.parseInt(line.replace("HFIMAGEOFFSETY;", ""));
 				   }
 				   
 				   if (line.startsWith("HEROCARD;"))
@@ -624,6 +725,39 @@ public class LegendaryCardMaker {
 		String str = "";
 		
 		str += "EXPANSIONSTYLE;" + expansionStyle;
+		str += "\n\n";
+		
+		str += "DIVIDERORIENTATION;" + (dividerHorizontal ? "HORIZONTAL" : "VERTICAL");
+		str += "\n";
+		
+		str += "DTITLEBARCOLOUR;" + (dividerTitleBarColour == null ? Color.white.getRGB() : dividerTitleBarColour.getRGB()) + "\n";
+		
+		str += "DTITLEBARVISIBLE;" + dividerTitleBarVisible + "\n";
+		
+		if (dfImagePath != null)
+			str += "DFIMAGEPATH;" + dfImagePath + "\n";
+		
+		if (dfImagePath != null)
+			str += "DFIMAGEZOOM;" + dfImageZoom + "\n";
+		
+		if (dfImagePath != null)
+			str += "DFIMAGEOFFSETX;" + dfImageOffsetX + "\n";
+		
+		if (dfImagePath != null)
+			str += "DFIMAGEOFFSETY;" + dfImageOffsetY + "\n";
+		
+		if (dbImagePath != null)
+			str += "DBIMAGEPATH;" + dbImagePath + "\n";
+		
+		if (dbImagePath != null)
+			str += "DBIMAGEZOOM;" + dbImageZoom + "\n";
+		
+		if (dbImagePath != null)
+			str += "DBIMAGEOFFSETX;" + dbImageOffsetX + "\n";
+		
+		if (dbImagePath != null)
+			str += "DBIMAGEOFFSETY;" + dbImageOffsetY + "\n";
+		
 		str += "\n\n";
 		
 		for (Hero h : heroes)

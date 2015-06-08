@@ -73,13 +73,13 @@ public class LegendaryCardMakerFrame extends JFrame {
 	
 	CardMakerToolbar toolbar;
 	
-	static LegendaryCardMakerFrame lcmf;
+	public static LegendaryCardMakerFrame lcmf;
 	
 	public LegendaryCardMakerFrame(LegendaryCardMaker lcm)
 	{
 		this.setTitle("Legendedit");
 		
-		this.lcmf = lcmf;
+		this.lcmf = this;
 		
 		loadProperties();
 		if (applicationProps.get("lastExpansion") != null)
@@ -666,6 +666,12 @@ public class LegendaryCardMakerFrame extends JFrame {
 		lcm.heroes = new ArrayList<Hero>();
 		lcm.villains = new ArrayList<Villain>();
 		lcm.schemes = new ArrayList<SchemeCard>();
+		
+		lcm.dividerHorizontal = true;
+		lcm.dbImageOffsetX = 0;
+		lcm.dbImageOffsetY = 0;
+		lcm.dbImagePath = null;
+		lcm.dbImageZoom = 1.0d;
 		
 		lcm.inputFile = null;
 		lcm.textOutputFile = null;
