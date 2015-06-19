@@ -16,6 +16,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
+import LegendaryCardMaker.Icon;
+
 public class HeroMakerFrame extends JDialog {
 	
 	HeroMaker hm;
@@ -27,12 +29,37 @@ public class HeroMakerFrame extends JDialog {
 	
 	HeroMakerToolbar hmt;
 	
+	boolean templateMode = false;
+	
 	public HeroMakerFrame(HeroCard hc)
 	{
+		if (hc == null)
+		{
+			hc = new HeroCard();
+			hc.rarity = CardRarity.COMMON;
+			hc.heroName = "Hero Name";
+			hc.name = "Card Name";
+			hc.cardTeam = Icon.valueOf("AVENGERS");
+			hc.cardPower = Icon.valueOf("STRENGTH");
+			hc.recruit = "X";
+			hc.attack = "X";
+			hc.cost = "X";
+			hc.abilityText = "<AVENGERS><k>: <r>Card Text goes here.";
+			templateMode = true;
+		}
+		else
+		{
+			templateMode = false;
+		}
+		
 		hm = new HeroMaker();
+		hm.loadTemplateDefaults();
 		
 		if (hc.nameSize > 0)
 			hm.cardNameSize = hc.nameSize;
+		
+		if (hc.heroNameSize > 0)
+			hm.heroNameSize = hc.heroNameSize;
 		
 		if (hc.abilityTextSize > 0)
 			hm.textSize = hc.abilityTextSize;

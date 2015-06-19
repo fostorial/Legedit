@@ -10,11 +10,32 @@ public class Villain implements Comparator<Villain>, Comparable<Villain>  {
 	public List<VillainCard> cards = new ArrayList<VillainCard>();
 	public boolean changed = false;
 	
+	public String imagePath;
+	public double imageZoom = 1.0d;
+	public int imageOffsetX = 0;
+	public int imageOffsetY = 0;
+	
+	public String dividerIconEnum = null;
+	
 	public String generateOutputString()
 	{
 		String str = "";
 		
 		str += "VILLAIN;" + name + "\n\n";
+		
+		if (imagePath != null)
+			str += "VFIMAGEPATH;" + imagePath + "\n";
+		
+		if (imagePath != null)
+			str += "VFIMAGEZOOM;" + imageZoom + "\n";
+		
+		if (imagePath != null)
+			str += "VFIMAGEOFFSETX;" + imageOffsetX + "\n";
+		
+		if (imagePath != null)
+			str += "VFIMAGEOFFSETY;" + imageOffsetY + "\n";
+		
+		str +="\n";
 		
 		for (VillainCard vc : cards)
 		{

@@ -1,11 +1,14 @@
 package LegendaryCardMaker;
 
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,16 +27,19 @@ import javax.swing.JPopupMenu;
 
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
+import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.CardRarity;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker;
+import LegendaryCardMaker.LegendaryHeroMaker.HeroMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroSelectorMenu;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.BystanderSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCard;
+import LegendaryCardMaker.LegendaryVillainMaker.VillainCardType;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.WoundSelectorMenu;
 
@@ -62,12 +68,16 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	TeamIconSelectorMenu teamSelectorMenu = null;
 	BystanderSelectorMenu bystanderSelectorMenu = null;
 	WoundSelectorMenu woundSelectorMenu = null;
+	SchemeTypeSelectorMenu schemeTypeSelectorMenu = null;
 	
-	JMenu divider = new JMenu("Divider");
-	JMenu orientation = new JMenu("Direction");
+	JMenu divider = new JMenu("Templates");
+	
+	JMenu orientation = new JMenu("Divider Orientation");
 	JCheckBoxMenuItem orientationHorizontal = new JCheckBoxMenuItem("Horizontal");
 	JCheckBoxMenuItem orientationVertical = new JCheckBoxMenuItem("Vertical");
 	JMenuItem editHeroDividerTemplate = new JMenuItem("Edit Hero Divider Template...");
+	JMenuItem editVillainDividerTemplate = new JMenuItem("Edit Villain Divider Template...");
+	JMenuItem editHeroTemplate = new JMenuItem("Edit Hero Template...");
 	
 	JMenu expansion = new JMenu("Expansion");
 	JMenu style = new JMenu("Style");
@@ -149,20 +159,30 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		woundSelectorMenu = new WoundSelectorMenu(lcmf, tb);
 		this.add(woundSelectorMenu);
 		
+		schemeTypeSelectorMenu = new SchemeTypeSelectorMenu(lcmf, tb);
+		this.add(schemeTypeSelectorMenu);
+		
 		removeEditMenus();
 		setEditMenu();
 		
+		editHeroTemplate.addActionListener(this);
+		divider.add(editHeroTemplate);
+		
+		divider.addSeparator();
 		
 		orientationHorizontal.addActionListener(this);
-		orientationHorizontal.setSelected(lcmf.lcm.dividerHorizontal);
+		orientationHorizontal.setSelected(LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal);
 		orientation.add(orientationHorizontal);
 		orientationVertical.addActionListener(this);
-		orientationVertical.setSelected(!lcmf.lcm.dividerHorizontal);
+		orientationVertical.setSelected(!LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal);
 		orientation.add(orientationVertical);
 		divider.add(orientation);
 		
 		editHeroDividerTemplate.addActionListener(this);
 		divider.add(editHeroDividerTemplate);
+		
+		editVillainDividerTemplate.addActionListener(this);
+		divider.add(editVillainDividerTemplate);
 		
 		this.add(divider);
 		
@@ -187,7 +207,11 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			int outcome = chooser.showOpenDialog(this);
 			if (outcome == JFileChooser.APPROVE_OPTION)
 			{
+				HeroMaker.resetTemplateValues();
+				
 				lcmf.lcm.processInput(chooser.getSelectedFile().getAbsolutePath());
+				
+				lcmf.setTitle(LegendaryCardMakerFrame.FRAME_NAME + " - " + chooser.getSelectedFile().getName());
 				
 				lcmf.heroListModel.removeAllElements();
 				for (Hero h : lcmf.lcm.heroes)
@@ -198,13 +222,42 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				lcmf.villainListModel.removeAllElements();
 				for (Villain h : lcmf.lcm.villains)
 				{
-					lcmf.villainListModel.addElement(h);
+					if (!h.name.equals("system_bystander_villain") && !h.name.equals("system_wound_villain"))
+					{
+						lcmf.villainListModel.addElement(h);
+					}
 				}
 				
 				lcmf.schemeListModel.removeAllElements();
 				for (SchemeCard h : lcmf.lcm.schemes)
 				{
 					lcmf.schemeListModel.addElement(h);
+				}
+				
+				lcmf.bystanderListModel.removeAllElements();
+				Collections.sort(lcmf.lcm.villains, new Villain());
+				for (Villain v : lcmf.lcm.villains)
+				{
+					for (VillainCard vc : v.cards)
+					{
+						if (vc.cardType != null && vc.cardType.equals(VillainCardType.BYSTANDER))
+						{
+							lcmf.bystanderListModel.addElement(vc);
+						}
+					}
+				}
+				
+				lcmf.woundListModel.removeAllElements();
+				Collections.sort(lcmf.lcm.villains, new Villain());
+				for (Villain v : lcmf.lcm.villains)
+				{
+					for (VillainCard vc : v.cards)
+					{
+						if (vc.cardType != null && vc.cardType.equals(VillainCardType.WOUND))
+						{
+							lcmf.woundListModel.addElement(vc);
+						}
+					}
 				}
 				
 				lcmf.applicationProps.put("lastExpansion", chooser.getSelectedFile().getAbsolutePath());
@@ -242,6 +295,8 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 						lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
 						lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
 						lcmf.saveProperties();
+						
+						lcmf.setTitle(LegendaryCardMakerFrame.FRAME_NAME + " - " + chooser.getSelectedFile().getName());						
 					}
 					catch (Exception ex)
 					{
@@ -266,6 +321,8 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 					lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
 					lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
 					lcmf.saveProperties();
+					
+					lcmf.setTitle(LegendaryCardMakerFrame.FRAME_NAME + " - " + chooser.getSelectedFile().getName());
 				}
 				catch (Exception ex)
 				{
@@ -360,6 +417,8 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				}
 			}
 			lcmf.createNewExpansion();
+			
+			HeroMaker.resetTemplateValues();
 		}
 		
 		if (e.getSource().equals(exportPNG))
@@ -522,23 +581,33 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			dialog.setVisible(true);
 		}
 		
+		if (e.getSource().equals(editHeroDividerTemplate))
+		{
+			HeroDividerMakerFrame dmf = new HeroDividerMakerFrame(null, lcmf.lcm.dividerHorizontal);
+		}
+		
+		if (e.getSource().equals(editVillainDividerTemplate))
+		{
+			VillainDividerMakerFrame dmf = new VillainDividerMakerFrame(null, lcmf.lcm.dividerHorizontal);
+		}
+		
+		if (e.getSource().equals(editHeroTemplate))
+		{
+			HeroMakerFrame hmf = new HeroMakerFrame(null);
+		}
+		
 		if (e.getSource().equals(orientationHorizontal))
 		{
 			orientationHorizontal.setSelected(true);
 			orientationVertical.setSelected(false);
-			lcmf.lcm.dividerHorizontal = true;
+			LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal = true;
 		}
 		
 		if (e.getSource().equals(orientationVertical))
 		{
 			orientationHorizontal.setSelected(false);
 			orientationVertical.setSelected(true);
-			lcmf.lcm.dividerHorizontal = false;
-		}
-		
-		if (e.getSource().equals(editHeroDividerTemplate))
-		{
-			HeroDividerMakerFrame dmf = new HeroDividerMakerFrame(null, lcmf.lcm.dividerHorizontal);
+			LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal = false;
 		}
 	}
 	
@@ -767,6 +836,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		{
 			woundSelectorMenu.setVisible(true);
 		}
+		if (str.equals("Scheme Types"))
+		{
+			schemeTypeSelectorMenu.setVisible(true);
+		}
 	}
 	
 	public void removeEditMenus()
@@ -777,6 +850,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		teamSelectorMenu.setVisible(false);
 		bystanderSelectorMenu.setVisible(false);
 		woundSelectorMenu.setVisible(false);
+		schemeTypeSelectorMenu.setVisible(false);
 	}
 	
 	public void populateExpansionMenu()

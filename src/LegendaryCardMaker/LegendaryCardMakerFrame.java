@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,9 +21,11 @@ import java.util.Properties;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -31,7 +35,7 @@ import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCardSelector;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
-import LegendaryCardMaker.LegendarySchemeMaker.SchemeMaker;
+import LegendaryCardMaker.LegendarySchemeMaker.SchemeCardType;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeMakerFrame;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCard;
@@ -41,6 +45,8 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMakerFrame;
 
 public class LegendaryCardMakerFrame extends JFrame {
 
+	final static public String FRAME_NAME = "Legendedit";
+	
 	public LegendaryCardMaker lcm;
 	
 	public JTabbedPane tabs;
@@ -65,6 +71,10 @@ public class LegendaryCardMakerFrame extends JFrame {
 	public DefaultListModel schemeListModel;
 	JScrollPane schemeScroll = new JScrollPane();
 	
+	public JList schemeTypeList;
+	public DefaultListModel schemeTypeListModel;
+	JScrollPane schemeTypeScroll = new JScrollPane();
+	
 	public JList teamList;
 	public DefaultListModel teamListModel;
 	JScrollPane teamScroll = new JScrollPane();
@@ -77,7 +87,7 @@ public class LegendaryCardMakerFrame extends JFrame {
 	
 	public LegendaryCardMakerFrame(LegendaryCardMaker lcm)
 	{
-		this.setTitle("Legendedit");
+		this.setTitle(FRAME_NAME + " - [Untitled]");
 		
 		this.lcmf = this;
 		
@@ -89,6 +99,8 @@ public class LegendaryCardMakerFrame extends JFrame {
 			if (file.exists())
 			{
 				lcm.processInput((String)applicationProps.get("lastExpansion"));
+				lcmf.setTitle(LegendaryCardMakerFrame.FRAME_NAME + " - " + new File((String)applicationProps.get("lastExpansion")).getName());
+				
 			}
 		}
 		
@@ -135,6 +147,8 @@ public class LegendaryCardMakerFrame extends JFrame {
                     
                     if (toolbar != null)
                     {
+                    	lcmf.applicationProps.put("lastTab", pane.getTitleAt(pane.getSelectedIndex()));
+                    	lcmf.saveProperties();
                     	toolbar.setEditMenu();
                     }
                 }
@@ -330,12 +344,104 @@ public class LegendaryCardMakerFrame extends JFrame {
 		tabs.add("Teams", teamScroll);
 		
 		
+		schemeTypeListModel = new DefaultListModel();
+		List<SchemeCardType> schemeTypes = SchemeCardType.values();
+		Collections.sort(schemeTypes, new SchemeCardType());
+		for (SchemeCardType v : schemeTypes)
+		{
+			schemeTypeListModel.addElement(v);
+		}
+		schemeTypeList = new JList(schemeTypeListModel);
+		schemeTypeList.setCellRenderer(new SchemeTypeListRenderer());
+		schemeTypeList.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent evt) {
+		        JList list = (JList)evt.getSource();
+		        if (evt.getClickCount() == 2) {
+
+		            // Double-click detected
+		            int index = list.locationToIndex(evt.getPoint());
+		            if (index >= 0)
+		            {
+		            	//new HeroCardSelector((Hero)list.getSelectedValue(), lcmf);
+		            }
+		        }
+		    }
+		});
+		
+		schemeTypeScroll.setViewportView(schemeTypeList);
+		this.add(schemeTypeScroll);
+		tabs.add("Scheme Types", schemeTypeScroll);
+		
+		
+		if (applicationProps.get("lastTab") != null)
+		{
+			String title = (String)applicationProps.get("lastTab");
+			for (int i = 0; i < tabs.getTabCount(); i++)
+			{
+				if (tabs.getTitleAt(i).equals(title))
+				{
+					tabs.setSelectedIndex(i);
+				}
+			}
+		}
+		
+		
 		this.add(tabs);
 		
 		toolbar = new CardMakerToolbar(this);
 		this.setJMenuBar(toolbar);
 		
-		this.setSize(400, 500);
+		this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+            	if (lcmf.lcm.doChangesExist())
+    			{
+    				int outcome = JOptionPane.showOptionDialog(lcmf, "Save Changes?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+    				if (outcome == JOptionPane.YES_OPTION)
+    				{
+    					if (lcmf.lcm.currentFile != null && new File(lcmf.lcm.currentFile).exists())
+    					{
+    						try
+    						{
+    							lcmf.lcm.saveExpansion();
+    						}
+    						catch (Exception ex)
+    						{
+    							JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+    						}
+    					}
+    					else
+    					{
+    						JFileChooser chooser = new JFileChooser();
+    						int outcome2 = chooser.showSaveDialog(e.getWindow());
+    						if (outcome2 == JFileChooser.APPROVE_OPTION)
+    						{
+    							lcmf.lcm.currentFile = chooser.getSelectedFile().getAbsolutePath();
+    							
+    							try
+    							{
+    								lcmf.lcm.saveExpansion();
+    								lcmf.applicationProps.put("lastSaveDirectory", chooser.getSelectedFile().getParent());
+    								lcmf.lcm.lastSaved = chooser.getSelectedFile().getParent();
+    								lcmf.saveProperties();
+    							}
+    							catch (Exception ex)
+    							{
+    								JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+    							}
+    						}
+    					}
+    				}
+    			}
+    			
+                e.getWindow().dispose();
+                
+                System.exit(0);
+            }
+        });
+		
+		this.setSize(500, 500);
 		this.setVisible(true);
 	}
 	
@@ -515,6 +621,44 @@ public class LegendaryCardMakerFrame extends JFrame {
         }
     }
 	
+	public class SchemeTypeListRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(
+                JList list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+        	
+        	SchemeCardType type = (SchemeCardType)value;
+
+            JLabel label = (JLabel) super.getListCellRendererComponent(
+                    list, value, index, isSelected, cellHasFocus);
+            //label.setIcon(new ImageIcon(getImageSummary(villain)));
+            label.setHorizontalTextPosition(JLabel.RIGHT);
+            
+            String s = type.getDisplayString() + " (" +  (type.doesAllowHeadings() ? "Custom Headers" : "Set Header") + ")";
+            label.setText(s);
+            label.setIcon(new ImageIcon(getColorSummary(type)));
+            
+            return label;
+        }
+        
+        private BufferedImage getColorSummary(SchemeCardType type)
+        {
+        	int maxWidth = 20;
+        	int maxHeight = 20;
+        	
+        	BufferedImage bi = new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_ARGB);
+        	Graphics g2 = bi.getGraphics();
+        	
+        	g2.setColor(type.getBgColor());
+        	g2.fillRect(0, 0, maxWidth, maxHeight);
+        	
+        	g2.dispose();
+        
+        	return bi;
+        }
+    }
+	
 	public class BystanderListRenderer extends DefaultListCellRenderer {
 
         @Override
@@ -672,10 +816,12 @@ public class LegendaryCardMakerFrame extends JFrame {
 		lcm.dbImageOffsetY = 0;
 		lcm.dbImagePath = null;
 		lcm.dbImageZoom = 1.0d;
+		lcm.dividerCardStyle = "PowerIcons";
+		lcm.dividerBodyStyle = "Images";
 		
 		lcm.inputFile = null;
 		lcm.textOutputFile = null;
-		lcm.textErrorFile = null;
+		lcm.textErrorFile = "error.txt";
 		lcm.exportFolder = null;
 		lcm.textDividerFile = null;
 		lcm.currentFile = null;
@@ -685,5 +831,8 @@ public class LegendaryCardMakerFrame extends JFrame {
 		schemeListModel.clear();
 		bystanderListModel.clear();
 		woundListModel.clear();
+		
+		setTitle(LegendaryCardMakerFrame.FRAME_NAME + " - [Untitled]");
+		
 	}
 }

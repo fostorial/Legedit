@@ -41,6 +41,8 @@ public class CardTextDialog extends JDialog implements ActionListener {
 	private JToolBar optionsBar = new JToolBar();
 	private JButton keywordButton = new JButton("Keyword");
 	private JButton regularButton = new JButton("Regular");
+	private JButton headingButton = new JButton("Heading");
+	private JButton headerIconButton = new JButton("Header Icon");
 	private JComboBox iconCombo;
 	private ComboBoxModel iconListModel;
 	private JButton addButton = new JButton("Add");
@@ -55,12 +57,14 @@ public class CardTextDialog extends JDialog implements ActionListener {
 	public CardTextDialog(String text)
 	{
 		this.setModal(true);
-		this.setSize(400, 200);
+		this.setSize(500, 300);
 		
 		originalText = text;
 		
 		keywordButton.addActionListener(this);
 		regularButton.addActionListener(this);
+		headingButton.addActionListener(this);
+		headerIconButton.addActionListener(this);
 		addButton.addActionListener(this);
 		optionsBar.setFloatable(false);
 		optionsBar.add(keywordButton);
@@ -89,6 +93,16 @@ public class CardTextDialog extends JDialog implements ActionListener {
 		buttonBar.add(okButton);
 		buttonBar.add(cancelButton);
 		this.add(buttonBar, BorderLayout.PAGE_END);
+	}
+	
+	public void addHeadingButton()
+	{
+		optionsBar.add(headingButton, 0);
+	}
+	
+	public void addHeaderIconButton()
+	{
+		optionsBar.add(headerIconButton, 0);
 	}
 	
 	public String showInputDialog()
@@ -120,6 +134,16 @@ public class CardTextDialog extends JDialog implements ActionListener {
 		if (e.getSource().equals(regularButton))
 		{
 			textArea.insert("<r>", textArea.getCaretPosition());
+		}
+		
+		if (e.getSource().equals(headingButton))
+		{
+			textArea.insert("<h></h>", textArea.getCaretPosition());
+		}
+		
+		if (e.getSource().equals(headerIconButton))
+		{
+			textArea.insert("<hi icon= value= />", textArea.getCaretPosition());
 		}
 		
 		if (e.getSource().equals(addButton))

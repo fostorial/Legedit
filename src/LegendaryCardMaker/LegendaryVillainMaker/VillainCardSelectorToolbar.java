@@ -15,6 +15,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
+import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMakerFrame;
+
 public class VillainCardSelectorToolbar extends JMenuBar implements ActionListener{
 
 	VillainCardSelector hm;
@@ -30,6 +33,7 @@ public class VillainCardSelectorToolbar extends JMenuBar implements ActionListen
 	JMenuItem newCard = new JMenuItem("New Card");
 	JMenuItem editCard = new JMenuItem("Edit Card...");
 	JMenuItem delete = new JMenuItem("Delete Card...");
+	JMenuItem editDivider = new JMenuItem("Edit Divider...");
 	
 	static VillainCardSelectorToolbar tb = null;
 	
@@ -64,6 +68,11 @@ public class VillainCardSelectorToolbar extends JMenuBar implements ActionListen
 		
 		delete.addActionListener(this);
 		edit.add(delete);
+		
+		edit.addSeparator();
+		
+		editDivider.addActionListener(this);
+		edit.add(editDivider);
 		
 		add(edit);
 	}
@@ -134,6 +143,11 @@ public class VillainCardSelectorToolbar extends JMenuBar implements ActionListen
 				hm.h.cards.remove(getCurrentVillainCard());
 				getVillainCardListModel().removeElement(getCurrentVillainCard());
 			}
+		}
+		
+		if (e.getSource().equals(editDivider))
+		{			
+			VillainDividerMakerFrame dmf = new VillainDividerMakerFrame(hm.h, this.hm.lcmf.lcm.dividerHorizontal);
 		}
 	}
 	

@@ -22,6 +22,8 @@ public class Hero implements Comparator<Hero>, Comparable<Hero> {
 	public int imageOffsetX = 0;
 	public int imageOffsetY = 0;
 	
+	public String dividerIconEnum = null;
+	
 	public String generateOutputString()
 	{
 		String str = "";

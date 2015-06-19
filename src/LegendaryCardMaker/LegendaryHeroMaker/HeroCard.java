@@ -19,6 +19,7 @@ public class HeroCard {
 	public String name;
 	public int nameSize;
 	public String heroName;
+	public int heroNameSize;
 	public CardRarity rarity;
 	public Icon cardTeam;
 	public Icon cardPower;
@@ -94,6 +95,9 @@ public class HeroCard {
 		
 		if (name != null)
 			str += "HCNAMESIZE;" + nameSize + "\n";
+		
+		if (name != null)
+			str += "HCHERONAMESIZE;" + heroNameSize + "\n";
 		
 		if (rarity != null)
 			str += "HCRARITY;" + rarity.toString() + "\n";

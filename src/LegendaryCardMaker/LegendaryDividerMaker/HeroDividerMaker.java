@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -35,6 +36,7 @@ import org.w3c.dom.Element;
 
 import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.DividerMaker;
+import LegendaryCardMaker.HSLColor;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
@@ -136,25 +138,82 @@ public class HeroDividerMaker extends DividerMaker {
 	    g.fillRect(0, 0, width, height);
 	    g.setColor(Color.black);
 	    
-	    if (LegendaryCardMakerFrame.lcmf != null && LegendaryCardMakerFrame.lcmf.lcm != null
-	    		&& LegendaryCardMakerFrame.lcmf.lcm.dbImagePath != null)
+	    String cardStyle = LegendaryCardMakerFrame.lcmf.lcm.dividerCardStyle;
+	    if (cardStyle != null) {cardStyle.replace(" ", ""); }
+	    
+	    String bodyStyle = LegendaryCardMakerFrame.lcmf.lcm.dividerBodyStyle;
+	    if (cardStyle != null) {cardStyle.replace(" ", ""); }
+	    
+	    // Background Images
+	    if (bodyStyle.equals("Images"))
 	    {
-	    	BufferedImage bi = resizeImage(new ImageIcon(LegendaryCardMakerFrame.lcmf.lcm.dbImagePath), LegendaryCardMakerFrame.lcmf.lcm.dbImageZoom);
-	    	g.drawImage(bi, LegendaryCardMakerFrame.lcmf.lcm.dbImageOffsetX, LegendaryCardMakerFrame.lcmf.lcm.dbImageOffsetY, null);
+	    	if (LegendaryCardMakerFrame.lcmf != null && LegendaryCardMakerFrame.lcmf.lcm != null
+		    		&& LegendaryCardMakerFrame.lcmf.lcm.dbImagePath != null)
+		    {
+		    	BufferedImage bi = resizeImage(new ImageIcon(LegendaryCardMakerFrame.lcmf.lcm.dbImagePath), LegendaryCardMakerFrame.lcmf.lcm.dbImageZoom);
+		    	g.drawImage(bi, LegendaryCardMakerFrame.lcmf.lcm.dbImageOffsetX, LegendaryCardMakerFrame.lcmf.lcm.dbImageOffsetY, null);
+		    }
+		    
+		    if (LegendaryCardMakerFrame.lcmf != null && LegendaryCardMakerFrame.lcmf.lcm != null
+		    		&& LegendaryCardMakerFrame.lcmf.lcm.dfImagePath != null)
+		    {
+		    	BufferedImage bi = resizeImage(new ImageIcon(LegendaryCardMakerFrame.lcmf.lcm.dfImagePath), LegendaryCardMakerFrame.lcmf.lcm.dfImageZoom);
+		    	g.drawImage(bi, LegendaryCardMakerFrame.lcmf.lcm.dfImageOffsetX, LegendaryCardMakerFrame.lcmf.lcm.dfImageOffsetY, null);
+		    }
+		    
+		    if (hero.imagePath != null)
+		    {
+		    	BufferedImage bi = resizeImage(new ImageIcon(hero.imagePath), hero.imageZoom);
+		    	g.drawImage(bi, hero.imageOffsetX, hero.imageOffsetY, null);
+		    }
+	    }
+	    if (bodyStyle.equals("TeamLogo"))
+	    {
+	    	BufferedImage bi = getIcon(getTeamIcon(), getPercentage(width, 0.7d), getPercentage(height, 0.7d));
+	    	
+	    	HashMap<Color, Integer> colorMap = new HashMap<Color, Integer>();
+	    	for (int xx = 0; xx < bi.getWidth(); xx++) {
+	            for (int yy = 0; yy < bi.getHeight(); yy++) {
+	                Color originalColor = new Color(bi.getRGB(xx, yy), true);
+	                if (originalColor.getAlpha() > 0 
+	                		&& !(originalColor.getRed() < 10 && originalColor.getGreen() < 10 && originalColor.getBlue() < 10)
+	                		&& !(originalColor.getRed() > 245 && originalColor.getGreen() > 245 && originalColor.getBlue() > 245)) {
+	                	if (colorMap.containsKey(originalColor))
+	    	    		{
+	    	    			Integer i = colorMap.get(originalColor);
+	    	    			i = new Integer(i.intValue() + 1);
+	    	    			colorMap.put(originalColor, i);
+	    	    		}
+	    	    		else
+	    	    		{
+	    	    			colorMap.put(originalColor, new Integer(1));
+	    	    		}
+	                }
+	            }
+	        }
+	    	
+	    	int count = 0;
+	    	Color mainColor = Color.WHITE;
+    		for (Entry<Color, Integer> en : colorMap.entrySet())
+    		{
+    			System.out.println(en.getKey().toString() + ":" + en.getValue());
+    			if (en.getValue().intValue() > count)
+    			{
+    				count = en.getValue().intValue();
+    				mainColor = en.getKey();
+    			}
+    		}
+	    	
+    		HSLColor hsl = new HSLColor(mainColor);
+    		g.setColor(hsl.getComplementary());
+    		g.fillRect(0, titleBarHeight, width, height);
+    		
+	    	int modifiedHeight = height - titleBarHeight;
+	    	int iconX = (width / 2) - (bi.getWidth() / 2);
+	    	int iconY = titleBarHeight + (modifiedHeight / 2) - (bi.getHeight() / 2);
+	    	g.drawImage(bi, iconX, iconY, null);
 	    }
 	    
-	    if (LegendaryCardMakerFrame.lcmf != null && LegendaryCardMakerFrame.lcmf.lcm != null
-	    		&& LegendaryCardMakerFrame.lcmf.lcm.dfImagePath != null)
-	    {
-	    	BufferedImage bi = resizeImage(new ImageIcon(LegendaryCardMakerFrame.lcmf.lcm.dfImagePath), LegendaryCardMakerFrame.lcmf.lcm.dfImageZoom);
-	    	g.drawImage(bi, LegendaryCardMakerFrame.lcmf.lcm.dfImageOffsetX, LegendaryCardMakerFrame.lcmf.lcm.dfImageOffsetY, null);
-	    }
-	    
-	    if (hero.imagePath != null)
-	    {
-	    	BufferedImage bi = resizeImage(new ImageIcon(hero.imagePath), hero.imageZoom);
-	    	g.drawImage(bi, hero.imageOffsetX, hero.imageOffsetY, null);
-	    }
 	    
 	    // Title Bar
 	    if  (LegendaryCardMakerFrame.lcmf.lcm.dividerTitleBarVisible)
@@ -164,100 +223,94 @@ public class HeroDividerMaker extends DividerMaker {
 	    	g.setColor(Color.BLACK);
 	    }
 	    
-
 	    
 	    // Card Team
-	    if (hero.cards != null && hero.cards.size() > 0 && hero.cards.get(0).cardTeam != null && hero.cards.get(0).cardTeam.getImagePath() != null)
-	    {
-	    	BufferedImage bi = getIcon(hero.cards.get(0).cardTeam, teamMaxWidth, teamMaxHeight);
-	    	int x = teamIconX - (bi.getWidth() / 2);
-	    	int y = teamIconY - (bi.getWidth() / 2);
-	    	
-	    	if (includeBlurredBGTeam)
-	    	{
-	    		drawUnderlay(bi, g, type, x, y, teamBlurRadius, teamBlurDouble, expandTeam);
-	    	}
-	    	
-	    	g.drawImage(bi, x, y, null);
-	    }
-	    
-	 // Card Power
-	    int heroNameEnd = width - teamIconX;
+	    int heroNameStart = heroNameX;
 	    if (hero.cards != null && hero.cards.size() > 0)
 	    {
-	    	if (horizontal)
-	    	{
-	    		int tempX = width - (hero.cards.size() * (powerMaxWidth + 5)) - powerIconX;
-		    	heroNameEnd = tempX - 15;
-		    	for (HeroCard hc : hero.cards)
+	    	Icon teamIcon = getTeamIcon();
+        	
+        	if (teamIcon != null && teamIcon.getImagePath() != null)
+        	{
+        		heroNameStart = heroNameX;
+        		
+        		BufferedImage bi = getIcon(hero.cards.get(0).cardTeam, teamMaxWidth, teamMaxHeight);
+    	    	int x = teamIconX - (bi.getWidth() / 2);
+    	    	int y = teamIconY - (bi.getWidth() / 2);
+    	    	
+    	    	if (includeBlurredBGTeam)
+    	    	{
+    	    		drawUnderlay(bi, g, type, x, y, teamBlurRadius, teamBlurDouble, expandTeam);
+    	    	}
+    	    	
+    	    	g.drawImage(bi, x, y, null);
+        	}
+	    }
+	    
+	    
+	    // Card Power
+	    int heroNameEnd = width;
+	    if (cardStyle.equals("PowerIcons"))
+	    {
+	    	heroNameEnd = width - teamIconX;
+		    if (hero.cards != null && hero.cards.size() > 0)
+		    {
+		    	if (horizontal)
 		    	{
-		    		if (hc.cardPower != null && !hc.cardPower.equals(Icon.valueOf("NONE")))
-		    		{
-		    			BufferedImage bi = getIcon(hc.cardPower, powerMaxWidth, powerMaxHeight);
-				    	int y = teamIconY - (bi.getWidth() / 2);
-				    	
-				    	if (includeBlurredBGTeam)
-				    	{
-				    		drawUnderlay(bi, g, type, tempX, y, teamBlurRadius, teamBlurDouble, expandTeam);
-				    	}
-				    	
-				    	g.drawImage(bi, tempX, y, null);
-		    		}
-		    		tempX += powerMaxWidth + 5;
+		    		int tempX = width - (hero.cards.size() * (powerMaxWidth + 5)) - powerIconX;
+			    	heroNameEnd = tempX - 15;
+			    	for (HeroCard hc : hero.cards)
+			    	{
+			    		if (hc.cardPower != null && !hc.cardPower.equals(Icon.valueOf("NONE")))
+			    		{
+			    			BufferedImage bi = getIcon(hc.cardPower, powerMaxWidth, powerMaxHeight);
+					    	int y = teamIconY - (bi.getWidth() / 2);
+					    	
+					    	if (includeBlurredBGTeam)
+					    	{
+					    		drawUnderlay(bi, g, type, tempX, y, teamBlurRadius, teamBlurDouble, expandTeam);
+					    	}
+					    	
+					    	g.drawImage(bi, tempX, y, null);
+			    		}
+			    		tempX += powerMaxWidth + 5;
+			    	}
 		    	}
-	    	}
-	    	else
-	    	{
-	    		int count = 0;
-	    		int tempX = width - powerMaxWidth - 15;
-	    		int tempY = powerIconY / 3;
-	    		heroNameEnd = tempX - 15;
-		    	for (HeroCard hc : hero.cards)
+		    	else
 		    	{
-		    		if (hc.cardPower != null && !hc.cardPower.equals(Icon.valueOf("NONE")))
-		    		{
-		    			BufferedImage bi = getIcon(hc.cardPower, powerMaxWidth / 2, powerMaxHeight / 2);
-				    	
-				    	if (includeBlurredBGTeam)
-				    	{
-				    		drawUnderlay(bi, g, type, tempX, tempY, teamBlurRadius, teamBlurDouble, expandTeam);
-				    	}
-				    	
-				    	g.drawImage(bi, tempX, tempY, null);
-		    		}
-		    		tempX = tempX + (powerMaxWidth / 2);
-		    		
-		    		count++;
-		    		if (count == 2)
-		    		{
-		    			count = 0;
-		    			tempX = width - powerMaxWidth - 15;
-		    			tempY += (powerMaxHeight/2) + (5/2);
-		    		}
+		    		int count = 0;
+		    		int tempX = width - powerMaxWidth - 15;
+		    		int tempY = powerIconY / 3;
+		    		heroNameEnd = tempX - 15;
+			    	for (HeroCard hc : hero.cards)
+			    	{
+			    		if (hc.cardPower != null && !hc.cardPower.equals(Icon.valueOf("NONE")))
+			    		{
+			    			BufferedImage bi = getIcon(hc.cardPower, powerMaxWidth / 2, powerMaxHeight / 2);
+					    	
+					    	if (includeBlurredBGTeam)
+					    	{
+					    		drawUnderlay(bi, g, type, tempX, tempY, teamBlurRadius, teamBlurDouble, expandTeam);
+					    	}
+					    	
+					    	g.drawImage(bi, tempX, tempY, null);
+			    		}
+			    		tempX = tempX + (powerMaxWidth / 2);
+			    		
+			    		count++;
+			    		if (count == 2)
+			    		{
+			    			count = 0;
+			    			tempX = width - powerMaxWidth - 15;
+			    			tempY += (powerMaxHeight/2) + (5/2);
+			    		}
+			    	}
 		    	}
 		    	
-		    	/*
-	    		int tempY = teamIconY + teamMaxHeight;
-		    	for (HeroCard hc : hero.cards)
-		    	{
-		    		if (hc.cardPower != null && !hc.cardPower.equals(Icon.valueOf("NONE")))
-		    		{
-		    			BufferedImage bi = getIcon(hc.cardPower, powerMaxWidth, powerMaxHeight);
-				    	int x = teamIconX - (bi.getWidth() / 2);
-				    	
-				    	if (includeBlurredBGTeam)
-				    	{
-				    		drawUnderlay(bi, g, type, x, tempY, teamBlurRadius, teamBlurDouble, expandTeam);
-				    	}
-				    	
-				    	g.drawImage(bi, x, tempY, null);
-		    		}
-		    		tempY += powerMaxHeight + 5;
-		    	}
-		    	*/
-	    	}
-	    	
+		    }
 	    }
+	    
+	    
 	    
 	    // Hero Name
 	    if (hero.name != null)
@@ -284,8 +337,8 @@ public class HeroDividerMaker extends DividerMaker {
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, hero.name.toUpperCase());
-	        int heroLength = width - heroNameX - (width - heroNameEnd);
-	        int x = heroNameX + ((heroLength / 2) - (stringLength / 2));
+	        int heroLength = width - heroNameStart - (width - heroNameEnd);
+	        int x = heroNameStart + ((heroLength / 2) - (stringLength / 2));
 	        
 	        g2.drawString(hero.name.toUpperCase(), x, heroNameY);
 	    	if (includeBlurredBGHeroName)
@@ -627,6 +680,37 @@ public class HeroDividerMaker extends DividerMaker {
         }
 		
 		return bi;
+	}
+	
+	private Icon getTeamIcon()
+	{
+		Icon teamIcon = Icon.valueOf("NONE");
+    	HashMap<Icon, Integer> teamMap = new HashMap<Icon, Integer>();
+    	for (HeroCard hc : hero.cards)
+    	{
+    		if (teamMap.containsKey(hc.cardTeam))
+    		{
+    			Integer i = teamMap.get(hc.cardTeam);
+    			i = new Integer(i.intValue() + 1);
+    			teamMap.put(hc.cardTeam, i);
+    		}
+    		else
+    		{
+    			teamMap.put(hc.cardTeam, new Integer(1));
+    		}
+    		
+    		int count = 0;
+    		for (Entry<Icon, Integer> en : teamMap.entrySet())
+    		{
+    			if (en.getValue().intValue() > count)
+    			{
+    				count = en.getValue().intValue();
+    				teamIcon = en.getKey();
+    			}
+    		}
+    	}
+    	
+    	return teamIcon;
 	}
 
 }

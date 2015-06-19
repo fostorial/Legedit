@@ -24,7 +24,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.6";
+	public static String version = "0.7";
 
 	public String inputFile = null;
 	
@@ -62,6 +62,8 @@ public class LegendaryCardMaker {
 	public int dbImageOffsetY = 0;
 	public boolean dividerTitleBarVisible = true;
 	public Color dividerTitleBarColour = Color.WHITE;
+	public String dividerCardStyle = "PowerIcons";
+	public String dividerBodyStyle = "Images";
 	
 	public static void main(String[] args)
 	{
@@ -167,6 +169,16 @@ public class LegendaryCardMaker {
 					   }
 				   }
 				   
+				   if (line.startsWith("DIVIDERCARDSTYLE;"))
+				   {
+					   dividerCardStyle = line.replace("DIVIDERCARDSTYLE;", "");
+				   }
+				   
+				   if (line.startsWith("DIVIDERBODYSTYLE;"))
+				   {
+					   dividerBodyStyle = line.replace("DIVIDERBODYSTYLE;", "");
+				   }
+				   
 				   if (line.startsWith("DFIMAGEZOOM;"))
 				   {
 					   dfImageZoom = Double.parseDouble(line.replace("DFIMAGEZOOM;", ""));
@@ -222,6 +234,55 @@ public class LegendaryCardMaker {
 					   }
 				   }
 				   
+				   
+				   // Load Hero Template Information
+				   if (line.startsWith("HCTCARDNAMESIZE;"))
+				   {
+					   HeroMaker.cardNameSizeTemplate = Integer.parseInt(line.replace("HCTCARDNAMESIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTHERONAMESIZE;"))
+				   {
+					   HeroMaker.heroNameSizeTemplate = Integer.parseInt(line.replace("HCTHERONAMESIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTABILITYTEXTSIZE;"))
+				   {
+					   HeroMaker.abilityTextSizeTemplate = Integer.parseInt(line.replace("HCTABILITYTEXTSIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTCARDNAMECOLOUR;"))
+				   {
+					   HeroMaker.cardNameColorTemplate = new Color(Integer.parseInt(line.replace("HCTCARDNAMECOLOUR;", "")));
+				   }
+				   
+				   if (line.startsWith("HCTHERONAMECOLOUR;"))
+				   {
+					   HeroMaker.heroNameColorTemplate = new Color(Integer.parseInt(line.replace("HCTHERONAMECOLOUR;", "")));
+				   }
+				   
+				   if (line.startsWith("HCTABILITYTEXTCOLOUR;"))
+				   {
+					   HeroMaker.abilityTextColorTemplate = new Color(Integer.parseInt(line.replace("HCTABILITYTEXTCOLOUR;", "")));
+				   }
+				   
+				   if (line.startsWith("HCTTEAMPOWERUNDERLAYCOLOUR;"))
+				   {
+					   HeroMaker.teamPowerUnderlayColorTemplate = new Color(Integer.parseInt(line.replace("HCTTEAMPOWERUNDERLAYCOLOUR;", "")));
+				   }
+				   
+				   if (line.startsWith("HCTTEAMPOWERBLURRADIUS;"))
+				   {
+					   HeroMaker.teamPowerBlurRadiusTemplate = Integer.parseInt(line.replace("HCTTEAMPOWERBLURRADIUS;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTNAMEHIGHLIGHTTYPE;"))
+				   {
+					   HeroMaker.nameHighlightTemplate = line.replace("HCTNAMEHIGHLIGHTTYPE;", "");
+				   }
+				   
+				   
+				   // Load Hero Information
 				   if (line.startsWith("HERO;"))
 				   {
 					   h = new Hero();
@@ -273,6 +334,12 @@ public class LegendaryCardMaker {
 				   {
 					   hm.cardNameSize = Integer.parseInt(line.replace("HCNAMESIZE;", ""));
 					   hc.nameSize = Integer.parseInt(line.replace("HCNAMESIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCHERONAMESIZE;"))
+				   {
+					   hm.heroNameSize = Integer.parseInt(line.replace("HCHERONAMESIZE;", ""));
+					   hc.heroNameSize = Integer.parseInt(line.replace("HCHERONAMESIZE;", ""));
 				   }
 				   
 				   if (line.startsWith("HCRARITY;"))
@@ -395,6 +462,26 @@ public class LegendaryCardMaker {
 						{
 							outputVillain(bw, v);
 						}
+				   }
+				   
+				   if (line.startsWith("VFIMAGEZOOM;"))
+				   {
+					   v.imageZoom = Double.parseDouble(line.replace("VFIMAGEZOOM;", ""));
+				   }
+				   
+				   if (line.startsWith("VFIMAGEPATH;"))
+				   {
+					   v.imagePath = line.replace("VFIMAGEPATH;", "");
+				   }
+				   
+				   if (line.startsWith("VFIMAGEOFFSETX;"))
+				   {
+					   v.imageOffsetX = Integer.parseInt(line.replace("VFIMAGEOFFSETX;", ""));
+				   }
+				   
+				   if (line.startsWith("VFIMAGEOFFSETY;"))
+				   {
+					   v.imageOffsetY = Integer.parseInt(line.replace("VFIMAGEOFFSETY;", ""));
 				   }
 				   
 				   if (line.startsWith("VILLAINCARD;"))
@@ -554,6 +641,26 @@ public class LegendaryCardMaker {
 				   {
 					   sm.textSize = Integer.parseInt(line.replace("SCTEXTSIZE;", ""));
 					   sc.cardTextSize = Integer.parseInt(line.replace("SCTEXTSIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("SCIMAGEZOOM;"))
+				   {
+					   sc.imageZoom = Double.parseDouble(line.replace("SCIMAGEZOOM;", ""));
+				   }
+				   
+				   if (line.startsWith("SCIMAGEPATH;"))
+				   {
+					   sc.imagePath = line.replace("SCIMAGEPATH;", "");
+				   }
+				   
+				   if (line.startsWith("SCIMAGEOFFSETX;"))
+				   {
+					   sc.imageOffsetX = Integer.parseInt(line.replace("SCIMAGEOFFSETX;", ""));
+				   }
+				   
+				   if (line.startsWith("SCIMAGEOFFSETY;"))
+				   {
+					   sc.imageOffsetY = Integer.parseInt(line.replace("SCIMAGEOFFSETY;", ""));
 				   }
 				   
 				   if (!ignoreGenerate && line.startsWith("SCGENERATE;"))
@@ -730,9 +837,16 @@ public class LegendaryCardMaker {
 		str += "DIVIDERORIENTATION;" + (dividerHorizontal ? "HORIZONTAL" : "VERTICAL");
 		str += "\n";
 		
+		str += "DIVIDERCARDSTYLE;" + dividerCardStyle + "\n";
+		
+		str += "DIVIDERBODYSTYLE;" + dividerBodyStyle + "\n";
+		
 		str += "DTITLEBARCOLOUR;" + (dividerTitleBarColour == null ? Color.white.getRGB() : dividerTitleBarColour.getRGB()) + "\n";
 		
 		str += "DTITLEBARVISIBLE;" + dividerTitleBarVisible + "\n";
+		str += "\n";
+		
+		str += HeroMaker.generateTemplateOutputString();
 		
 		if (dfImagePath != null)
 			str += "DFIMAGEPATH;" + dfImagePath + "\n";

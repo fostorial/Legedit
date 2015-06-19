@@ -12,6 +12,8 @@ import javax.xml.crypto.dsig.spec.HMACParameterSpec;
 
 import LegendaryCardMaker.CardMakerToolbar;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
+import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
+import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMakerFrame;
 
 public class VillainSelectorMenu extends JMenu implements ActionListener{
 	
@@ -21,6 +23,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 	JMenuItem edit = new JMenuItem("Edit Villain...");
 	JMenuItem rename = new JMenuItem("Rename Villain...");
 	JMenuItem delete = new JMenuItem("Delete Villain...");
+	JMenuItem editDivider = new JMenuItem("Edit Divider...");
 	
 	public LegendaryCardMakerFrame lcmf;
 	
@@ -52,6 +55,11 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 		
 		delete.addActionListener(this);
 		add(delete);
+		
+		addSeparator();
+		
+		editDivider.addActionListener(this);
+		add(editDivider);
 	}
 
 	@Override
@@ -213,6 +221,16 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 				lcmf.lcm.villains.remove(getCurrentVillain());
 				getVillainListModel().removeElement(getCurrentVillain());
 			}
+		}
+		
+		if (e.getSource().equals(editDivider))
+		{
+			if (getCurrentVillain() == null)
+			{
+				return;
+			}
+			
+			VillainDividerMakerFrame dmf = new VillainDividerMakerFrame(getCurrentVillain(), lcmf.lcm.dividerHorizontal);
 		}
 	}
 	

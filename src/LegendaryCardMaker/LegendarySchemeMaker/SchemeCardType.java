@@ -2,12 +2,17 @@ package LegendaryCardMaker.LegendarySchemeMaker;
 
 import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public final class SchemeCardType {
+import LegendaryCardMaker.Icon;
+
+public final class SchemeCardType implements Comparator<SchemeCardType>, Comparable<SchemeCardType> {
 	/*
 	SCHEME (new Color(71,152,96)), 
 	TRANSFORMATION (new Color(211, 125, 33)), 
@@ -22,13 +27,18 @@ public final class SchemeCardType {
 	private String displayString;
 	private boolean allowHeadings = false;
 	
-	private SchemeCardType(Color bgColor)
+	public SchemeCardType()
+	{
+		
+	}
+	
+	public SchemeCardType(Color bgColor)
 	{
 		this.bgColor = bgColor;
 		this.displayString = this.toString();
 	}
 	
-	private SchemeCardType(Color bgColor, String displayString, boolean allowHeadings)
+	public SchemeCardType(Color bgColor, String displayString, boolean allowHeadings)
 	{
 		this.bgColor = bgColor;
 		this.displayString = displayString;
@@ -137,5 +147,57 @@ public final class SchemeCardType {
 		}
 		
 		return schemeCardTypes;
+	}
+	
+	@Override
+	public int compareTo(SchemeCardType i) {
+		return (this.getEnumName()).compareTo(i.getEnumName());
+	}
+
+	@Override
+	public int compare(SchemeCardType i1, SchemeCardType i2) {
+		return (i1.getEnumName()).compareTo(i2.getEnumName());
+	}
+
+	public boolean isAllowHeadings() {
+		return allowHeadings;
+	}
+
+	public void setAllowHeadings(boolean allowHeadings) {
+		this.allowHeadings = allowHeadings;
+	}
+
+	public void setBgColor(Color bgColor) {
+		this.bgColor = bgColor;
+	}
+
+	public void setDisplayString(String displayString) {
+		this.displayString = displayString;
+	}
+	
+	public static void saveSchemeTypeDefinitions()
+	{
+		try
+		{
+			String str = "";
+			
+			for (SchemeCardType i : SchemeCardType.values())
+			{
+				str += i.getEnumName() + "," + i.getBgColor().getRed() + "," + i.getBgColor().getGreen() + "," + i.getBgColor().getBlue() + "," + i.doesAllowHeadings() + "\n";
+			}
+			
+			File file = new File("legendary" + File.separator + "definitions" + File.separator + "scheme_types.txt");
+			FileWriter fw = new FileWriter(file);
+			BufferedWriter bw = new BufferedWriter(fw);
+			
+			bw.write(str);
+			
+			bw.close();
+			fw.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}	
 	}
 }

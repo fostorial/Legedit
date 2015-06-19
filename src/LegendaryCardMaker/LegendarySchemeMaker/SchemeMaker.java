@@ -16,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.IIOImage;
@@ -209,6 +210,9 @@ public class SchemeMaker extends CardMaker {
 	    		System.out.println(cardString);
 	    		
 	    		String[] sections = cardString.split("<h>");
+	    		boolean firstSection = true;
+	    		boolean lastWordWasBreak = false;
+	    		int lastWordBreakHeight = 0;
 	    		for (String sectionString : sections)
 	    		{
 	    			System.out.println("Section: " + sectionString);
@@ -216,19 +220,79 @@ public class SchemeMaker extends CardMaker {
 	    			if (!sectionString.isEmpty())
 	    			{
 	    				String headerStr = card.cardType.getDisplayString();
+	    				if (card.cardType.doesAllowHeadings())
+		    			{
+		    				headerStr = "";
+		    			}
+	    				
+	    				HeaderIcon headerIcon = null;
 		    			String cardStr = sectionString;
 		    			if (cardStr.contains("</h>"))
 		    			{
 		    				String[] headerSplit = sectionString.split("</h>");
 		    				headerStr = headerSplit[0];
-		    				cardStr = headerSplit[1];
+		    				
+		    				//Calculate Header Icons
+		    				if (headerStr.toLowerCase().contains("<hi") && headerStr.toLowerCase().contains("/>"))
+		    				{
+		    					String[] spl = headerStr.split("<hi");
+		    					headerStr = spl[0];
+		    					String[] spl2 = spl[1].split("/>");
+		    					String headerIconText = spl2[0];
+		    					
+		    					String[] iconPairs = headerIconText.split(" ");
+		    					for (String i : iconPairs)
+		    					{
+		    						if (i.toUpperCase().startsWith("ICON="))
+		    						{
+		    							if (headerIcon == null)
+		    							{
+		    								headerIcon = new HeaderIcon();
+		    							}
+		    							headerIcon.icon = isIcon(i.toUpperCase().trim().replace("ICON=", ""));
+		    						}
+		    						
+		    						if (i.toUpperCase().startsWith("VALUE="))
+		    						{
+		    							if (headerIcon == null)
+		    							{
+		    								headerIcon = new HeaderIcon();
+		    							}
+		    							headerIcon.value = i.toUpperCase().trim().replace("VALUE=", "");
+		    						}
+		    					}
+		    				}
+		    				
+		    				if (headerSplit.length > 1)
+		    				{
+		    					cardStr = headerSplit[1];
+		    				}
+		    				else
+		    				{
+		    					cardStr = "";
+		    				}
 		    			}
+		    			
 		    			System.out.println("header: " + headerStr + ", card: " + cardStr);
 		    			
-		    			int headerHeight = (int)((double)g.getFontMetrics(fontHeader).getHeight() * 1.2d);
-			    		drawHeader(g2, headerStr, fontHeader, card.cardType.getBgColor(), y, headerHeight, getPercentage(cardWidth, 0.2d));
-			    		y += headerHeight + metrics.getHeight() + getPercentage(metrics.getHeight(), 0.5d);
-			    		
+		    			if (headerStr != null && !headerStr.isEmpty())
+		    			{
+		    				int headerHeight = (int)((double)g.getFontMetrics(fontHeader).getHeight() * 1.2d);
+		    				if (lastWordWasBreak)
+		    				{
+		    					y -= lastWordBreakHeight;
+		    				}
+			    			drawHeader(g2, headerStr.toUpperCase(), fontHeader, card.cardType.getBgColor(), y, headerHeight, getPercentage(cardWidth, 0.2d), headerIcon);
+				    		y += headerHeight + metrics.getHeight() + getPercentage(metrics.getHeight(), 0.5d);
+		    			}
+		    			else
+		    			{
+		    				if (firstSection)
+		    				{
+		    					y += 35;
+		    				}
+		    			}
+		    			
 			    		List<WordDefinition> words = WordDefinition.getWordDefinitionList(cardStr);
 			    		for (WordDefinition wd : words)
 			    		{
@@ -262,11 +326,14 @@ public class SchemeMaker extends CardMaker {
 			    			Icon icon = isIcon(s);
 			    			if (gap == true)
 			    			{
+			    				lastWordWasBreak = true;
 			    				x = xOrigin;
 			    				y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textGapHeight);
+			    				lastWordBreakHeight = g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textGapHeight);
 			    			}
 			    			else if (icon == null)
 			    			{
+			    				lastWordWasBreak = false;
 			    				int stringLength = SwingUtilities.computeStringWidth(metrics, s);
 			    				
 			    					if (x + stringLength > xEnd)
@@ -280,6 +347,7 @@ public class SchemeMaker extends CardMaker {
 			    			}
 			    			else if (icon != null)
 			    			{
+			    				lastWordWasBreak = false;
 			    				BufferedImage i = getIconMaxHeight(icon, getPercentage(metrics.getHeight(), textIconHeight));
 			    				
 			    				if ((x + i.getWidth() > xEnd))
@@ -303,8 +371,10 @@ public class SchemeMaker extends CardMaker {
 			    			}
 			    		}
 			    		
-			    		y += (int)((double)metrics.getHeight() * 1.5d);
+			    		y += (int)((double)metrics.getHeight() * 1.0d);
 	    			}
+	    			
+	    			firstSection = false;
 	    		}
 	    		
 	    	}
@@ -392,7 +462,7 @@ public class SchemeMaker extends CardMaker {
     		}
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
-	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.subCategory);
+	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.subCategory.toUpperCase());
 	        int x = (cardWidth / 2) - (stringLength / 2);
 	        
 	        g2.drawString(card.subCategory.toUpperCase(), x, subCategoryY);
@@ -401,7 +471,7 @@ public class SchemeMaker extends CardMaker {
 	    		drawUnderlay(bi, g2, type, 0, 0, subCategoryBlurRadius, subCategoryBlurDouble, expandSubCategory);
 	    	}
 	    	
-	    	g2.drawString(card.subCategory, x, subCategoryY);
+	    	g2.drawString(card.subCategory.toUpperCase(), x, subCategoryY);
 	    	
 	    	g.drawImage(bi, 0, 0, null);
 	    	
@@ -730,13 +800,13 @@ public class SchemeMaker extends CardMaker {
 		return bi;
 	}
 	
-	private void drawHeader(Graphics g, String header, Font font, Color color, int y, int height, int blurRadius)
+	private void drawHeader(Graphics g, String header, Font font, Color color, int y, int height, int blurRadius, HeaderIcon headerIcon)
 	{
 		BufferedImage bi1 = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics g2 = bi1.getGraphics();
 		
 		g2.setColor(color);
-		g2.fillRect(0, y, getPercentage(cardWidth, 0.70d), height);
+		g2.fillRect(0, y, getPercentage(cardWidth, 0.8d), height);
     	
     	if (blurRadius > 0)
     	{
@@ -747,16 +817,53 @@ public class SchemeMaker extends CardMaker {
         	makeTransparent(bi1, 0.7d);
     	}
     	
+    	g2 = bi1.getGraphics();
+    	
+    	if (headerIcon != null && headerIcon.icon != null)
+	    {
+	    	BufferedImage bi = getIcon(headerIcon.icon, getPercentage(height, 1.9d), getPercentage(height, 1.9d));
+	    	int iconx = cardWidth - getPercentage(cardWidth, 0.09d) - bi.getWidth() + (bi.getWidth() / 2);
+	    	int icony = y + (height / 2) - (bi.getWidth() / 2);
+	    	
+	    	g2.drawImage(bi, iconx, icony, null);
+	    }
+    	
     	BufferedImage bi2 = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-		Graphics g3 = bi2.getGraphics();
+		Graphics g3 = bi2.getGraphics();	
 		
     	g3.setColor(Color.WHITE);
     	g3.setFont(font);
 		g3.drawString(header, getPercentage(cardWidth, 0.04d), y + g.getFontMetrics(font).getHeight() - (g.getFontMetrics(font).getHeight() / 6));
 		
+		if (headerIcon != null && headerIcon.value != null)
+		{
+			Font originalFont = font;
+			
+			font = font.deriveFont((float)(g.getFontMetrics(originalFont).getHeight() * 1.6f));
+			g3.setFont(font);
+			int stringLength = SwingUtilities.computeStringWidth(g.getFontMetrics(font), headerIcon.value.toUpperCase());
+			g3.drawString(headerIcon.value, cardWidth - getPercentage(cardWidth, 0.09d) - stringLength + (stringLength / 2), y + g.getFontMetrics(font).getHeight() - (int)(g.getFontMetrics(font).getHeight() / 2.6d));
+			
+			font = originalFont;
+			g3.setFont(originalFont);
+		}
+		
 		drawUnderlay(bi2, g3, BufferedImage.TYPE_INT_ARGB, 0, 0, 5, true, 3);
 		
 		g3.drawString(header, getPercentage(cardWidth, 0.04d), y + g.getFontMetrics(font).getHeight() - (g.getFontMetrics(font).getHeight() / 6));
+		
+		if (headerIcon != null && headerIcon.value != null)
+		{
+			Font originalFont = font;
+			
+			font = font.deriveFont((float)(g.getFontMetrics(originalFont).getHeight() * 1.6f));
+			g3.setFont(font);
+			int stringLength = SwingUtilities.computeStringWidth(g.getFontMetrics(font), headerIcon.value.toUpperCase());
+			g3.drawString(headerIcon.value, cardWidth - getPercentage(cardWidth, 0.09d) - stringLength + (stringLength / 2), y + g.getFontMetrics(font).getHeight() - (int)(g.getFontMetrics(font).getHeight() / 2.6d));
+			
+			font = originalFont;
+			g3.setFont(originalFont);
+		}
 		
 		g.drawImage(bi1, 0, 0, null);
 		g.drawImage(bi2, 0, 0, null);

@@ -3,6 +3,7 @@ package LegendaryCardMaker.LegendarySchemeMaker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import LegendaryCardMaker.CardTextDialog;
 import LegendaryCardMaker.Icon;
@@ -151,13 +153,28 @@ public class SchemeMakerToolbar extends JMenuBar implements ActionListener{
 		if (e.getSource().equals(exportJPG))
 		{
 			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter1 = new FileNameExtensionFilter("JPEG file", "jpg", "jpeg");
+		    chooser.addChoosableFileFilter(filter1);
+		    chooser.setFileFilter(filter1);
 			int outcome = chooser.showSaveDialog(this);
 			if (outcome == JFileChooser.APPROVE_OPTION)
 			{
 				BufferedImage bi = hm.generateCard();
 				try
 				{
-					hm.exportToJPEG(bi, chooser.getSelectedFile());
+					if (!chooser.getSelectedFile().getName().toLowerCase().endsWith(".jpg") 
+							&& !chooser.getSelectedFile().getName().toLowerCase().endsWith(".jpeg"))
+					{
+						chooser.setSelectedFile(new File(chooser.getSelectedFile().getAbsolutePath() + ".jpg"));
+					}
+					if (chooser.getSelectedFile().exists())
+					{
+						int confirm = JOptionPane.showConfirmDialog(hmf, "Overwrite File?", "File Exists", JOptionPane.YES_OPTION);
+						if (confirm == JOptionPane.YES_OPTION)
+						{
+							hm.exportToJPEG(bi, chooser.getSelectedFile());
+						}
+					}
 				}
 				catch (Exception ex)
 				{
@@ -170,13 +187,27 @@ public class SchemeMakerToolbar extends JMenuBar implements ActionListener{
 		if (e.getSource().equals(exportPNG))
 		{
 			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter1 = new FileNameExtensionFilter("PNG file", "png");
+		    chooser.addChoosableFileFilter(filter1);
+		    chooser.setFileFilter(filter1);
 			int outcome = chooser.showSaveDialog(this);
 			if (outcome == JFileChooser.APPROVE_OPTION)
 			{
 				BufferedImage bi = hm.generateCard();
 				try
 				{
-					hm.exportToPNG(bi, chooser.getSelectedFile());
+					if (!chooser.getSelectedFile().getName().toLowerCase().endsWith(".png"))
+					{
+						chooser.setSelectedFile(new File(chooser.getSelectedFile().getAbsolutePath() + ".png"));
+					}
+					if (chooser.getSelectedFile().exists())
+					{
+						int confirm = JOptionPane.showConfirmDialog(hmf, "Overwrite File?", "File Exists", JOptionPane.YES_OPTION);
+						if (confirm == JOptionPane.YES_OPTION)
+						{
+							hm.exportToPNG(bi, chooser.getSelectedFile());
+						}
+					}
 				}
 				catch (Exception ex)
 				{
@@ -189,6 +220,9 @@ public class SchemeMakerToolbar extends JMenuBar implements ActionListener{
 		if (e.getSource().equals(exportPrinterStudioPNG))
 		{
 			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter1 = new FileNameExtensionFilter("PNG file", "png");
+		    chooser.addChoosableFileFilter(filter1);
+		    chooser.setFileFilter(filter1);
 			int outcome = chooser.showSaveDialog(this);
 			if (outcome == JFileChooser.APPROVE_OPTION)
 			{
@@ -196,7 +230,18 @@ public class SchemeMakerToolbar extends JMenuBar implements ActionListener{
 				bi = hm.resizeImagePS(bi);
 				try
 				{
-					hm.exportToPNG(bi, chooser.getSelectedFile());
+					if (!chooser.getSelectedFile().getName().toLowerCase().endsWith(".png"))
+					{
+						chooser.setSelectedFile(new File(chooser.getSelectedFile().getAbsolutePath() + ".png"));
+					}
+					if (chooser.getSelectedFile().exists())
+					{
+						int confirm = JOptionPane.showConfirmDialog(hmf, "Overwrite File?", "File Exists", JOptionPane.YES_OPTION);
+						if (confirm == JOptionPane.YES_OPTION)
+						{
+							hm.exportToPNG(bi, chooser.getSelectedFile());
+						}
+					}
 				}
 				catch (Exception ex)
 				{
@@ -209,7 +254,13 @@ public class SchemeMakerToolbar extends JMenuBar implements ActionListener{
 		if (e.getSource().equals(setCardText))
 		{
 			//String s = JOptionPane.showInputDialog(hmf, "Enter the Ability Text", hm.card.abilityText);
-			String s = new CardTextDialog(hm.card.cardText).showInputDialog();
+			CardTextDialog d = new CardTextDialog(hm.card.cardText);
+			if (hm.card.cardType.doesAllowHeadings())
+			{
+				d.addHeaderIconButton();
+				d.addHeadingButton();
+			}
+			String s = d.showInputDialog();
 			if (s == null) { s = hm.card.cardText; }
 			if (s != null && s.isEmpty()) { s = null; }
 			hm.card.cardText = s;

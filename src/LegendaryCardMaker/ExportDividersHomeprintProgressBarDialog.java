@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 import org.w3c.dom.Element;
 
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMaker;
+import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMaker;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker;
@@ -77,12 +78,19 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
         		max++;
     		}
     		
-        	/*
+        	
     		for (Villain v : lcm.villains)
     		{
-    			
+    			if (!v.name.toLowerCase().equals("system_bystander_villain") 
+    					&& !v.name.toLowerCase().equals("system_wound_villain"))
+    			{
+    				VillainDividerMaker hm = new VillainDividerMaker(v, LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal);
+        			cardMakers.add(hm);
+        			max++;
+    			}
     		}
     		
+    		/*
     		for (SchemeCard s : lcm.schemes)
     		{
     			
@@ -169,7 +177,7 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
     		
     		}
     		
-    		if (i < (DividerMaker.getDividersPerRow() * DividerMaker.getDividerRows()))
+    		if (i < (DividerMaker.getDividersPerRow() * DividerMaker.getDividerRows()) && i > 0)
     		{
     			i=0;
     			try

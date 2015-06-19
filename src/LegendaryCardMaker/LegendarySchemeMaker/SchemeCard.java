@@ -64,6 +64,18 @@ public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard
 		if (cardText != null)
 			str += "SCTEXTSIZE;" + cardTextSize + "\n";
 		
+		if (imagePath != null)
+			str += "SCIMAGEPATH;" + imagePath + "\n";
+		
+		if (imagePath != null)
+			str += "SCIMAGEZOOM;" + imageZoom + "\n";
+		
+		if (imagePath != null)
+			str += "SCIMAGEOFFSETX;" + imageOffsetX + "\n";
+		
+		if (imagePath != null)
+			str += "SCIMAGEOFFSETY;" + imageOffsetY + "\n";
+		
 		str += "SCGENERATE;\n";
 		
 		return str;

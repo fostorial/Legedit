@@ -30,6 +30,8 @@ public class HeroDividerMakerFrame extends JDialog {
 	JLabel backLabel;
 	JLayeredPane layers;
 	
+	JScrollPane scroll;
+	
 	//JLabel imageLabel;
 	
 	HeroDividerMakerToolbar hmt;
@@ -218,7 +220,7 @@ public class HeroDividerMakerFrame extends JDialog {
 			});
 		}
 		
-		JScrollPane scroll = new JScrollPane();
+		scroll = new JScrollPane();
 		scroll.setViewportView(layers);
 		this.add(scroll);
 		
@@ -270,5 +272,11 @@ public class HeroDividerMakerFrame extends JDialog {
 		ImageIcon icon = new ImageIcon(resizeImage(new ImageIcon(bi), 0.5d));
 		//ImageIcon icon = new ImageIcon(new ImageIcon(bi));
 		label.setIcon(icon);
+		
+		label.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
+		backLabel.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
+		scroll.setViewportView(layers);
+		
+		validate();
 	}
 }
