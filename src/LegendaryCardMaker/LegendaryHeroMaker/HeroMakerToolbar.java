@@ -20,6 +20,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import LegendaryCardMaker.CardTextDialog;
 import LegendaryCardMaker.Icon;
+import LegendaryCardMaker.JFontChooser;
+import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
 
 public class HeroMakerToolbar extends JMenuBar implements ActionListener{
@@ -31,7 +33,7 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 	
 	JMenuItem exportJPG = new JMenuItem("Export to JPEG...");
 	JMenuItem exportPNG = new JMenuItem("Export to PNG...");
-	JMenuItem exportPrinterStudioPNG = new JMenuItem("Export to Printer Studio PNG...");
+	JMenuItem exportPrinterStudioPNG = new JMenuItem("Export to Bordered PNG...");
 	JMenuItem close = new JMenuItem("Close");
 	
 	JMenu edit = new JMenu("Edit");
@@ -43,6 +45,9 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 	
 	JMenu team = new JMenu("Team");
 	List<JCheckBoxMenuItem> teamItems = new ArrayList<JCheckBoxMenuItem>();
+	
+	JMenu secondaryTeam = new JMenu("Secondary Team");
+	List<JCheckBoxMenuItem> secondaryTeamItems = new ArrayList<JCheckBoxMenuItem>();
 	
 	JMenu power = new JMenu("Power");
 	List<JCheckBoxMenuItem> powerItems = new ArrayList<JCheckBoxMenuItem>();
@@ -61,8 +66,23 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 	JMenuItem setTeamPowerColour = new JMenuItem("Set Team/Power Underlay Colour..");
 	JMenuItem setTeamPowerRadius = new JMenuItem("Set Team/Power Blur Radius..");
 	JMenuItem setCardNameColour = new JMenuItem("Set Card Name Colour..");
+	JMenuItem setCardNameFont = new JMenuItem("Set Card Name Font..");
 	JMenuItem setHeroNameColour = new JMenuItem("Set Hero Name Colour..");
+	JMenuItem setHeroNameFont = new JMenuItem("Set Hero Name Font..");
 	JMenuItem setAbilityTextColour = new JMenuItem("Set Ability Text Colour..");
+	JMenuItem setAbilityTextFont = new JMenuItem("Set Ability Text Font..");
+	
+	JMenuItem setCostSize = new JMenuItem("Set Cost Size...");
+	JMenuItem setCostColour = new JMenuItem("Set Cost Colour..");
+	JMenuItem setCostFont = new JMenuItem("Set Cost Font..");
+	
+	JMenuItem setRecruitSize = new JMenuItem("Set Recruit Size...");
+	JMenuItem setRecruitColour = new JMenuItem("Set Recruit Colour..");
+	JMenuItem setRecruitFont = new JMenuItem("Set Recruit Font..");
+	
+	JMenuItem setAttackSize = new JMenuItem("Set Attack Size...");
+	JMenuItem setAttackColour = new JMenuItem("Set Attack Colour..");
+	JMenuItem setAttackFont = new JMenuItem("Set Attack Font..");
 	
 	JMenu nameHighlightType = new JMenu("Name Highlight Type");
 	JCheckBoxMenuItem highlightBlur = new JCheckBoxMenuItem("Blur");
@@ -135,6 +155,15 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 								}
 							}
 							
+							for (Hero h : LegendaryCardMakerFrame.lcmf.lcm.heroes)
+							{
+								if (h.name.equals(tb.hm.card.heroName))
+								{
+									h.imageSummary = null;
+								}
+							}
+							tb.hm.card.imageSummary = null;
+							
 							tb.hmf.reRenderCard();
 							tb.hm.card.changed = true;
 						}
@@ -142,6 +171,50 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 					
 					teamItems.add(m);
 					team.add(m);
+				}
+				
+				if (icon.getIconType().equals(Icon.ICON_TYPE.TEAM) || icon.getIconType().equals(Icon.ICON_TYPE.NONE))
+				{
+					String s = icon.toString().substring(0, 1).toUpperCase() + icon.toString().substring(1).toLowerCase();
+					s = s.replace("_", " ");
+					JCheckBoxMenuItem m = new JCheckBoxMenuItem(s);
+					m.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							
+							String enumValue = ((JCheckBoxMenuItem)e.getSource()).getText().replace(" ", "_").toUpperCase();
+							Icon icon = Icon.valueOf(enumValue);
+							tb.hm.card.cardTeam2 = icon;
+							
+							for (JCheckBoxMenuItem item : tb.secondaryTeamItems)
+							{
+								if (item.getText().replace(" ", "_").toUpperCase().equals(enumValue))
+								{
+									item.setSelected(true);
+								}
+								else
+								{
+									item.setSelected(false);
+								}
+							}
+							
+							for (Hero h : LegendaryCardMakerFrame.lcmf.lcm.heroes)
+							{
+								if (h.name.equals(tb.hm.card.heroName))
+								{
+									h.imageSummary = null;
+								}
+							}
+							tb.hm.card.imageSummary = null;
+							
+							tb.hmf.reRenderCard();
+							tb.hm.card.changed = true;
+						}
+					});
+					
+					secondaryTeamItems.add(m);
+					secondaryTeam.add(m);
 				}
 				
 				if (icon.getIconType().equals(Icon.ICON_TYPE.POWER) || icon.getIconType().equals(Icon.ICON_TYPE.NONE))
@@ -170,6 +243,15 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 								}
 							}
 							
+							for (Hero h : LegendaryCardMakerFrame.lcmf.lcm.heroes)
+							{
+								if (h.name.equals(tb.hm.card.heroName))
+								{
+									h.imageSummary = null;
+								}
+							}
+							tb.hm.card.imageSummary = null;
+							
 							tb.hmf.reRenderCard();
 							tb.hm.card.changed = true;
 						}
@@ -192,6 +274,19 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 				}
 			}
 			edit.add(team);
+			
+			for (JCheckBoxMenuItem item : secondaryTeamItems)
+			{
+				if (hm.card.cardTeam2 != null && item.getText().replace(" ", "_").toUpperCase().equals(hm.card.cardTeam2.toString()))
+				{
+					item.setSelected(true);
+				}
+				else
+				{
+					item.setSelected(false);
+				}
+			}
+			edit.add(secondaryTeam);
 			
 			for (JCheckBoxMenuItem item : powerItems)
 			{
@@ -261,12 +356,20 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			
 			setCardNameColour.addActionListener(this);
 			edit.add(setCardNameColour);
+			
+			setCardNameFont.addActionListener(this);
+			edit.add(setCardNameFont);
 
+			edit.addSeparator();
+			
 			setHeroNameSize.addActionListener(this);
 			edit.add(setHeroNameSize);
 			
 			setHeroNameColour.addActionListener(this);
 			edit.add(setHeroNameColour);
+			
+			setHeroNameFont.addActionListener(this);
+			edit.add(setHeroNameFont);
 			
 			edit.addSeparator();
 			
@@ -275,6 +378,42 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			
 			setAbilityTextColour.addActionListener(this);
 			edit.add(setAbilityTextColour);
+			
+			setAbilityTextFont.addActionListener(this);
+			edit.add(setAbilityTextFont);
+			
+			edit.addSeparator();
+			
+			setCostSize.addActionListener(this);
+			edit.add(setCostSize);
+			
+			setCostColour.addActionListener(this);
+			edit.add(setCostColour);
+			
+			setCostFont.addActionListener(this);
+			edit.add(setCostFont);
+			
+			edit.addSeparator();
+			
+			setRecruitSize.addActionListener(this);
+			edit.add(setRecruitSize);
+			
+			setRecruitColour.addActionListener(this);
+			edit.add(setRecruitColour);
+			
+			setRecruitFont.addActionListener(this);
+			edit.add(setRecruitFont);
+			
+			edit.addSeparator();
+			
+			setAttackSize.addActionListener(this);
+			edit.add(setAttackSize);
+			
+			setAttackColour.addActionListener(this);
+			edit.add(setAttackColour);
+			
+			setAttackFont.addActionListener(this);
+			edit.add(setAttackFont);
 			
 			edit.addSeparator();
 			
@@ -373,6 +512,10 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 							hm.exportToPNG(bi, chooser.getSelectedFile());
 						}
 					}
+					else
+					{
+						hm.exportToPNG(bi, chooser.getSelectedFile());
+					}
 				}
 				catch (Exception ex)
 				{
@@ -406,6 +549,10 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 						{
 							hm.exportToPNG(bi, chooser.getSelectedFile());
 						}
+					}
+					else
+					{
+						hm.exportToPNG(bi, chooser.getSelectedFile());
 					}
 				}
 				catch (Exception ex)
@@ -490,6 +637,29 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			hm.card.changed = true;
 		}
 		
+		if (e.getSource().equals(setAbilityTextFont))
+		{
+			JFontChooser fontChooser = new JFontChooser();
+			int outcome = fontChooser.showDialog(hmf);
+			if (outcome == JFontChooser.OK_OPTION)
+			{
+				hm.textSize = fontChooser.getSelectedFontSize();
+				hm.card.abilityTextSize = fontChooser.getSelectedFontSize();
+				
+				hm.textFontName = fontChooser.getSelectedFont().getFontName();
+				hm.textFontStyle = fontChooser.getSelectedFont().getStyle();
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.abilityTextFontNameTemplate = hm.textFontName;
+					HeroMaker.abilityTextFontStyleTemplate = hm.textFontStyle;
+					HeroMaker.abilityTextSizeTemplate = fontChooser.getSelectedFontSize();
+				}
+			}
+			hmf.reRenderCard();
+			hm.card.changed = true;
+		}
+		
 		if (e.getSource().equals(setCardNameSize))
 		{
 			String s = JOptionPane.showInputDialog(hmf, "Enter the Card Name Size", hm.cardNameSize);
@@ -508,6 +678,29 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			catch (Exception ex)
 			{
 				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			hmf.reRenderCard();
+			hm.card.changed = true;
+		}
+		
+		if (e.getSource().equals(setCardNameFont))
+		{
+			JFontChooser fontChooser = new JFontChooser();
+			int outcome = fontChooser.showDialog(hmf);
+			if (outcome == JFontChooser.OK_OPTION)
+			{
+				hm.cardNameSize = fontChooser.getSelectedFontSize();
+				hm.card.nameSize = fontChooser.getSelectedFontSize();
+				
+				hm.cardNameFontName = fontChooser.getSelectedFont().getFontName();
+				hm.cardNameFontStyle = fontChooser.getSelectedFont().getStyle();
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.cardNameFontNameTemplate = hm.cardNameFontName;
+					HeroMaker.cardNameFontStyleTemplate = hm.cardNameFontStyle;
+					HeroMaker.cardNameSizeTemplate = fontChooser.getSelectedFontSize();
+				}
 			}
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -536,6 +729,236 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			hmf.reRenderCard();
 			hm.card.changed = true;
 			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		if (e.getSource().equals(setHeroNameFont))
+		{
+			JFontChooser fontChooser = new JFontChooser();
+			int outcome = fontChooser.showDialog(hmf);
+			if (outcome == JFontChooser.OK_OPTION)
+			{
+				hm.heroNameSize = fontChooser.getSelectedFontSize();
+				hm.card.heroNameSize = fontChooser.getSelectedFontSize();
+				
+				hm.heroNameFontName = fontChooser.getSelectedFont().getFontName();
+				hm.heroNameFontStyle = fontChooser.getSelectedFont().getStyle();
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.heroNameFontNameTemplate = hm.heroNameFontName;
+					HeroMaker.heroNameFontStyleTemplate = hm.heroNameFontStyle;
+					HeroMaker.heroNameSizeTemplate = fontChooser.getSelectedFontSize();
+				}
+			}
+			hmf.reRenderCard();
+			hm.card.changed = true;
+		}
+		
+		if (e.getSource().equals(setCostSize))
+		{
+			String s = JOptionPane.showInputDialog(hmf, "Enter the Hero Name Size", hm.costSize);
+			if (s == null) { s = "" + hm.costSize; }
+			if (s != null && s.isEmpty()) { s = "" + hm.costSize; }
+			try
+			{
+				hm.costSize = Integer.parseInt(s);
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.costSizeTemplate = hm.costSize;
+				}
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			hmf.reRenderCard();
+			hm.card.changed = true;
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		if (e.getSource().equals(setCostFont))
+		{
+			JFontChooser fontChooser = new JFontChooser();
+			int outcome = fontChooser.showDialog(hmf);
+			if (outcome == JFontChooser.OK_OPTION)
+			{
+				hm.costSize = fontChooser.getSelectedFontSize();
+				
+				hm.costFontName = fontChooser.getSelectedFont().getFontName();
+				hm.costFontStyle = fontChooser.getSelectedFont().getStyle();
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.costFontNameTemplate = hm.costFontName;
+					HeroMaker.costFontStyleTemplate = hm.costFontStyle;
+					HeroMaker.costSizeTemplate = fontChooser.getSelectedFontSize();
+				}
+			}
+			hmf.reRenderCard();
+			hm.card.changed = true;
+		}
+		
+		if (e.getSource().equals(setCostColour))
+		{
+			JColorChooser chooser = new JColorChooser();
+			Color outcome = chooser.showDialog(hmf, "Select Cost colour...", hm.costColor);
+			if (outcome != null)
+			{
+				hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				try
+				{
+					HeroMaker.costColorTemplate = outcome;
+					hm.costColor = outcome;
+					
+					hmf.reRenderCard();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}
+				
+				hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		}
+		
+		if (e.getSource().equals(setAttackSize))
+		{
+			String s = JOptionPane.showInputDialog(hmf, "Enter the Hero Name Size", hm.attackSize);
+			if (s == null) { s = "" + hm.attackSize; }
+			if (s != null && s.isEmpty()) { s = "" + hm.attackSize; }
+			try
+			{
+				hm.attackSize = Integer.parseInt(s);
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.attackSizeTemplate = hm.attackSize;
+				}
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			hmf.reRenderCard();
+			hm.card.changed = true;
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		if (e.getSource().equals(setAttackFont))
+		{
+			JFontChooser fontChooser = new JFontChooser();
+			int outcome = fontChooser.showDialog(hmf);
+			if (outcome == JFontChooser.OK_OPTION)
+			{
+				hm.attackSize = fontChooser.getSelectedFontSize();
+				
+				hm.attackFontName = fontChooser.getSelectedFont().getFontName();
+				hm.attackFontStyle = fontChooser.getSelectedFont().getStyle();
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.attackFontNameTemplate = hm.attackFontName;
+					HeroMaker.attackFontStyleTemplate = hm.attackFontStyle;
+					HeroMaker.attackSizeTemplate = fontChooser.getSelectedFontSize();
+				}
+			}
+			hmf.reRenderCard();
+			hm.card.changed = true;
+		}
+		
+		if (e.getSource().equals(setAttackColour))
+		{
+			JColorChooser chooser = new JColorChooser();
+			Color outcome = chooser.showDialog(hmf, "Select Attack colour...", hm.attackColor);
+			if (outcome != null)
+			{
+				hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				try
+				{
+					HeroMaker.attackColorTemplate = outcome;
+					hm.attackColor = outcome;
+					
+					hmf.reRenderCard();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}
+				
+				hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		}
+		
+		if (e.getSource().equals(setRecruitSize))
+		{
+			String s = JOptionPane.showInputDialog(hmf, "Enter the Hero Name Size", hm.recruitSize);
+			if (s == null) { s = "" + hm.recruitSize; }
+			if (s != null && s.isEmpty()) { s = "" + hm.recruitSize; }
+			try
+			{
+				hm.recruitSize = Integer.parseInt(s);
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.recruitSizeTemplate = hm.recruitSize;
+				}
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			hmf.reRenderCard();
+			hm.card.changed = true;
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		if (e.getSource().equals(setRecruitFont))
+		{
+			JFontChooser fontChooser = new JFontChooser();
+			int outcome = fontChooser.showDialog(hmf);
+			if (outcome == JFontChooser.OK_OPTION)
+			{
+				hm.recruitSize = fontChooser.getSelectedFontSize();
+				
+				hm.recruitFontName = fontChooser.getSelectedFont().getFontName();
+				hm.recruitFontStyle = fontChooser.getSelectedFont().getStyle();
+				
+				if (hmf.templateMode)
+				{
+					HeroMaker.recruitFontNameTemplate = hm.recruitFontName;
+					HeroMaker.recruitFontStyleTemplate = hm.recruitFontStyle;
+					HeroMaker.recruitSizeTemplate = fontChooser.getSelectedFontSize();
+				}
+			}
+			hmf.reRenderCard();
+			hm.card.changed = true;
+		}
+		
+		if (e.getSource().equals(setRecruitColour))
+		{
+			JColorChooser chooser = new JColorChooser();
+			Color outcome = chooser.showDialog(hmf, "Select Recruit colour...", hm.recruitColor);
+			if (outcome != null)
+			{
+				hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				try
+				{
+					HeroMaker.recruitColorTemplate = outcome;
+					hm.recruitColor = outcome;
+					
+					hmf.reRenderCard();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}
+				
+				hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
 		}
 		
 		if (e.getSource().equals(close))

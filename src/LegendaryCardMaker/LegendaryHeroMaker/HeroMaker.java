@@ -34,60 +34,145 @@ import javax.swing.SwingUtilities;
 import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
+import LegendaryCardMaker.LegendaryCardMakerFrame;
 import LegendaryCardMaker.WordDefinition;
 
 public class HeroMaker extends CardMaker {
 	
 	//Template values
 	public static int cardNameSizeTemplate = 40;
+	public static String cardNameFontNameTemplate = null;
+	public static int cardNameFontStyleTemplate = Font.PLAIN;
 	public static Color cardNameColorTemplate = new Color (255,186,20);
 	public static int heroNameSizeTemplate = 33;
+	public static String heroNameFontNameTemplate = null;
+	public static int heroNameFontStyleTemplate = Font.PLAIN;
 	public static Color heroNameColorTemplate = new Color (255,186,20);
 	public static int abilityTextSizeTemplate = 27;
 	public static Color abilityTextColorTemplate = Color.BLACK;
+	public static String abilityTextFontNameTemplate = null;
+	public static int abilityTextFontStyleTemplate = Font.PLAIN;
 	public static Color teamPowerUnderlayColorTemplate = Color.BLACK;
 	public static int teamPowerBlurRadiusTemplate = 5;
 	public static String nameHighlightTemplate = "Blur";
 	
+	public static int costSizeTemplate = 120;
+	public static String costFontNameTemplate = null;
+	public static int costFontStyleTemplate = Font.PLAIN;
+	public static Color costColorTemplate = Color.WHITE;
+	
+	public static int attackSizeTemplate = 80;
+	public static String attackFontNameTemplate = null;
+	public static int attackFontStyleTemplate = Font.PLAIN;
+	public static Color attackColorTemplate = Color.WHITE;
+	
+	public static int recruitSizeTemplate = 80;
+	public static String recruitFontNameTemplate = null;
+	public static int recruitFontStyleTemplate = Font.PLAIN;
+	public static Color recruitColorTemplate = Color.WHITE;
+	
 	public static void resetTemplateValues()
 	{
 		cardNameSizeTemplate = 40;
+		cardNameFontNameTemplate = null;
+		cardNameFontStyleTemplate = Font.PLAIN;
 		cardNameColorTemplate = new Color (255,186,20);
 		heroNameSizeTemplate = 33;
+		heroNameFontNameTemplate = null;
+		heroNameFontStyleTemplate = Font.PLAIN;
 		heroNameColorTemplate = new Color (255,186,20);
 		abilityTextSizeTemplate = 27;
 		abilityTextColorTemplate = Color.BLACK;
+		abilityTextFontNameTemplate = null;
+		abilityTextFontStyleTemplate = Font.PLAIN;
 		teamPowerUnderlayColorTemplate = Color.BLACK;
 		teamPowerBlurRadiusTemplate = 5;
 		nameHighlightTemplate = "Blur";
+		
+		costSizeTemplate = 120;
+		costFontNameTemplate = null;
+		costFontStyleTemplate = Font.PLAIN;
+		costColorTemplate = Color.WHITE;
+		
+		attackSizeTemplate = 80;
+		attackFontNameTemplate = null;
+		attackFontStyleTemplate = Font.PLAIN;
+		attackColorTemplate = Color.WHITE;
+		
+		recruitSizeTemplate = 80;
+		recruitFontNameTemplate = null;
+		recruitFontStyleTemplate = Font.PLAIN;
+		recruitColorTemplate = Color.WHITE;
 	}
 	
 	public void resetTemplateValuesInstance()
 	{
 		cardNameSize = 40;
+		cardNameFontName = null;
+		cardNameFontStyle = Font.PLAIN;
 		cardNameColor = new Color (255,186,20);
 		heroNameSize = 33;
+		heroNameFontName = null;
+		heroNameFontStyle = Font.PLAIN;
 		heroNameColor = new Color (255,186,20);
 		textSize = 27;
 		textColor = Color.BLACK;
+		textFontName = null;
+		textFontStyle = Font.PLAIN;
 		teamPowerUnderlayColor = Color.BLACK;
 		teamBlurRadius = 5;
 		powerBlurRadius = 5;
 		nameHighlight = "Blur";
+		
+		costSize = 120;
+		costFontName = null;
+		costFontStyle = Font.PLAIN;
+		costColor = Color.WHITE;
+		
+		attackSize = 80;
+		attackFontName = null;
+		attackFontStyle = Font.PLAIN;
+		attackColor = Color.WHITE;
+		
+		recruitSize = 80;
+		recruitFontName = null;
+		recruitFontStyle = Font.PLAIN;
+		recruitColor = Color.WHITE;
 	}
 	
 	public void loadTemplateDefaults()
 	{
 		cardNameSize = cardNameSizeTemplate;
 		cardNameColor = cardNameColorTemplate;
+		cardNameFontName = cardNameFontNameTemplate;
+		cardNameFontStyle = cardNameFontStyleTemplate;
 		heroNameSize = heroNameSizeTemplate;
 		heroNameColor = heroNameColorTemplate;
+		heroNameFontName = heroNameFontNameTemplate;
+		heroNameFontStyle = heroNameFontStyleTemplate;
 		textSize = abilityTextSizeTemplate;
 		textColor = abilityTextColorTemplate;
+		textFontName = abilityTextFontNameTemplate;
+		textFontStyle = abilityTextFontStyleTemplate;
 		teamPowerUnderlayColor = teamPowerUnderlayColorTemplate;
 		teamBlurRadius = teamPowerBlurRadiusTemplate;
 		powerBlurRadius = teamPowerBlurRadiusTemplate;
 		nameHighlight = nameHighlightTemplate;
+		
+		costSize = costSizeTemplate;
+		costColor = costColorTemplate;
+		costFontName = costFontNameTemplate;
+		costFontStyle = costFontStyleTemplate;
+		
+		attackSize = attackSizeTemplate;
+		attackColor = attackColorTemplate;
+		attackFontName = attackFontNameTemplate;
+		attackFontStyle = attackFontStyleTemplate;
+		
+		recruitSize = recruitSizeTemplate;
+		recruitColor = recruitColorTemplate;
+		recruitFontName = recruitFontNameTemplate;
+		recruitFontStyle = recruitFontStyleTemplate;
 	}
 	
 	public static String generateTemplateOutputString()
@@ -106,11 +191,26 @@ public class HeroMaker extends CardMaker {
 		if (cardNameColorTemplate != null)
 			str += "HCTCARDNAMECOLOUR;" + cardNameColorTemplate.getRGB() + "\n";
 		
+		if (cardNameFontNameTemplate != null)
+			str += "HCTCARDNAMEFONTNAME;" + cardNameFontNameTemplate + "\n";
+		
+		str += "HCTCARDNAMEFONTSTYLE;" + cardNameFontStyleTemplate + "\n";
+		
 		if (heroNameColorTemplate != null)
 			str += "HCTHERONAMECOLOUR;" + heroNameColorTemplate.getRGB() + "\n";
 		
+		if (heroNameFontNameTemplate != null)
+			str += "HCTHERONAMEFONTNAME;" + heroNameFontNameTemplate + "\n";
+		
+		str += "HCTHERONAMEFONTSTYLE;" + heroNameFontStyleTemplate + "\n";
+		
 		if (abilityTextColorTemplate != null)
 			str += "HCTABILITYTEXTCOLOUR;" + abilityTextColorTemplate.getRGB() + "\n";
+		
+		if (abilityTextFontNameTemplate != null)
+			str += "HCTABILITYTEXTFONTNAME;" + abilityTextFontNameTemplate + "\n";
+		
+		str += "HCTABILITYTEXTFONTSTYLE;" + abilityTextFontStyleTemplate + "\n";
 		
 		if (teamPowerUnderlayColorTemplate != null)
 			str += "HCTTEAMPOWERUNDERLAYCOLOUR;" + teamPowerUnderlayColorTemplate.getRGB() + "\n";
@@ -120,6 +220,39 @@ public class HeroMaker extends CardMaker {
 		
 		if (nameHighlightTemplate != null)
 			str += "HCTNAMEHIGHLIGHTTYPE;" + nameHighlightTemplate + "\n";
+		
+		if (costSizeTemplate > 0)
+			str += "HCTCOSTSIZE;" + costSizeTemplate + "\n";
+		
+		if (costColorTemplate != null)
+			str += "HCTCOSTCOLOUR;" + costColorTemplate.getRGB() + "\n";
+		
+		if (costFontNameTemplate != null)
+			str += "HCTCOSTFONTNAME;" + costFontNameTemplate + "\n";
+		
+		str += "HCTCOSTFONTSTYLE;" + costFontStyleTemplate + "\n";
+		
+		if (attackSizeTemplate > 0)
+			str += "HCTATTACKSIZE;" + attackSizeTemplate + "\n";
+		
+		if (attackColorTemplate != null)
+			str += "HCTATTACKCOLOUR;" + attackColorTemplate.getRGB() + "\n";
+		
+		if (attackFontNameTemplate != null)
+			str += "HCTATTACKFONTNAME;" + attackFontNameTemplate + "\n";
+		
+		str += "HCTATTACKFONTSTYLE;" + attackFontStyleTemplate + "\n";
+		
+		if (recruitSizeTemplate > 0)
+			str += "HCTRECRUITSIZE;" + recruitSizeTemplate + "\n";
+		
+		if (recruitColorTemplate != null)
+			str += "HCTRECRUITCOLOUR;" + recruitColorTemplate.getRGB() + "\n";
+		
+		if (recruitFontNameTemplate != null)
+			str += "HCTRECRUITFONTNAME;" + recruitFontNameTemplate + "\n";
+		
+		str += "HCTRECRUITFONTSTYLE;" + recruitFontStyleTemplate + "\n";
 		
 		str +="\n";
 		
@@ -135,7 +268,7 @@ public class HeroMaker extends CardMaker {
 	int dpi = 300;
 	
 	boolean exportImage = false;
-	boolean exportToPNG = true;
+	public boolean exportToPNG = true;
 	
 	Color teamPowerUnderlayColor = Color.BLACK;
 	
@@ -159,6 +292,8 @@ public class HeroMaker extends CardMaker {
 	
 	public String nameHighlight = "Blur";
 	
+	public String cardNameFontName = null;
+	public int cardNameFontStyle = Font.PLAIN;
 	public int cardNameSize = 40;
 	int cardNameMinSize = 30;
 	int cardNameY = 50;
@@ -168,6 +303,8 @@ public class HeroMaker extends CardMaker {
 	int cardNameBlurRadius = 5;
 	boolean cardNameBlurDouble = true;
 	
+	public String heroNameFontName = null;
+	public int heroNameFontStyle = Font.PLAIN;
 	public int heroNameSize = 33;
 	int heroNameMinSize = 30;
 	int heroNameY = 85;
@@ -177,27 +314,33 @@ public class HeroMaker extends CardMaker {
 	int heroNameBlurRadius = 5;
 	boolean heroNameBlurDouble = true;
 	
-	int costSize = 120;
+	public String costFontName = null;
+	public int costFontStyle = Font.PLAIN;
+	public int costSize = 120;
 	int costX = 635;
-	int costY = 993;
+	int costY = 960;
 	Color costColor = Color.WHITE;
 	boolean includeBlurredBGCost = true;
 	int expandCost = 5;
 	int costBlurRadius = 5;
 	boolean costBlurDouble = false;
 	
+	public String recruitFontName = null;
+	public int recruitFontStyle = Font.PLAIN;
 	int recruitSize = 80;
 	int recruitX = 98;
-	int recruitY = 791;
+	int recruitY = 766;
 	Color recruitColor = Color.WHITE;
 	boolean includeBlurredBGRecruit = true;
 	int expandRecruit = 3;
 	int recruitBlurRadius = 3;
 	boolean recruitBlurDouble = false;
 	
+	public String attackFontName = null;
+	public int attackFontStyle = Font.PLAIN;
 	int attackSize = 80;
 	int attackX = 87;
-	int attackY = 942;
+	int attackY = 917;
 	Color attackColor = Color.WHITE;
 	boolean includeBlurredBGAttack = true;
 	int expandAttack = 3;
@@ -205,6 +348,8 @@ public class HeroMaker extends CardMaker {
 	boolean attackBlurDouble = false;
 	HashMap<String, Integer> costOffsets = new HashMap<String, Integer>();
 	
+	public String textFontName = null;
+	public int textFontStyle = Font.PLAIN;
 	public int textSize = 27;
 	int textX = 154;
 	int textY = 805;
@@ -247,6 +392,15 @@ public class HeroMaker extends CardMaker {
 	public void setCard(HeroCard c)
 	{
 		card = c;
+		
+		if (card.nameSize > 0)
+			cardNameSize = card.nameSize;
+		
+		if (card.heroNameSize > 0)
+			heroNameSize = card.heroNameSize;
+		
+		if (card.abilityTextSize > 0)
+			textSize = card.abilityTextSize;
 	}
 	
 	public void populateHeroCard()
@@ -294,7 +448,7 @@ public class HeroMaker extends CardMaker {
 	
 	public BufferedImage generateCard()
 	{
-		int type = BufferedImage.TYPE_INT_RGB;
+		int type = BufferedImage.TYPE_INT_ARGB;
 		if (exportToPNG)
 		{
 			type = BufferedImage.TYPE_INT_ARGB;	
@@ -314,7 +468,12 @@ public class HeroMaker extends CardMaker {
 	    
 	    if (card.imagePath != null)
 	    {
-	    	BufferedImage bi = resizeImage(new ImageIcon(card.imagePath), card.imageZoom);
+	    	String imagePath = card.imagePath;
+	    	if (!imagePath.contains(File.separator) && LegendaryCardMakerFrame.lcmf.lcm.currentFile != null)
+	    	{
+	    		imagePath = new File(LegendaryCardMakerFrame.lcmf.lcm.currentFile).getParent() + File.separator + card.imagePath;
+	    	}
+	    	BufferedImage bi = resizeImage(new ImageIcon(imagePath), card.imageZoom);
 	    	g.drawImage(bi, card.imageOffsetX, card.imageOffsetY, null);
 	    }
 
@@ -509,6 +668,11 @@ public class HeroMaker extends CardMaker {
 	    		font = new Font("Percolator", Font.PLAIN, cardNameSize);
 	    		g2.setFont(font);
 	    	}
+	    	if (cardNameFontName != null)
+    		{
+    			font = new Font(cardNameFontName, cardNameFontStyle, cardNameSize);
+    			g2.setFont(font);
+    		}
 	        metrics = g2.getFontMetrics(font);
 	        int newNameHeight = metrics.getHeight();
 	        nameHeightDifference = newNameHeight - originalNameHeight;
@@ -578,6 +742,10 @@ public class HeroMaker extends CardMaker {
 	    		font = new Font("Percolator", Font.PLAIN, heroNameSize);
 	    		g2.setFont(font);
 	    	}
+	        if (heroNameFontName != null)
+    		{
+    			font = new Font(heroNameFontName, heroNameFontStyle, heroNameSize);
+    		}
 	        g2.setFont(font);
 	        metrics = g2.getFontMetrics(font);
 	        int newHeroHeight = metrics.getHeight();
@@ -610,16 +778,35 @@ public class HeroMaker extends CardMaker {
 	    // Card Team
 	    if (card.cardTeam != null && card.cardTeam.getImagePath() != null)
 	    {
-	    	BufferedImage bi = getIcon(card.cardTeam, teamMaxWidth, teamMaxHeight);
-	    	int x = teamIconX - (bi.getWidth() / 2);
-	    	int y = teamIconY - (bi.getWidth() / 2);
-	    	
-	    	if (includeBlurredBGTeam)
+	    	if (card.cardTeam2 != null && card.cardTeam != null && !card.cardTeam2.equals(Icon.valueOf("NONE")))
 	    	{
-	    		drawUnderlay(bi, g, type, x, y, teamBlurRadius, teamBlurDouble, expandTeam, teamPowerUnderlayColor);
+	    		BufferedImage bi1 = getIcon(card.cardTeam, teamMaxWidth, teamMaxHeight);
+	    		BufferedImage bi2 = getIcon(card.cardTeam2, teamMaxWidth, teamMaxHeight);
+		    	int x = teamIconX - (bi1.getWidth() / 2);
+		    	int y = teamIconY - (bi1.getWidth() / 2);
+		    	
+		    	if (includeBlurredBGTeam)
+		    	{
+		    		drawUnderlay(bi1, g, type, x, y, teamBlurRadius, teamBlurDouble, expandTeam, teamPowerUnderlayColor);
+		    		drawUnderlay(bi2, g, type, x + bi1.getWidth(), y, teamBlurRadius, teamBlurDouble, expandTeam, teamPowerUnderlayColor);
+		    	}
+		    	
+		    	g.drawImage(bi1, x, y, null);
+		    	g.drawImage(bi2, x + bi1.getWidth(), y, null);
 	    	}
-	    	
-	    	g.drawImage(bi, x, y, null);
+	    	else
+	    	{
+	    		BufferedImage bi = getIcon(card.cardTeam, teamMaxWidth, teamMaxHeight);
+		    	int x = teamIconX - (bi.getWidth() / 2);
+		    	int y = teamIconY - (bi.getWidth() / 2);
+		    	
+		    	if (includeBlurredBGTeam)
+		    	{
+		    		drawUnderlay(bi, g, type, x, y, teamBlurRadius, teamBlurDouble, expandTeam, teamPowerUnderlayColor);
+		    	}
+		    	
+		    	g.drawImage(bi, x, y, null);
+	    	}
 	    }
 	    
 	    // Card Power
@@ -660,18 +847,24 @@ public class HeroMaker extends CardMaker {
 	    		
 	    		font = new Font("Sylfaen", Font.PLAIN, recruitSize);
 	    	}
+	    	if (recruitFontName != null)
+    		{
+    			font = new Font(recruitFontName, recruitFontStyle, recruitSize);
+    		}
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.recruit.toUpperCase());
 	        int x = recruitX - (stringLength / 2);
 	        
-	        g2.drawString(card.recruit.toUpperCase(), x, recruitY);
+	        int recruitYModified = recruitY + metrics.getDescent();
+	        
+	        g2.drawString(card.recruit.toUpperCase(), x, recruitYModified);
 	    	if (includeBlurredBGRecruit)
 	    	{
 	    		drawUnderlay(bi, g2, type, 0, 0, recruitBlurRadius, recruitBlurDouble, expandRecruit, Color.black);
 	    	}
 	    	
-	    	g2.drawString(card.recruit.toUpperCase(), x, recruitY);
+	    	g2.drawString(card.recruit.toUpperCase(), x, recruitYModified);
 	    	
 	    	//bi = blurImage(bi, g2, 2);
 	    	g.drawImage(bi, 0, 0, null);
@@ -702,18 +895,24 @@ public class HeroMaker extends CardMaker {
 	    		
 	    		font = new Font("Sylfaen", Font.PLAIN, attackSize);
 	    	}
+	    	if (attackFontName != null)
+    		{
+    			font = new Font(attackFontName, attackFontStyle, attackSize);
+    		}
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.attack.toUpperCase());
 	        int x = attackX - (stringLength / 2);
 	        
-	        g2.drawString(card.attack.toUpperCase(), x, attackY);
+	        int attackYModified = attackY + metrics.getDescent();
+	        
+	        g2.drawString(card.attack.toUpperCase(), x, attackYModified);
 	    	if (includeBlurredBGAttack)
 	    	{
 	    		drawUnderlay(bi, g2, type, 0, 0, attackBlurRadius, attackBlurDouble, expandAttack, Color.black);
 	    	}
 	    	
-	    	g2.drawString(card.attack.toUpperCase(), x, attackY);
+	    	g2.drawString(card.attack.toUpperCase(), x, attackYModified);
 	    	
 	    	//bi = blurImage(bi, g2, 2);
 	    	g.drawImage(bi, 0, 0, null);
@@ -754,6 +953,10 @@ public class HeroMaker extends CardMaker {
 	    	{
 	    		Font font = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Light Condensed.ttf"));
 	    		font = font.deriveFont((float)textSize);
+	    		if (textFontName != null)
+	    		{
+	    			font = new Font(textFontName, textFontStyle, textSize);
+	    		}
 	    		g2.setFont(font);
 	    		
 	    		Font fontBold = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Black Condensed.ttf"));
@@ -947,6 +1150,22 @@ public class HeroMaker extends CardMaker {
 	    	Font font = null;
 	    	try
 	    	{
+	    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
+	        font = font.deriveFont((float)120);
+	        g2.setFont(font);
+	    	}
+	    	catch (Exception e)
+	    	{
+	    		e.printStackTrace();
+	    		
+	    		font = new Font("Percolator", Font.PLAIN, 120);
+	    		g2.setFont(font);
+	    	}
+	        FontMetrics metrics = g2.getFontMetrics(font);
+	        int originalHeight = metrics.getHeight();
+	        
+	    	try
+	    	{
 	    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Sylfaen.ttf"));
 	        font = font.deriveFont((float)costSize);
 	    	}
@@ -956,27 +1175,39 @@ public class HeroMaker extends CardMaker {
 	    		
 	    		font = new Font("Sylfaen", Font.PLAIN, costSize);
 	    	}
+	    	if (costFontName != null)
+    		{
+    			font = new Font(costFontName, costFontStyle, costSize);
+    		}
 	        g2.setFont(font);
-	        FontMetrics metrics = g2.getFontMetrics(font);
+	        metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.cost.toUpperCase());
+	        int newHeight = metrics.getHeight();
 	        
 	        Integer offset = costOffsets.get("");
 	        int primitiveOffset = 0; 
 	        for (char c : card.cost.toCharArray())
 	        {
 	        	offset = costOffsets.get("" + c);
-	        	if (offset != null) { primitiveOffset += offset.intValue(); }
+	        	if (offset != null) 
+	        	{
+	        		double percentage = (double)newHeight / (double)originalHeight;
+	        		
+	        		primitiveOffset += getPercentage(offset.intValue(), percentage); 
+	        	}
 	        }
 	        int x = costX - (stringLength / 2) + primitiveOffset;
 	        //System.out.println("cost x =" + x);
 	        
-	        g2.drawString(card.cost.toUpperCase(), x, costY);
+	        int costYModified = costY + metrics.getDescent();
+	        
+	        g2.drawString(card.cost.toUpperCase(), x, costYModified);
 	    	if (includeBlurredBGCost)
 	    	{
 	    		drawUnderlay(bi, g2, type, 0, 0, costBlurRadius, costBlurDouble, expandCost, Color.black);
 	    	}
 	    	
-	    	g2.drawString(card.cost.toUpperCase(), x, costY);
+	    	g2.drawString(card.cost.toUpperCase(), x, costYModified);
 	    	
 	    	bi = blurImage(bi, g2, 2);
 	    	g.drawImage(bi, 0, 0, null);
@@ -1018,39 +1249,18 @@ public class HeroMaker extends CardMaker {
 	{
 		System.out.println("Exporting: " + newFile.getName());
 		
+		BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics g = bi.getGraphics();
+		g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+		g.dispose();
+		
 		File dir = new File(exportFolder);
 		dir.mkdirs();
 		
-		FileOutputStream fos = new FileOutputStream(newFile);
-		ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
-		//JPEGImageWriter imageWriter = (JPEGImageWriter) ImageIO.getImageWritersBySuffix("jpeg").next();
-	    ImageOutputStream ios = ImageIO.createImageOutputStream(fos);
-	    imageWriter.setOutput(ios);
-	 
-	    //and metadata
-	    IIOMetadata imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(image), null);
-	    
-	    /*
-	  //new metadata
-        Element tree = (Element) imageMetaData.getAsTree("javax_imageio_jpeg_image_1.0");
-        Element jfif = (Element)tree.getElementsByTagName("app0JFIF").item(0);
-        jfif.setAttribute("Xdensity", Integer.toString(dpi));
-		jfif.setAttribute("Ydensity", Integer.toString(dpi));
-		jfif.setAttribute("resUnits", "1"); // density is dots per inch	
-        imageMetaData.setFromTree("javax_imageio_jpeg_image_1.0", tree);
-        */
-        
-        JPEGImageWriteParam jpegParams = (JPEGImageWriteParam) imageWriter.getDefaultWriteParam();
-        jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-        jpegParams.setCompressionQuality(1f);
-        
-      //new Write and clean up
-        imageWriter.write(null, new IIOImage(image, null, imageMetaData), jpegParams);
-        ios.close();
-        imageWriter.dispose();
+		ImageIO.write(bi, "jpeg", newFile);
 	}
 	
-	public static void exportToPNG(BufferedImage image, File newFile) throws Exception
+	public void exportToPNG(BufferedImage image, File newFile) throws Exception
 	{
 		System.out.println("Exporting: " + newFile.getName());
 		ImageIO.write(image, "png", newFile);

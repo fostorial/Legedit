@@ -456,7 +456,15 @@ public class LegendaryCardMakerFrame extends JFrame {
 
             JLabel label = (JLabel) super.getListCellRendererComponent(
                     list, value, index, isSelected, cellHasFocus);
-            label.setIcon(new ImageIcon(getImageSummary(hero)));
+            if (hero.imageSummary != null)
+            {
+            	label.setIcon(hero.imageSummary);
+            }
+            else
+            {
+            	hero.imageSummary = new ImageIcon(getImageSummary(hero));
+            	label.setIcon(hero.imageSummary);
+            }
             label.setHorizontalTextPosition(JLabel.RIGHT);
             
             String s = hero.name;
@@ -807,6 +815,8 @@ public class LegendaryCardMakerFrame extends JFrame {
 	
 	public void createNewExpansion()
 	{
+		lcm.keywords = "";
+		
 		lcm.heroes = new ArrayList<Hero>();
 		lcm.villains = new ArrayList<Villain>();
 		lcm.schemes = new ArrayList<SchemeCard>();

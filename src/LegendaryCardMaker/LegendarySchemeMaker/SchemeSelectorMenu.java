@@ -5,7 +5,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBoxMenuItem;
@@ -21,12 +23,17 @@ import LegendaryCardMaker.CardMakerToolbar;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
+import LegendaryCardMaker.LegendaryHeroMaker.HeroCardSelector;
 
 public class SchemeSelectorMenu extends JMenu implements ActionListener{
 	
 	JMenuItem newHero = new JMenuItem("New Scheme...");
+	JMenuItem edit = new JMenuItem("Edit Scheme...");
 	JMenuItem rename = new JMenuItem("Rename Scheme...");
 	JMenuItem delete = new JMenuItem("Delete Scheme...");
+	JMenuItem copy = new JMenuItem("Copy Scheme...");
+	
+	JMenuItem random = new JMenuItem("Random Scheme...");
 	
 	public LegendaryCardMakerFrame lcmf;
 	
@@ -44,11 +51,24 @@ public class SchemeSelectorMenu extends JMenu implements ActionListener{
 		
 		addSeparator();
 		
+		edit.addActionListener(this);
+		add(edit);
+		
 		//rename.addActionListener(this);
 		//add(rename);
 		
 		delete.addActionListener(this);
 		add(delete);
+		
+		addSeparator();
+		
+		copy.addActionListener(this);
+		add(copy);
+		
+		addSeparator();
+		
+		random.addActionListener(this);
+		add(random);
 	}
 
 	@Override
@@ -86,6 +106,35 @@ public class SchemeSelectorMenu extends JMenu implements ActionListener{
 			{
 				lcmf.lcm.schemes.remove(getCurrentScheme());
 				getSchemeListModel().removeElement(getCurrentScheme());
+			}
+		}
+		
+		if (e.getSource().equals(edit))
+		{
+			if (getCurrentScheme() == null)
+			{
+				return;
+			}
+			new SchemeMakerFrame(getCurrentScheme());
+		}
+		
+		if (e.getSource().equals(copy))
+		{
+			if (getCurrentScheme() == null)
+			{
+				return;
+			}
+			SchemeCard c = getCurrentScheme().getCopy();
+			lcmf.schemeListModel.addElement(c);
+			lcmf.lcm.schemes.add(c);
+		}
+		
+		if (e.getSource().equals(random))
+		{
+			if (lcmf.schemeListModel.size() > 0)
+			{
+				Random rand = new Random(new Date().getTime());
+				new SchemeMakerFrame((SchemeCard)lcmf.schemeListModel.get(rand.nextInt(lcmf.schemeListModel.size())));
 			}
 		}
 	}

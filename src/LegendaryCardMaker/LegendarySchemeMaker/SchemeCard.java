@@ -1,11 +1,13 @@
 package LegendaryCardMaker.LegendarySchemeMaker;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Comparator;
 
 import LegendaryCardMaker.Icon;
+import LegendaryCardMaker.LegendaryItem;
 
-public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard> {
+public class SchemeCard extends LegendaryItem implements Comparator<SchemeCard>, Comparable<SchemeCard>, Cloneable {
 
 	public String name;
 	public int cardNameSize;
@@ -19,6 +21,7 @@ public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard
 	public double imageZoom = 1.0d;
 	public int imageOffsetX = 0;
 	public int imageOffsetY = 0;
+	public int numberInDeck = 1;
 	
 	public String getCardName(String exportDir)
 	{
@@ -39,6 +42,11 @@ public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard
 	}
 	
 	public String generateOutputString()
+	{
+		return generateOutputString(false);
+	}
+	
+	public String generateOutputString(boolean fullExport)
 	{
 		String str = "";
 		
@@ -76,6 +84,8 @@ public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard
 		if (imagePath != null)
 			str += "SCIMAGEOFFSETY;" + imageOffsetY + "\n";
 		
+		str += "SCNUMBERINDECK;" + numberInDeck + "\n";
+		
 		str += "SCGENERATE;\n";
 		
 		return str;
@@ -96,7 +106,7 @@ public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard
 		String str = "";
 		
 		str += cardType.toString() + "\n";
-		str += name + "\n";
+		str += name + " x " + numberInDeck + "\n";
 		
 		if (subCategory != null)
 		{
@@ -104,10 +114,21 @@ public class SchemeCard implements Comparator<SchemeCard>, Comparable<SchemeCard
 		}
 		
 		if (cardText != null)
-			cardText.replace("<k>", "").replace("<r>", "").replace(" <g> ", "\n").replace("</h>", "\n").replace("<h>", "\n");
+		{
+			str += cardText.replace("<k>", "").replace("<r>", "").replace(" <g> ", "\n").replace("</h>", "\n").replace("<h>", "\n");
+		}
 		
 		str += "\n";
 		
 		return str;
+	}
+	
+	public SchemeCard getCopy()
+	{
+		try {
+			return (SchemeCard) clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 }

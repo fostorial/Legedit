@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.swing.ImageIcon;
+
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
@@ -22,6 +24,7 @@ public class HeroCard {
 	public int heroNameSize;
 	public CardRarity rarity;
 	public Icon cardTeam;
+	public Icon cardTeam2;
 	public Icon cardPower;
 	public String attack;
 	public String recruit;
@@ -33,6 +36,8 @@ public class HeroCard {
 	public double imageZoom = 1.0d;
 	public int imageOffsetX = 0;
 	public int imageOffsetY = 0;
+	
+	public ImageIcon imageSummary;
 	
 	public String getCardName(String exportDir)
 	{
@@ -85,6 +90,11 @@ public class HeroCard {
 	
 	public String generateOutputString()
 	{
+		return generateOutputString(false);
+	}
+	
+	public String generateOutputString(boolean fullExport)
+	{
 		String str = "";
 		
 		//str += "HCNAMESIZE;" + 40 + "\n";
@@ -104,6 +114,9 @@ public class HeroCard {
 		
 		if (cardTeam != null)
 			str += "HCTEAM;" + cardTeam.toString() + "\n";
+		
+		if (cardTeam2 != null)
+			str += "HCTEAM2;" + cardTeam2.toString() + "\n";
 		
 		if (cardPower != null)
 			str += "HCPOWER;" + cardPower.toString() + "\n";
@@ -150,7 +163,12 @@ public class HeroCard {
 		str += name;
 		str += "\n";
 		
-		str += cardTeam.toString() + ", " + cardPower.toString();
+		str += cardTeam.toString();
+				
+		if (cardTeam2 != null) 
+			str += " + " + cardTeam2.toString();
+			
+		str += ", " + cardPower.toString();
 		str += "\n";
 		
 		if (attack != null || recruit != null || cost != null)

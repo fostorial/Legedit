@@ -54,6 +54,8 @@ public class ExportHomeprintProgressBarDialog extends JPanel
     private JDialog frame;
     
     private String exportFileName = "export_";
+    
+    private List<CardMaker> cardMakers;
  
     class Task extends SwingWorker<Void, Void> {
     	
@@ -65,48 +67,61 @@ public class ExportHomeprintProgressBarDialog extends JPanel
         @Override
         public Void doInBackground() throws Exception
         {
-        	List<CardMaker> cardMakers = new ArrayList<CardMaker>();
-        	
         	int max = 0;
-        	
-        	for (Hero h : lcm.heroes)
-    		{
-        		for (HeroCard hc : h.cards)
+        	if (cardMakers == null)
+        	{
+        		cardMakers = new ArrayList<CardMaker>();
+        		
+        		for (Hero h : lcm.heroes)
         		{
-        			HeroMaker hm = new HeroMaker();
-        			hm.setCard(hc);
-        			for (int i = 0; i < hc.rarity.getCount(); i++)
+            		for (HeroCard hc : h.cards)
+            		{
+            			HeroMaker hm = new HeroMaker();
+            			hm.setCard(hc);
+            			for (int i = 0; i < hc.rarity.getCount(); i++)
+            			{
+            				cardMakers.add(hm);
+            				max++; 
+            			}
+            		}
+        		}
+        		
+        		for (Villain v : lcm.villains)
+        		{
+        			for (VillainCard vc : v.cards)
         			{
-        				cardMakers.add(hm);
-        				max++; 
+        				VillainMaker vm = new VillainMaker();
+        				vm.setCard(vc);
+        				
+        				int count = vc.cardType.getCount();
+        				if (vc.numberInDeck > 0)
+        				{
+        					count = vc.numberInDeck;
+        				}
+        				for (int i = 0; i < count; i++)
+            			{
+        					cardMakers.add(vm);
+        					max++;
+            			}
         			}
         		}
-    		}
-    		
-    		for (Villain v : lcm.villains)
-    		{
-    			for (VillainCard vc : v.cards)
-    			{
-    				VillainMaker vm = new VillainMaker();
-    				vm.setCard(vc);
-    				for (int i = 0; i < vc.cardType.getCount(); i++)
+        		
+        		for (SchemeCard s : lcm.schemes)
+        		{
+        			SchemeMaker sm = new SchemeMaker();
+        			sm.setCard(s);
+        			
+        			for (int i = 0; i < s.numberInDeck; i++)
         			{
-    					cardMakers.add(vm);
+    					cardMakers.add(sm);
     					max++;
         			}
-    			}
-    		}
-    		
-    		for (SchemeCard s : lcm.schemes)
-    		{
-    			SchemeMaker sm = new SchemeMaker();
-    			sm.setCard(s);
-    			cardMakers.add(sm);
-    			max++;
-    			
-    			//frame.setTitle("Exporting (" + (getCurrentValue()+1) + "/" + getMaxValue() + ")...");
-    			//setProgress(currentValue++);
-    		}
+        		}
+        	}
+        	else
+        	{
+        		max = cardMakers.size();
+        	}
     		
     		setMaxValue(max);
     		double progressDouble = 0d;
@@ -215,11 +230,12 @@ public class ExportHomeprintProgressBarDialog extends JPanel
         
     }
  
-    public ExportHomeprintProgressBarDialog(int maxValue, LegendaryCardMaker lcm, File folder) {
+    public ExportHomeprintProgressBarDialog(int maxValue, LegendaryCardMaker lcm, File folder, List<CardMaker> cardMakers) {
         super(new BorderLayout());
         
         this.lcm = lcm;
         this.folder = folder;
+        this.cardMakers = cardMakers;
         
         this.maxValue = maxValue;
  

@@ -24,7 +24,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.7";
+	public static String version = "0.8";
 
 	public String inputFile = null;
 	
@@ -64,6 +64,7 @@ public class LegendaryCardMaker {
 	public Color dividerTitleBarColour = Color.WHITE;
 	public String dividerCardStyle = "PowerIcons";
 	public String dividerBodyStyle = "Images";
+	public String keywords = "";
 	
 	public static void main(String[] args)
 	{
@@ -110,6 +111,8 @@ public class LegendaryCardMaker {
 		woundVillain.name = "system_wound_villain";
 		villains.add(woundVillain);
 		
+		keywords = "";
+		
 		Hero h = new Hero();
 		HeroCard hc = new HeroCard();
 		HeroMaker hm = new HeroMaker();
@@ -154,6 +157,11 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("EXPANSIONSTYLE;"))
 				   {
 					   expansionStyle = line.replace("EXPANSIONSTYLE;", "");
+				   }
+				   
+				   if (line.startsWith("KEYWORDS;"))
+				   {
+					   keywords = line.replace("KEYWORDS;", "");
 				   }
 				   
 				   if (line.startsWith("DIVIDERORIENTATION;"))
@@ -241,14 +249,44 @@ public class LegendaryCardMaker {
 					   HeroMaker.cardNameSizeTemplate = Integer.parseInt(line.replace("HCTCARDNAMESIZE;", ""));
 				   }
 				   
+				   if (line.startsWith("HCTCARDNAMEFONTNAME;"))
+				   {
+					   HeroMaker.cardNameFontNameTemplate = line.replace("HCTCARDNAMEFONTNAME;", "");
+				   }
+				   
+				   if (line.startsWith("HCTCARDNAMEFONTSTYLE;"))
+				   {
+					   HeroMaker.cardNameFontStyleTemplate = Integer.parseInt(line.replace("HCTCARDNAMEFONTSTYLE;", ""));
+				   }
+				   
 				   if (line.startsWith("HCTHERONAMESIZE;"))
 				   {
 					   HeroMaker.heroNameSizeTemplate = Integer.parseInt(line.replace("HCTHERONAMESIZE;", ""));
 				   }
 				   
+				   if (line.startsWith("HCTHERONAMEFONTNAME;"))
+				   {
+					   HeroMaker.heroNameFontNameTemplate = line.replace("HCTHERONAMEFONTNAME;", "");
+				   }
+				   
+				   if (line.startsWith("HCTHERONAMEFONTSTYLE;"))
+				   {
+					   HeroMaker.heroNameFontStyleTemplate = Integer.parseInt(line.replace("HCTHERONAMEFONTSTYLE;", ""));
+				   }
+				   
 				   if (line.startsWith("HCTABILITYTEXTSIZE;"))
 				   {
 					   HeroMaker.abilityTextSizeTemplate = Integer.parseInt(line.replace("HCTABILITYTEXTSIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTABILITYTEXTFONTNAME;"))
+				   {
+					   HeroMaker.abilityTextFontNameTemplate = line.replace("HCTABILITYTEXTFONTNAME;", "");
+				   }
+				   
+				   if (line.startsWith("HCTABILITYTEXTFONTSTYLE;"))
+				   {
+					   HeroMaker.abilityTextFontStyleTemplate = Integer.parseInt(line.replace("HCTABILITYTEXTFONTSTYLE;", ""));
 				   }
 				   
 				   if (line.startsWith("HCTCARDNAMECOLOUR;"))
@@ -279,6 +317,66 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("HCTNAMEHIGHLIGHTTYPE;"))
 				   {
 					   HeroMaker.nameHighlightTemplate = line.replace("HCTNAMEHIGHLIGHTTYPE;", "");
+				   }
+				   
+				   if (line.startsWith("HCTCOSTSIZE;"))
+				   {
+					   HeroMaker.costSizeTemplate = Integer.parseInt(line.replace("HCTCOSTSIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTCOSTFONTNAME;"))
+				   {
+					   HeroMaker.costFontNameTemplate = line.replace("HCTCOSTFONTNAME;", "");
+				   }
+				   
+				   if (line.startsWith("HCTCOSTFONTSTYLE;"))
+				   {
+					   HeroMaker.costFontStyleTemplate = Integer.parseInt(line.replace("HCTCOSTFONTSTYLE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTCOSTCOLOUR;"))
+				   {
+					   HeroMaker.costColorTemplate = new Color(Integer.parseInt(line.replace("HCTCOSTCOLOUR;", "")));
+				   }
+				   
+				   if (line.startsWith("HCTATTACKSIZE;"))
+				   {
+					   HeroMaker.attackSizeTemplate = Integer.parseInt(line.replace("HCTATTACKSIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTATTACKFONTNAME;"))
+				   {
+					   HeroMaker.attackFontNameTemplate = line.replace("HCTATTACKFONTNAME;", "");
+				   }
+				   
+				   if (line.startsWith("HCTATTACKFONTSTYLE;"))
+				   {
+					   HeroMaker.attackFontStyleTemplate = Integer.parseInt(line.replace("HCTATTACKFONTSTYLE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTATTACKCOLOUR;"))
+				   {
+					   HeroMaker.attackColorTemplate = new Color(Integer.parseInt(line.replace("HCTATTACKCOLOUR;", "")));
+				   }
+				   
+				   if (line.startsWith("HCTRECRUITSIZE;"))
+				   {
+					   HeroMaker.recruitSizeTemplate = Integer.parseInt(line.replace("HCTRECRUITSIZE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTRECRUITFONTNAME;"))
+				   {
+					   HeroMaker.recruitFontNameTemplate = line.replace("HCTRECRUITFONTNAME;", "");
+				   }
+				   
+				   if (line.startsWith("HCTRECRUITFONTSTYLE;"))
+				   {
+					   HeroMaker.recruitFontStyleTemplate = Integer.parseInt(line.replace("HCTRECRUITFONTSTYLE;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTRECRUITCOLOUR;"))
+				   {
+					   HeroMaker.recruitColorTemplate = new Color(Integer.parseInt(line.replace("HCTRECRUITCOLOUR;", "")));
 				   }
 				   
 				   
@@ -350,6 +448,11 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("HCTEAM;"))
 				   {
 					   hc.cardTeam = Icon.valueOf(line.replace("HCTEAM;", ""));
+				   }
+				   
+				   if (line.startsWith("HCTEAM2;"))
+				   {
+					   hc.cardTeam2 = Icon.valueOf(line.replace("HCTEAM2;", ""));
 				   }
 				   
 				   if (line.startsWith("HCPOWER;"))
@@ -572,6 +675,11 @@ public class LegendaryCardMaker {
 					   vc.imageOffsetY = Integer.parseInt(line.replace("VCIMAGEOFFSETY;", ""));
 				   }
 				   
+				   if (line.startsWith("VCNUMBERINDECK;"))
+				   {
+					   vc.numberInDeck = Integer.parseInt(line.replace("VCNUMBERINDECK;", ""));
+				   }
+				   
 				   if (!ignoreGenerate && line.startsWith("VCGENERATE;"))
 				   {
 					   
@@ -661,6 +769,11 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("SCIMAGEOFFSETY;"))
 				   {
 					   sc.imageOffsetY = Integer.parseInt(line.replace("SCIMAGEOFFSETY;", ""));
+				   }
+				   
+				   if (line.startsWith("SCNUMBERINDECK;"))
+				   {
+					   sc.numberInDeck = Integer.parseInt(line.replace("SCNUMBERINDECK;", ""));
 				   }
 				   
 				   if (!ignoreGenerate && line.startsWith("SCGENERATE;"))
@@ -829,9 +942,17 @@ public class LegendaryCardMaker {
 	
 	public void saveExpansion() throws Exception
 	{
+		saveExpansion(false, currentFile);
+	}
+	
+	public void saveExpansion(boolean fullExport, String saveFile) throws Exception
+	{	
 		String str = "";
 		
 		str += "EXPANSIONSTYLE;" + expansionStyle;
+		str += "\n\n";
+		
+		str += "KEYWORDS;" + keywords;
 		str += "\n\n";
 		
 		str += "DIVIDERORIENTATION;" + (dividerHorizontal ? "HORIZONTAL" : "VERTICAL");
@@ -892,7 +1013,7 @@ public class LegendaryCardMaker {
 			str += "\n\n";
 		}
 		
-		FileWriter fw = new FileWriter(new File(currentFile));
+		FileWriter fw = new FileWriter(new File(saveFile));
 		BufferedWriter bw = new BufferedWriter(fw);
 		
 		bw.write(str);
@@ -1039,6 +1160,42 @@ public class LegendaryCardMaker {
 	public void exportSchemeToPng(SchemeCard s, File folder) throws Exception
 	{
 		SchemeMaker sm = new SchemeMaker();
+		sm.exportFolder = folder.getAbsolutePath();
+		sm.setCard(s);
+		BufferedImage image = sm.generateCard();
+		sm.exportImage(image);
+	}
+	
+	public void exportHeroToJpeg(Hero h, File folder) throws Exception
+	{
+		for (HeroCard hc : h.cards)
+		{
+			HeroMaker hm = new HeroMaker();
+			hm.exportToPNG = false;
+			hm.exportFolder = folder.getAbsolutePath();
+			hm.setCard(hc);
+			BufferedImage image = hm.generateCard();
+			hm.exportImage(image);
+		}
+	}
+	
+	public void exportVillainToJpeg(Villain v, File folder) throws Exception
+	{
+		for (VillainCard vc : v.cards)
+		{
+			VillainMaker vm = new VillainMaker();
+			vm.exportToPNG = false;
+			vm.exportFolder = folder.getAbsolutePath();
+			vm.setCard(vc);
+			BufferedImage image = vm.generateCard();
+			vm.exportImage(image);
+		}
+	}
+	
+	public void exportSchemeToJpeg(SchemeCard s, File folder) throws Exception
+	{
+		SchemeMaker sm = new SchemeMaker();
+		sm.exportToPNG = false;
 		sm.exportFolder = folder.getAbsolutePath();
 		sm.setCard(s);
 		BufferedImage image = sm.generateCard();

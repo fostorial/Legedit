@@ -27,6 +27,8 @@ public class ExportProgressBarDialog extends JPanel
     private File folder;
     
     private JDialog frame;
+    
+    private boolean jpegMode = false;
  
     class Task extends SwingWorker<Void, Void> {
     	
@@ -41,7 +43,10 @@ public class ExportProgressBarDialog extends JPanel
         	
         	for (Hero h : lcm.heroes)
     		{
-    			lcm.exportHeroToPng(h, folder);
+        		if (jpegMode)
+    				lcm.exportHeroToJpeg(h, folder);
+    			else
+    				lcm.exportHeroToPng(h, folder);
     			
     			frame.setTitle("Exporting (" + (getCurrentValue()+1) + "/" + getMaxValue() + ")...");
     			setProgress(currentValue++);
@@ -49,7 +54,10 @@ public class ExportProgressBarDialog extends JPanel
     		
     		for (Villain v : lcm.villains)
     		{
-    			lcm.exportVillainToPng(v, folder);
+    			if (jpegMode)
+    				lcm.exportVillainToJpeg(v, folder);
+    			else
+    				lcm.exportVillainToPng(v, folder);
     			
     			frame.setTitle("Exporting (" + (getCurrentValue()+1) + "/" + getMaxValue() + ")...");
     			setProgress(currentValue++);
@@ -57,7 +65,10 @@ public class ExportProgressBarDialog extends JPanel
     		
     		for (SchemeCard s : lcm.schemes)
     		{
-    			lcm.exportSchemeToPng(s, folder);
+    			if (jpegMode)
+    				lcm.exportSchemeToJpeg(s, folder);
+    			else
+    				lcm.exportSchemeToPng(s, folder);
     			
     			frame.setTitle("Exporting (" + (getCurrentValue()+1) + "/" + getMaxValue() + ")...");
     			 setProgress(currentValue++);
@@ -170,5 +181,13 @@ public class ExportProgressBarDialog extends JPanel
 
 	public void setCurrentValue(int currentValue) {
 		this.currentValue = currentValue;
+	}
+
+	public boolean isJpegMode() {
+		return jpegMode;
+	}
+
+	public void setJpegMode(boolean jpegMode) {
+		this.jpegMode = jpegMode;
 	}
 }

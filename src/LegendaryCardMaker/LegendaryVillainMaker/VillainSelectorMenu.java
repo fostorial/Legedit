@@ -2,18 +2,26 @@ package LegendaryCardMaker.LegendaryVillainMaker;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.xml.crypto.dsig.spec.HMACParameterSpec;
 
+import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.CardMakerToolbar;
+import LegendaryCardMaker.ExportHomeprintProgressBarDialog;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMakerFrame;
+import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
+import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker;
 
 public class VillainSelectorMenu extends JMenu implements ActionListener{
 	
@@ -24,6 +32,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 	JMenuItem rename = new JMenuItem("Rename Villain...");
 	JMenuItem delete = new JMenuItem("Delete Villain...");
 	JMenuItem editDivider = new JMenuItem("Edit Divider...");
+	JMenuItem exportJPEGHomeprint = new JMenuItem("Export to JPEG for Homeprint...");
 	
 	public LegendaryCardMakerFrame lcmf;
 	
@@ -60,6 +69,11 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 		
 		editDivider.addActionListener(this);
 		add(editDivider);
+		
+		addSeparator();
+		
+		exportJPEGHomeprint.addActionListener(this);
+		add(exportJPEGHomeprint);
 	}
 
 	@Override
@@ -79,6 +93,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.VILLAIN;
+			hc.numberInDeck = VillainCardType.VILLAIN.getCount();
 			hc.changed = true;
 			h.cards.add(hc);
 			
@@ -86,6 +101,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.VILLAIN;
+			hc.numberInDeck = VillainCardType.VILLAIN.getCount();
 			hc.changed = true;
 			h.cards.add(hc);
 			
@@ -93,6 +109,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.VILLAIN;
+			hc.numberInDeck = VillainCardType.VILLAIN.getCount();
 			hc.changed = true;
 			h.cards.add(hc);
 			
@@ -100,6 +117,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			hc.villain = h;
 			hc.villainGroup = h.name;
 			hc.cardType = VillainCardType.VILLAIN;
+			hc.numberInDeck = VillainCardType.VILLAIN.getCount();
 			hc.changed = true;
 			h.cards.add(hc);
 			
@@ -120,6 +138,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			VillainCard hc = VillainMaker.getBlankVillainCard();
 			hc.villain = h;
 			hc.villainGroup = h.name;
+			hc.numberInDeck = VillainCardType.HENCHMEN.getCount();
 			hc.cardType = VillainCardType.HENCHMEN;
 			hc.changed = true;
 			h.cards.add(hc);
@@ -141,13 +160,16 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			VillainCard hc = VillainMaker.getBlankVillainCard();
 			hc.villain = h;
 			hc.villainGroup = h.name;
+			hc.numberInDeck = VillainCardType.MASTERMIND.getCount();
 			hc.cardType = VillainCardType.MASTERMIND;
+			hc.abilityText = "<k>Always Leads: <r> <g> <k>Master Strike: <r>";
 			hc.changed = true;
 			h.cards.add(hc);
 			
 			hc = VillainMaker.getBlankVillainCard();
 			hc.villain = h;
 			hc.villainGroup = h.name;
+			hc.numberInDeck = VillainCardType.MASTERMIND_TACTIC.getCount();
 			hc.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hc.changed = true;
 			h.cards.add(hc);
@@ -155,6 +177,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			hc = VillainMaker.getBlankVillainCard();
 			hc.villain = h;
 			hc.villainGroup = h.name;
+			hc.numberInDeck = VillainCardType.MASTERMIND_TACTIC.getCount();
 			hc.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hc.changed = true;
 			h.cards.add(hc);
@@ -162,6 +185,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			hc = VillainMaker.getBlankVillainCard();
 			hc.villain = h;
 			hc.villainGroup = h.name;
+			hc.numberInDeck = VillainCardType.MASTERMIND_TACTIC.getCount();
 			hc.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hc.changed = true;
 			h.cards.add(hc);
@@ -169,6 +193,7 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			hc = VillainMaker.getBlankVillainCard();
 			hc.villain = h;
 			hc.villainGroup = h.name;
+			hc.numberInDeck = VillainCardType.MASTERMIND_TACTIC.getCount();
 			hc.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hc.changed = true;
 			h.cards.add(hc);
@@ -231,6 +256,56 @@ public class VillainSelectorMenu extends JMenu implements ActionListener{
 			}
 			
 			VillainDividerMakerFrame dmf = new VillainDividerMakerFrame(getCurrentVillain(), lcmf.lcm.dividerHorizontal);
+		}
+		
+		if (e.getSource().equals(exportJPEGHomeprint))
+		{
+			if (getCurrentVillain() == null)
+			{
+				return;
+			}
+			
+			JFileChooser chooser = new JFileChooser();
+			if (lcmf.lcm.exportFolder != null)
+			{
+				File tf = new File(lcmf.lcm.exportFolder);
+				chooser = new JFileChooser(tf.getParent());
+			}
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int outcome = chooser.showSaveDialog(this);
+			if (outcome == JFileChooser.APPROVE_OPTION)
+			{
+				File f = chooser.getSelectedFile();
+				lcmf.lcm.exportFolder = f.getAbsolutePath();
+				
+				f.mkdirs();
+				
+				try
+				{
+					List<CardMaker> cardMakers = new ArrayList<CardMaker>();
+					for (VillainCard hc : getCurrentVillain().cards)
+					{
+						VillainMaker hm = new VillainMaker();
+						hm.setCard(hc);
+						
+						for (int i = 0; i < hc.numberInDeck; i++)
+						cardMakers.add(hm);
+					}
+					
+					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
+					
+					ExportHomeprintProgressBarDialog exporter = new ExportHomeprintProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f, cardMakers);
+					exporter.createAndShowGUI();
+					
+					//lcmf.lcm.exportToPng(f);
+					
+					lcmf.saveProperties();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+				}
+			}
 		}
 	}
 	

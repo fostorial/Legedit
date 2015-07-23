@@ -84,7 +84,15 @@ public class HeroCardSelector extends JDialog {
 
             JLabel label = (JLabel) super.getListCellRendererComponent(
                     list, value, index, isSelected, cellHasFocus);
-            label.setIcon(new ImageIcon(getImageSummary(card)));
+            if (card.imageSummary != null)
+            {
+            	label.setIcon(card.imageSummary);
+            }
+            else
+            {
+            	card.imageSummary = new ImageIcon(getImageSummary(card));
+            	label.setIcon(card.imageSummary);
+            }
             label.setHorizontalTextPosition(JLabel.RIGHT);
             String s = card.name + " (" + card.rarity.toString() + ")";
             if (card.changed) { s += " *"; }

@@ -57,6 +57,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 	JMenuItem setAbilityTextSize = new JMenuItem("Set Ability Text Size...");
 	JMenuItem setBackgroundImage = new JMenuItem("Set Background Image...");
 	JMenuItem setBackgroundZoom = new JMenuItem("Set Background Zoom...");
+	JMenuItem setNumberInDeck = new JMenuItem("Set Number In Deck...");
 	
 	static VillainMakerToolbar tb = null;
 	
@@ -233,6 +234,9 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 		setBackgroundZoom.addActionListener(this);
 		edit.add(setBackgroundZoom);
 		
+		setNumberInDeck.addActionListener(this);
+		edit.add(setNumberInDeck);
+		
 		add(edit);
 	}
 
@@ -245,6 +249,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeMastermind.setSelected(false);
 			cardTypeMastermindTactic.setSelected(false);
 			cardTypeBystander.setSelected(false);
+			hm.card.numberInDeck = VillainCardType.HENCHMEN.getCount();
 			hm.card.cardType = VillainCardType.HENCHMEN;
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -256,6 +261,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeMastermind.setSelected(false);
 			cardTypeMastermindTactic.setSelected(false);
 			cardTypeBystander.setSelected(false);
+			hm.card.numberInDeck = VillainCardType.VILLAIN.getCount();
 			hm.card.cardType = VillainCardType.VILLAIN;
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -267,6 +273,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeMastermind.setSelected(true);
 			cardTypeMastermindTactic.setSelected(false);
 			cardTypeBystander.setSelected(false);
+			hm.card.numberInDeck = VillainCardType.MASTERMIND.getCount();
 			hm.card.cardType = VillainCardType.MASTERMIND;
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -278,6 +285,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeMastermind.setSelected(false);
 			cardTypeMastermindTactic.setSelected(true);
 			cardTypeBystander.setSelected(false);
+			hm.card.numberInDeck = VillainCardType.MASTERMIND_TACTIC.getCount();
 			hm.card.cardType = VillainCardType.MASTERMIND_TACTIC;
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -289,6 +297,7 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			cardTypeMastermind.setSelected(false);
 			cardTypeMastermindTactic.setSelected(false);
 			cardTypeBystander.setSelected(true);
+			hm.card.numberInDeck = VillainCardType.BYSTANDER.getCount();
 			hm.card.cardType = VillainCardType.BYSTANDER;
 			hmf.reRenderCard();
 			hm.card.changed = true;
@@ -540,6 +549,22 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 			hm.card.changed = true;
 			
 			hmf.updateLinkedCards();
+		}
+		
+		if (e.getSource().equals(setNumberInDeck))
+		{
+			String s = JOptionPane.showInputDialog(hmf, "Enter the Number in Deck", hm.card.numberInDeck);
+			if (s == null) { s = "" + hm.card.numberInDeck; }
+			if (s != null && s.isEmpty()) { s = "" + hm.card.numberInDeck; }
+			try
+			{
+				hm.card.numberInDeck = Integer.parseInt(s);
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			hm.card.changed = true;
 		}
 	}
 

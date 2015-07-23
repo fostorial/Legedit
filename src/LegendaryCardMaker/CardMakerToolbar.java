@@ -24,8 +24,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import LegendaryCardMaker.Icon;
+import LegendaryCardMaker.CampaignManager.CampaignManagerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.CardRarity;
@@ -35,11 +37,13 @@ import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroSelectorMenu;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
+import LegendaryCardMaker.LegendarySchemeMaker.SchemeMaker;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.BystanderSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCard;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCardType;
+import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.WoundSelectorMenu;
 
@@ -57,7 +61,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	JMenuItem exportPNG = new JMenuItem("Export to PNG...");
 	JMenuItem exportPrinterStudioPNG = new JMenuItem("Export to Printer Studio PNG...");
 	JMenuItem exportJPEGHomeprint = new JMenuItem("Export to JPEG for Homeprint...");
+	JMenuItem exportSelectedJPEGHomeprint = new JMenuItem("Export Selected Items to JPEG for Homeprint...");
 	JMenuItem exportDividersJPEGHomeprint = new JMenuItem("Export Dividers to JPEG for Homeprint...");
+	JMenuItem exportFull = new JMenuItem("Export Full Expansion...");
 	
 	JMenuItem viewAsText = new JMenuItem("View as Text...");
 	JMenuItem viewStatistics = new JMenuItem("View Statistics...");
@@ -82,6 +88,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	JMenu expansion = new JMenu("Expansion");
 	JMenu style = new JMenu("Style");
 	List<JCheckBoxMenuItem> styleItems = new ArrayList<JCheckBoxMenuItem>();
+	JMenuItem keywords = new JMenuItem("Edit Keywords...");
+	
+	JMenu tools = new JMenu("Tools");
+	JMenuItem campaignManager = new JMenuItem("Campaign Manager...");
 	
 	JMenu help = new JMenu("Help");
 	
@@ -114,8 +124,14 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		exportPNG.addActionListener(this);
 		file.add(exportPNG);
 		
+		exportJPG.addActionListener(this);
+		file.add(exportJPG);
+		
 		exportJPEGHomeprint.addActionListener(this);
 		file.add(exportJPEGHomeprint);
+		
+		exportSelectedJPEGHomeprint.addActionListener(this);
+		file.add(exportSelectedJPEGHomeprint);
 		
 		//exportPrinterStudioPNG.addActionListener(this);
 		//file.add(exportPrinterStudioPNG);
@@ -124,6 +140,11 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		exportDividersJPEGHomeprint.addActionListener(this);
 		file.add(exportDividersJPEGHomeprint);
+		
+		file.addSeparator();
+		
+		exportFull.addActionListener(this);
+		file.add(exportFull);
 		
 		file.addSeparator();
 		
@@ -187,10 +208,17 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		this.add(divider);
 		
 		
-		populateExpansionMenu();
-		expansion.add(style);
-		//this.add(expansion);
+		//populateExpansionMenu();
+		//expansion.add(style);
 		
+		keywords.addActionListener(this);
+		expansion.add(keywords);
+		
+		this.add(expansion);
+		
+		campaignManager.addActionListener(this);
+		tools.add(campaignManager);
+		//this.add(tools);
 		
 		JMenuItem version = new JMenuItem("Version: " + LegendaryCardMaker.version);
 		version.setEnabled(false);
@@ -457,6 +485,43 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			}
 		}
 		
+		if (e.getSource().equals(exportJPG))
+		{
+			
+			JFileChooser chooser = new JFileChooser();
+			if (lcmf.lcm.exportFolder != null)
+			{
+				File tf = new File(lcmf.lcm.exportFolder);
+				chooser = new JFileChooser(tf.getParent());
+			}
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int outcome = chooser.showSaveDialog(this);
+			if (outcome == JFileChooser.APPROVE_OPTION)
+			{
+				File f = chooser.getSelectedFile();
+				lcmf.lcm.exportFolder = f.getAbsolutePath();
+				
+				f.mkdirs();
+				
+				try
+				{
+					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
+					
+					ExportProgressBarDialog exporter = new ExportProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f);
+					exporter.setJpegMode(true);
+					exporter.createAndShowGUI();
+					
+					//lcmf.lcm.exportToPng(f);
+					
+					lcmf.saveProperties();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+				}
+			}
+		}
+		
 		if (e.getSource().equals(exportJPEGHomeprint))
 		{
 			
@@ -479,7 +544,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				{
 					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
 					
-					ExportHomeprintProgressBarDialog exporter = new ExportHomeprintProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f);
+					ExportHomeprintProgressBarDialog exporter = new ExportHomeprintProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f, null);
 					exporter.createAndShowGUI();
 					
 					//lcmf.lcm.exportToPng(f);
@@ -533,6 +598,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		{
 			String str = "";
 			
+			str += "KEYWORDS\n\n";
+			str += lcmf.lcm.keywords.replace("<k>", "").replace("<r>", "").replace(" <g> ", "\n");
+			str += "\n\n\n";
+			
 			str += "HEROES\n\n"; 
 					
 			for (Hero h : lcmf.lcm.heroes)
@@ -551,7 +620,18 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			
 			for (Villain v : lcmf.lcm.villains)
 			{
-				str += v.name + "\n\n";
+				if (v.name.equals("system_bystander_villain"))
+				{
+					str += "BYSTANDERS\n\n";
+				}
+				else if (v.name.equals("system_wound_villain"))
+				{
+					str += "WOUNDS\n\n";
+				}
+				else
+				{
+					str += v.name + "\n\n";
+				}
 				
 				for (VillainCard hc : v.cards)
 				{
@@ -608,6 +688,92 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			orientationHorizontal.setSelected(false);
 			orientationVertical.setSelected(true);
 			LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal = false;
+		}
+		
+		if (e.getSource().equals(campaignManager))
+		{
+			new CampaignManagerFrame();
+		}
+		
+		if (e.getSource().equals(exportFull))
+		{
+			
+			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter1 = new FileNameExtensionFilter("ZIP file", "zip");
+		    chooser.addChoosableFileFilter(filter1);
+		    chooser.setFileFilter(filter1);
+			if (lcmf.lcm.exportFolder != null)
+			{
+				File tf = new File(lcmf.lcm.exportFolder);
+				chooser = new JFileChooser(tf);
+			}
+			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			int outcome = chooser.showSaveDialog(this);
+			if (outcome == JFileChooser.APPROVE_OPTION)
+			{
+				File f = chooser.getSelectedFile();
+				
+				try
+				{
+					ExportFullProgressBarDialog exporter = new ExportFullProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f);
+					exporter.createAndShowGUI();
+					
+					lcmf.saveProperties();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+				}
+			}
+		}
+		
+		if (e.getSource().equals(exportSelectedJPEGHomeprint))
+		{
+			ItemSelectorDialog selector = new ItemSelectorDialog(lcmf);
+			List<CardMaker> makers = legendaryItemToCardMaker(selector.getLegendaryItems());
+			
+			if (makers.size() > 0)
+			{
+				JFileChooser chooser = new JFileChooser();
+				if (lcmf.lcm.exportFolder != null)
+				{
+					File tf = new File(lcmf.lcm.exportFolder);
+					chooser = new JFileChooser(tf.getParent());
+				}
+				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int outcome = chooser.showSaveDialog(this);
+				if (outcome == JFileChooser.APPROVE_OPTION)
+				{
+					File f = chooser.getSelectedFile();
+					lcmf.lcm.exportFolder = f.getAbsolutePath();
+					
+					f.mkdirs();
+					
+					try
+					{
+						lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
+						
+						ExportHomeprintProgressBarDialog exporter = new ExportHomeprintProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f, makers);
+						exporter.createAndShowGUI();
+						
+						//lcmf.lcm.exportToPng(f);
+						
+						lcmf.saveProperties();
+					}
+					catch (Exception ex)
+					{
+						JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+					}
+				}
+			}
+		}
+		
+		if (e.getSource().equals(keywords))
+		{
+			String s = new CardTextDialog(lcmf.lcm.keywords).showInputDialog();
+			if (s == null) { s = lcmf.lcm.keywords; }
+			if (s != null && s.isEmpty()) { s = null; }
+			lcmf.lcm.keywords = s;
 		}
 	}
 	
@@ -896,5 +1062,78 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				}
 			}
 		}
+	}
+	
+	private List<CardMaker> legendaryItemToCardMaker(List<LegendaryItem> items)
+	{
+		List<CardMaker> makers = new ArrayList<CardMaker>();
+		
+		for (LegendaryItem l : items)
+		{
+			if (l instanceof Hero)
+			{
+				Hero h = (Hero)l;
+				for (HeroCard hc : h.cards)
+        		{
+        			HeroMaker hm = new HeroMaker();
+        			hm.setCard(hc);
+        			for (int i = 0; i < hc.rarity.getCount(); i++)
+        			{
+        				makers.add(hm);
+        			}
+        		}
+			}
+			
+			if (l instanceof Villain)
+			{
+				Villain v = (Villain)l;
+				for (VillainCard vc : v.cards)
+    			{
+    				VillainMaker vm = new VillainMaker();
+    				vm.setCard(vc);
+    				
+    				int count = vc.cardType.getCount();
+    				if (vc.numberInDeck > 0)
+    				{
+    					count = vc.numberInDeck;
+    				}
+    				for (int i = 0; i < count; i++)
+        			{
+    					makers.add(vm);
+        			}
+    			}
+			}
+			
+			if (l instanceof VillainCard)
+			{
+				VillainCard vc = (VillainCard)l;
+				VillainMaker vm = new VillainMaker();
+				vm.setCard(vc);
+				
+				int count = vc.cardType.getCount();
+				if (vc.numberInDeck > 0)
+				{
+					count = vc.numberInDeck;
+				}
+				for (int i = 0; i < count; i++)
+    			{
+					makers.add(vm);
+    			}
+			}
+			
+			if (l instanceof SchemeCard)
+			{
+				SchemeCard s = (SchemeCard)l;
+				SchemeMaker sm = new SchemeMaker();
+    			sm.setCard(s);
+    			
+    			for (int i = 0; i < s.numberInDeck; i++)
+    			{
+					makers.add(sm);
+    			}
+			}
+		}
+		
+		return makers;
 	}
 }

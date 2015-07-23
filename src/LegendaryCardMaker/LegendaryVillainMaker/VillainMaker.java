@@ -34,6 +34,7 @@ import org.w3c.dom.Element;
 import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
+import LegendaryCardMaker.LegendaryCardMakerFrame;
 import LegendaryCardMaker.WordDefinition;
 
 public class VillainMaker extends CardMaker {
@@ -47,7 +48,7 @@ public class VillainMaker extends CardMaker {
 	int dpi = 300;
 	
 	boolean exportImage = false;
-	boolean exportToPNG = true;
+	public boolean exportToPNG = true;
 	
 	int teamIconX = 700;
 	int teamIconY = 785;
@@ -155,6 +156,16 @@ public class VillainMaker extends CardMaker {
 	public void setCard(VillainCard c)
 	{
 		card = c;
+		if (card.numberInDeck <= 0 && card.cardType != null)
+		{
+			card.numberInDeck = card.cardType.getCount();
+		}
+		
+		if (card.nameSize > 0)
+			cardNameSize = card.nameSize;
+		
+		if (card.abilityTextSize > 0)
+			textSize = card.abilityTextSize;
 	}
 	
 	public void populateVillainCard()
@@ -185,7 +196,7 @@ public class VillainMaker extends CardMaker {
 		int timeCount = 0;
 		//System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 		
-		int type = BufferedImage.TYPE_INT_RGB;
+		int type = BufferedImage.TYPE_INT_ARGB;
 		if (exportToPNG)
 		{
 			type = BufferedImage.TYPE_INT_ARGB;	
@@ -207,7 +218,12 @@ public class VillainMaker extends CardMaker {
 	    
 	    if (card.imagePath != null)
 	    {
-	    	BufferedImage bi = resizeImage(new ImageIcon(card.imagePath), card.imageZoom);
+	    	String imagePath = card.imagePath;
+	    	if (!imagePath.contains(File.separator) && LegendaryCardMakerFrame.lcmf.lcm.currentFile != null)
+	    	{
+	    		imagePath = new File(LegendaryCardMakerFrame.lcmf.lcm.currentFile).getParent() + File.separator + card.imagePath;
+	    	}
+	    	BufferedImage bi = resizeImage(new ImageIcon(imagePath), card.imageZoom);
 	    	g.drawImage(bi, card.imageOffsetX, card.imageOffsetY, null);
 	    }
 	    
@@ -884,35 +900,15 @@ public class VillainMaker extends CardMaker {
 	{
 		System.out.println("Exporting: " + newFile.getName());
 		
+		BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics g = bi.getGraphics();
+		g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+		g.dispose();
+		
 		File dir = new File(exportFolder);
 		dir.mkdirs();
 		
-		FileOutputStream fos = new FileOutputStream(newFile);
-		ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
-		//JPEGImageWriter imageWriter = (JPEGImageWriter) ImageIO.getImageWritersBySuffix("jpeg").next();
-	    ImageOutputStream ios = ImageIO.createImageOutputStream(fos);
-	    imageWriter.setOutput(ios);
-	 
-	    //and metadata
-	    IIOMetadata imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(image), null);
-	    
-	  //new metadata
-        Element tree = (Element) imageMetaData.getAsTree("javax_imageio_jpeg_image_1.0");
-        Element jfif = (Element)tree.getElementsByTagName("app0JFIF").item(0);
-        jfif.setAttribute("Xdensity", Integer.toString(dpi));
-		jfif.setAttribute("Ydensity", Integer.toString(dpi));
-		jfif.setAttribute("resUnits", "1"); // density is dots per inch	
-        imageMetaData.setFromTree("javax_imageio_jpeg_image_1.0", tree);
-        
-        
-        JPEGImageWriteParam jpegParams = (JPEGImageWriteParam) imageWriter.getDefaultWriteParam();
-        jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-        jpegParams.setCompressionQuality(1f);
-        
-      //new Write and clean up
-        imageWriter.write(null, new IIOImage(image, null, imageMetaData), jpegParams);
-        ios.close();
-        imageWriter.dispose();
+		ImageIO.write(bi, "jpeg", newFile);
 	}
 	
 	public static void exportToPNG(BufferedImage image, File newFile) throws Exception

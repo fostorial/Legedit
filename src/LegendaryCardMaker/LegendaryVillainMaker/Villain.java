@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class Villain implements Comparator<Villain>, Comparable<Villain>  {
+import LegendaryCardMaker.LegendaryItem;
+
+public class Villain extends LegendaryItem implements Comparator<Villain>, Comparable<Villain>  {
 
 	public String name;
 	public List<VillainCard> cards = new ArrayList<VillainCard>();
@@ -18,6 +20,10 @@ public class Villain implements Comparator<Villain>, Comparable<Villain>  {
 	public String dividerIconEnum = null;
 	
 	public String generateOutputString()
+	{
+		return generateOutputString(false);
+	}
+	public String generateOutputString(boolean fullExport)
 	{
 		String str = "";
 		
@@ -39,7 +45,7 @@ public class Villain implements Comparator<Villain>, Comparable<Villain>  {
 		
 		for (VillainCard vc : cards)
 		{
-			str += vc.generateOutputString() + "\n";
+			str += vc.generateOutputString(fullExport) + "\n";
 		}
 		
 		str +="\n";

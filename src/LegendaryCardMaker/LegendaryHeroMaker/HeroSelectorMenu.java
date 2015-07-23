@@ -17,7 +17,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.CardMakerToolbar;
+import LegendaryCardMaker.ExportHomeprintProgressBarDialog;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
@@ -30,6 +32,7 @@ public class HeroSelectorMenu extends JMenu implements ActionListener{
 	JMenuItem rename = new JMenuItem("Rename Hero...");
 	JMenuItem delete = new JMenuItem("Delete Hero...");
 	JMenuItem editDivider = new JMenuItem("Edit Divider...");
+	JMenuItem exportJPEGHomeprint = new JMenuItem("Export to JPEG for Homeprint...");
 	
 	JMenu team = new JMenu("Set Team");
 	List<JMenuItem> teamItems = new ArrayList<JMenuItem>();
@@ -84,7 +87,10 @@ public class HeroSelectorMenu extends JMenu implements ActionListener{
 						{
 							hc.cardTeam = icon;
 							hc.changed = true;
+							hc.imageSummary = null;
 						}
+						
+						getCurrentHero().imageSummary = null;
 						
 						getCurrentHero().changed = true;
 					}
@@ -100,6 +106,11 @@ public class HeroSelectorMenu extends JMenu implements ActionListener{
 		
 		editDivider.addActionListener(this);
 		add(editDivider);
+		
+		addSeparator();
+		
+		exportJPEGHomeprint.addActionListener(this);
+		add(exportJPEGHomeprint);
 	}
 
 	@Override
@@ -197,6 +208,56 @@ public class HeroSelectorMenu extends JMenu implements ActionListener{
 			}
 			
 			HeroDividerMakerFrame dmf = new HeroDividerMakerFrame(getCurrentHero(), lcmf.lcm.dividerHorizontal);
+		}
+		
+		if (e.getSource().equals(exportJPEGHomeprint))
+		{
+			if (getCurrentHero() == null)
+			{
+				return;
+			}
+			
+			JFileChooser chooser = new JFileChooser();
+			if (lcmf.lcm.exportFolder != null)
+			{
+				File tf = new File(lcmf.lcm.exportFolder);
+				chooser = new JFileChooser(tf.getParent());
+			}
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int outcome = chooser.showSaveDialog(this);
+			if (outcome == JFileChooser.APPROVE_OPTION)
+			{
+				File f = chooser.getSelectedFile();
+				lcmf.lcm.exportFolder = f.getAbsolutePath();
+				
+				f.mkdirs();
+				
+				try
+				{
+					List<CardMaker> cardMakers = new ArrayList<CardMaker>();
+					for (HeroCard hc : getCurrentHero().cards)
+					{
+						HeroMaker hm = new HeroMaker();
+						hm.setCard(hc);
+						
+						for (int i = 0; i < hc.rarity.getCount(); i++)
+						cardMakers.add(hm);
+					}
+					
+					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
+					
+					ExportHomeprintProgressBarDialog exporter = new ExportHomeprintProgressBarDialog(lcmf.lcm.getCardCount(), lcmf.lcm, f, cardMakers);
+					exporter.createAndShowGUI();
+					
+					//lcmf.lcm.exportToPng(f);
+					
+					lcmf.saveProperties();
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(lcmf, "Error! " + ex.getMessage());
+				}
+			}
 		}
 	}
 	

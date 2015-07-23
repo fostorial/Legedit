@@ -46,6 +46,7 @@ public class SchemeMakerToolbar extends JMenuBar implements ActionListener{
 	JMenuItem setCardTextSize = new JMenuItem("Set Card Text Size...");
 	JMenuItem setBackgroundImage = new JMenuItem("Set Background Image...");
 	JMenuItem setBackgroundZoom = new JMenuItem("Set Background Zoom...");
+	JMenuItem setNumberInDeck = new JMenuItem("Set Number In Deck...");
 	
 	static SchemeMakerToolbar tb = null;
 	
@@ -143,6 +144,9 @@ public class SchemeMakerToolbar extends JMenuBar implements ActionListener{
 		
 		setBackgroundZoom.addActionListener(this);
 		edit.add(setBackgroundZoom);
+		
+		setNumberInDeck.addActionListener(this);
+		edit.add(setNumberInDeck);
 		
 		add(edit);
 	}
@@ -386,6 +390,22 @@ public class SchemeMakerToolbar extends JMenuBar implements ActionListener{
 				JOptionPane.showMessageDialog(null, ex.getMessage());
 			}
 			hmf.reRenderCard();
+			hm.card.changed = true;
+		}
+		
+		if (e.getSource().equals(setNumberInDeck))
+		{
+			String s = JOptionPane.showInputDialog(hmf, "Enter the Number in Deck", hm.card.numberInDeck);
+			if (s == null) { s = "" + hm.card.numberInDeck; }
+			if (s != null && s.isEmpty()) { s = "" + hm.card.numberInDeck; }
+			try
+			{
+				hm.card.numberInDeck = Integer.parseInt(s);
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
 			hm.card.changed = true;
 		}
 	}

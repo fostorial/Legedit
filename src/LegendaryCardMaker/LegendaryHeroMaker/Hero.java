@@ -9,9 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import LegendaryCardMaker.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
-public class Hero implements Comparator<Hero>, Comparable<Hero> {
+import LegendaryCardMaker.Icon;
+import LegendaryCardMaker.LegendaryItem;
+
+public class Hero extends LegendaryItem implements Comparator<Hero>, Comparable<Hero> {
 
 	public String name;
 	public List<HeroCard> cards = new ArrayList<HeroCard>();
@@ -24,7 +28,14 @@ public class Hero implements Comparator<Hero>, Comparable<Hero> {
 	
 	public String dividerIconEnum = null;
 	
+	public ImageIcon imageSummary;
+	
 	public String generateOutputString()
+	{
+		return generateOutputString(false);
+	}
+	
+	public String generateOutputString(boolean fullExport)
 	{
 		String str = "";
 		
@@ -46,7 +57,7 @@ public class Hero implements Comparator<Hero>, Comparable<Hero> {
 		
 		for (HeroCard hc : cards)
 		{
-			str += hc.generateOutputString() + "\n";
+			str += hc.generateOutputString(fullExport) + "\n";
 		}
 		
 		str +="\n";

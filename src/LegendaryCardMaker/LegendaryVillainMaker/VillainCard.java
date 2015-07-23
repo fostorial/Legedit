@@ -3,8 +3,9 @@ package LegendaryCardMaker.LegendaryVillainMaker;
 import java.io.File;
 
 import LegendaryCardMaker.Icon;
+import LegendaryCardMaker.LegendaryItem;
 
-public class VillainCard {
+public class VillainCard extends LegendaryItem {
 
 	public Villain villain;
 	
@@ -24,6 +25,7 @@ public class VillainCard {
 	public double imageZoom = 1.0d;
 	public int imageOffsetX = 0;
 	public int imageOffsetY = 0;
+	public int numberInDeck = -1;
 	
 	public String getCardName(String exportDir)
 	{
@@ -76,6 +78,11 @@ public class VillainCard {
 	
 	public String generateOutputString()
 	{
+		return generateOutputString(false);
+	}
+	
+	public String generateOutputString(boolean fullExport)
+	{
 		String str = "";
 		
 		//str += "HCNAMESIZE;" + 40 + "\n";
@@ -120,6 +127,8 @@ public class VillainCard {
 		if (imagePath != null)
 			str += "VCIMAGEOFFSETY;" + imageOffsetY + "\n";
 		
+		str += "VCNUMBERINDECK;" + numberInDeck + "\n";
+		
 		str += "VCGENERATE;\n";
 		
 		return str;
@@ -130,7 +139,7 @@ public class VillainCard {
 		String str = "";
 		
 		str += cardType.toString() + "\n";
-		str += name + "\n";
+		str += name + " x " + numberInDeck + "\n";
 		str += cardTeam.toString() + "\n";
 		
 		if (attack != null || victory != null)

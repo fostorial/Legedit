@@ -152,20 +152,35 @@ public class VillainDividerMaker extends DividerMaker {
 	    	if (LegendaryCardMakerFrame.lcmf != null && LegendaryCardMakerFrame.lcmf.lcm != null
 		    		&& LegendaryCardMakerFrame.lcmf.lcm.dbImagePath != null)
 		    {
-		    	BufferedImage bi = resizeImage(new ImageIcon(LegendaryCardMakerFrame.lcmf.lcm.dbImagePath), LegendaryCardMakerFrame.lcmf.lcm.dbImageZoom);
+	    		String imagePath = LegendaryCardMakerFrame.lcmf.lcm.dbImagePath;
+		    	if (!imagePath.contains(File.separator) && LegendaryCardMakerFrame.lcmf.lcm.currentFile != null)
+		    	{
+		    		imagePath = new File(LegendaryCardMakerFrame.lcmf.lcm.currentFile).getParent() + File.separator + LegendaryCardMakerFrame.lcmf.lcm.dbImagePath;
+		    	}
+		    	BufferedImage bi = resizeImage(new ImageIcon(imagePath), LegendaryCardMakerFrame.lcmf.lcm.dbImageZoom);
 		    	g.drawImage(bi, LegendaryCardMakerFrame.lcmf.lcm.dbImageOffsetX, LegendaryCardMakerFrame.lcmf.lcm.dbImageOffsetY, null);
 		    }
 		    
 		    if (LegendaryCardMakerFrame.lcmf != null && LegendaryCardMakerFrame.lcmf.lcm != null
 		    		&& LegendaryCardMakerFrame.lcmf.lcm.dfImagePath != null)
 		    {
-		    	BufferedImage bi = resizeImage(new ImageIcon(LegendaryCardMakerFrame.lcmf.lcm.dfImagePath), LegendaryCardMakerFrame.lcmf.lcm.dfImageZoom);
+		    	String imagePath = LegendaryCardMakerFrame.lcmf.lcm.dfImagePath;
+		    	if (!imagePath.contains(File.separator) && LegendaryCardMakerFrame.lcmf.lcm.currentFile != null)
+		    	{
+		    		imagePath = new File(LegendaryCardMakerFrame.lcmf.lcm.currentFile).getParent() + File.separator + LegendaryCardMakerFrame.lcmf.lcm.dfImagePath;
+		    	}
+		    	BufferedImage bi = resizeImage(new ImageIcon(imagePath), LegendaryCardMakerFrame.lcmf.lcm.dfImageZoom);
 		    	g.drawImage(bi, LegendaryCardMakerFrame.lcmf.lcm.dfImageOffsetX, LegendaryCardMakerFrame.lcmf.lcm.dfImageOffsetY, null);
 		    }
 		    
 		    if (villain.imagePath != null)
 		    {
-		    	BufferedImage bi = resizeImage(new ImageIcon(villain.imagePath), villain.imageZoom);
+		    	String imagePath = villain.imagePath;
+		    	if (!imagePath.contains(File.separator) && LegendaryCardMakerFrame.lcmf.lcm.currentFile != null)
+		    	{
+		    		imagePath = new File(LegendaryCardMakerFrame.lcmf.lcm.currentFile).getParent() + File.separator + villain.imagePath;
+		    	}
+		    	BufferedImage bi = resizeImage(new ImageIcon(imagePath), villain.imageZoom);
 		    	g.drawImage(bi, villain.imageOffsetX, villain.imageOffsetY, null);
 		    }
 	    }

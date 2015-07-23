@@ -34,6 +34,7 @@ import org.w3c.dom.Element;
 import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMaker;
+import LegendaryCardMaker.LegendaryCardMakerFrame;
 import LegendaryCardMaker.WordDefinition;
 
 public class SchemeMaker extends CardMaker {
@@ -46,7 +47,7 @@ public class SchemeMaker extends CardMaker {
 	int cardHeight = 1050;
 	int dpi = 300;
 	
-	boolean exportToPNG = true;
+	public boolean exportToPNG = true;
 	
 	public int cardNameSize = 40;
 	int cardNameMinSize = 30;
@@ -105,6 +106,15 @@ public class SchemeMaker extends CardMaker {
 	public void setCard(SchemeCard c)
 	{
 		card = c;
+		
+		if (card.cardNameSize > 0)
+			cardNameSize = card.cardNameSize;
+		
+		if (card.subCategorySize > 0)
+			subCategorySize = card.subCategorySize;
+		
+		if (card.cardTextSize > 0)
+			textSize = card.cardTextSize;
 	}
 	
 	public void populateSchemeCard()
@@ -125,7 +135,7 @@ public class SchemeMaker extends CardMaker {
 		card.name = "Scheme Name";
 		card.subCategory = "";
 		card.cardType = SchemeCardType.valueOf("SCHEME");
-		card.cardText = "<k>Always Leads: <r>Villain Group <g> <k>Master Strike: <r>Some effect.";
+		card.cardText = "<k>Setup: <r> <g> <k>Twist: <r> <g> <k>Evil Wins: <r>";
 		return card;
 	}
 	
@@ -141,7 +151,7 @@ public class SchemeMaker extends CardMaker {
 	public BufferedImage generateCard()
 	{
 		
-		int type = BufferedImage.TYPE_INT_RGB;
+		int type = BufferedImage.TYPE_INT_ARGB;
 		if (exportToPNG)
 		{
 			type = BufferedImage.TYPE_INT_ARGB;	
@@ -157,7 +167,12 @@ public class SchemeMaker extends CardMaker {
 	    
 	    if (card.imagePath != null)
 	    {
-	    	BufferedImage bi = resizeImage(new ImageIcon(card.imagePath), card.imageZoom);
+	    	String imagePath = card.imagePath;
+	    	if (!imagePath.contains(File.separator) && LegendaryCardMakerFrame.lcmf.lcm.currentFile != null)
+	    	{
+	    		imagePath = new File(LegendaryCardMakerFrame.lcmf.lcm.currentFile).getParent() + File.separator + card.imagePath;
+	    	}
+	    	BufferedImage bi = resizeImage(new ImageIcon(imagePath), card.imageZoom);
 	    	g.drawImage(bi, card.imageOffsetX, card.imageOffsetY, null);
 	    }
 		
@@ -506,35 +521,15 @@ public class SchemeMaker extends CardMaker {
 	{
 		System.out.println("Exporting: " + newFile.getName());
 		
+		BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics g = bi.getGraphics();
+		g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+		g.dispose();
+		
 		File dir = new File(exportFolder);
 		dir.mkdirs();
 		
-		FileOutputStream fos = new FileOutputStream(newFile);
-		ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
-		//JPEGImageWriter imageWriter = (JPEGImageWriter) ImageIO.getImageWritersBySuffix("jpeg").next();
-	    ImageOutputStream ios = ImageIO.createImageOutputStream(fos);
-	    imageWriter.setOutput(ios);
-	 
-	    //and metadata
-	    IIOMetadata imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(image), null);
-	    
-	  //new metadata
-        Element tree = (Element) imageMetaData.getAsTree("javax_imageio_jpeg_image_1.0");
-        Element jfif = (Element)tree.getElementsByTagName("app0JFIF").item(0);
-        jfif.setAttribute("Xdensity", Integer.toString(dpi));
-		jfif.setAttribute("Ydensity", Integer.toString(dpi));
-		jfif.setAttribute("resUnits", "1"); // density is dots per inch	
-        imageMetaData.setFromTree("javax_imageio_jpeg_image_1.0", tree);
-        
-        
-        JPEGImageWriteParam jpegParams = (JPEGImageWriteParam) imageWriter.getDefaultWriteParam();
-        jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-        jpegParams.setCompressionQuality(1f);
-        
-      //new Write and clean up
-        imageWriter.write(null, new IIOImage(image, null, imageMetaData), jpegParams);
-        ios.close();
-        imageWriter.dispose();
+		ImageIO.write(bi, "jpeg", newFile);
 	}
 	
 	public static void exportToPNG(BufferedImage image, File newFile) throws Exception
