@@ -24,7 +24,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.8";
+	public static String version = "0.9";
 
 	public String inputFile = null;
 	

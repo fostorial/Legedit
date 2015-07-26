@@ -318,7 +318,7 @@ public class HeroMaker extends CardMaker {
 	public int costFontStyle = Font.PLAIN;
 	public int costSize = 120;
 	int costX = 635;
-	int costY = 960;
+	int costY = 950;
 	Color costColor = Color.WHITE;
 	boolean includeBlurredBGCost = true;
 	int expandCost = 5;
@@ -329,7 +329,7 @@ public class HeroMaker extends CardMaker {
 	public int recruitFontStyle = Font.PLAIN;
 	int recruitSize = 80;
 	int recruitX = 98;
-	int recruitY = 766;
+	int recruitY = 760;
 	Color recruitColor = Color.WHITE;
 	boolean includeBlurredBGRecruit = true;
 	int expandRecruit = 3;
@@ -481,6 +481,10 @@ public class HeroMaker extends CardMaker {
 	    if (card.rarity != null && card.rarity.equals(CardRarity.COMMON))
 	    {
 	    	ImageIcon ii = null;
+	    	
+	    	ii = new ImageIcon(templateFolder + File.separator + "hero_common" + File.separator + "back_text.png");
+	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+	    	
 	    	if (card.cardPower == null || (card.cardPower != null && card.cardPower.equals(Icon.valueOf("NONE"))))
 	    	{
 	    		ii = new ImageIcon(templateFolder + File.separator + "hero_common" + File.separator + "back_grey.png");
@@ -491,13 +495,14 @@ public class HeroMaker extends CardMaker {
 	    		ii = new ImageIcon(templateFolder + File.separator + "hero_common" + File.separator + "back_" + card.cardPower.toString() + ".png");
 		    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    	}
-	    	
-	    	ii = new ImageIcon(templateFolder + File.separator + "hero_common" + File.separator + "back_text.png");
-	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    }
 	    if (card.rarity != null && card.rarity.equals(CardRarity.UNCOMMON))
 	    {
 	    	ImageIcon ii = null;
+	    	
+	    	ii = new ImageIcon(templateFolder + File.separator + "hero_uncommon" + File.separator + "back_text.png");
+	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+	    	
 	    	if (card.cardPower != null && card.cardPower.equals(Icon.valueOf("NONE")))
 	    	{
 	    		ii = new ImageIcon(templateFolder + File.separator + "hero_uncommon" + File.separator + "back_grey.png");
@@ -509,8 +514,6 @@ public class HeroMaker extends CardMaker {
 		    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    	}
 	    	
-	    	ii = new ImageIcon(templateFolder + File.separator + "hero_uncommon" + File.separator + "back_text.png");
-	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    }
 	    if (card.rarity != null && card.rarity.equals(CardRarity.RARE))
 	    {	
@@ -856,7 +859,9 @@ public class HeroMaker extends CardMaker {
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.recruit.toUpperCase());
 	        int x = recruitX - (stringLength / 2);
 	        
-	        int recruitYModified = recruitY + metrics.getDescent();
+	        LineMetrics lm = metrics.getLineMetrics(card.recruit, g2);
+	        int recruitYModified = recruitY + (int)((lm.getAscent() - lm.getDescent()) / 2); 
+	   
 	        
 	        g2.drawString(card.recruit.toUpperCase(), x, recruitYModified);
 	    	if (includeBlurredBGRecruit)
@@ -904,7 +909,8 @@ public class HeroMaker extends CardMaker {
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.attack.toUpperCase());
 	        int x = attackX - (stringLength / 2);
 	        
-	        int attackYModified = attackY + metrics.getDescent();
+	        LineMetrics lm = metrics.getLineMetrics(card.attack, g2);
+	        int attackYModified = attackY + (int)((lm.getAscent() - lm.getDescent()) / 2);
 	        
 	        g2.drawString(card.attack.toUpperCase(), x, attackYModified);
 	    	if (includeBlurredBGAttack)
@@ -1199,7 +1205,8 @@ public class HeroMaker extends CardMaker {
 	        int x = costX - (stringLength / 2) + primitiveOffset;
 	        //System.out.println("cost x =" + x);
 	        
-	        int costYModified = costY + metrics.getDescent();
+	        LineMetrics lm = metrics.getLineMetrics(card.cost, g2);
+	        int costYModified = costY + (int)((lm.getAscent() - lm.getDescent()) / 2);
 	        
 	        g2.drawString(card.cost.toUpperCase(), x, costYModified);
 	    	if (includeBlurredBGCost)
