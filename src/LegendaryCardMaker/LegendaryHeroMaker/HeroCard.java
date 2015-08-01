@@ -26,6 +26,7 @@ public class HeroCard {
 	public Icon cardTeam;
 	public Icon cardTeam2;
 	public Icon cardPower;
+	public Icon cardPower2;
 	public String attack;
 	public String recruit;
 	public String cost;
@@ -36,6 +37,7 @@ public class HeroCard {
 	public double imageZoom = 1.0d;
 	public int imageOffsetX = 0;
 	public int imageOffsetY = 0;
+	public int numberInDeck = -1;
 	
 	public ImageIcon imageSummary;
 	
@@ -121,6 +123,9 @@ public class HeroCard {
 		if (cardPower != null)
 			str += "HCPOWER;" + cardPower.toString() + "\n";
 		
+		if (cardPower2 != null)
+			str += "HCPOWER2;" + cardPower2.toString() + "\n";
+		
 		if (attack != null)
 			str += "HCATTACK;" + attack + "\n";
 		
@@ -148,6 +153,8 @@ public class HeroCard {
 		if (imagePath != null)
 			str += "HCIMAGEOFFSETY;" + imageOffsetY + "\n";
 		
+		str += "HCNUMBERINDECK;" + numberInDeck + "\n";
+		
 		str += "HCGENERATE;\n";
 		
 		return str;
@@ -158,6 +165,10 @@ public class HeroCard {
 		String str = "";
 		
 		str += rarity.toString();
+		if (numberInDeck > 0)
+		{
+			str += " (" + numberInDeck + " in deck)";
+		}
 		str += "\n";
 		
 		str += name;
@@ -169,6 +180,10 @@ public class HeroCard {
 			str += " + " + cardTeam2.toString();
 			
 		str += ", " + cardPower.toString();
+		
+		if (cardPower2 != null) 
+			str += " + " + cardPower2.toString();
+		
 		str += "\n";
 		
 		if (attack != null || recruit != null || cost != null)

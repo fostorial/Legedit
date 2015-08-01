@@ -64,6 +64,9 @@ public class LegendaryCardMaker {
 	public Color dividerTitleBarColour = Color.WHITE;
 	public String dividerCardStyle = "PowerIcons";
 	public String dividerBodyStyle = "Images";
+	
+	public String expansionName = "";
+	public String rules = "";
 	public String keywords = "";
 	
 	public static void main(String[] args)
@@ -82,14 +85,6 @@ public class LegendaryCardMaker {
 	
 	public LegendaryCardMaker()
 	{
-		//Icon.loadIcons();
-		
-		//processInput(inputFile);
-		
-		//new VillainMaker();
-		
-		//new SchemeMaker();
-		
 		bystanderVillain.name = "system_bystander_villain";
 		villains.add(bystanderVillain);
 		
@@ -111,7 +106,9 @@ public class LegendaryCardMaker {
 		woundVillain.name = "system_wound_villain";
 		villains.add(woundVillain);
 		
+		expansionName = "";
 		keywords = "";
+		rules = "";
 		
 		Hero h = new Hero();
 		HeroCard hc = new HeroCard();
@@ -157,6 +154,16 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("EXPANSIONSTYLE;"))
 				   {
 					   expansionStyle = line.replace("EXPANSIONSTYLE;", "");
+				   }
+				   
+				   if (line.startsWith("EXPANSIONNAME;"))
+				   {
+					   expansionName = line.replace("EXPANSIONNAME;", "");
+				   }
+				   
+				   if (line.startsWith("RULES;"))
+				   {
+					   rules = line.replace("RULES;", "");
 				   }
 				   
 				   if (line.startsWith("KEYWORDS;"))
@@ -460,6 +467,11 @@ public class LegendaryCardMaker {
 					   hc.cardPower = Icon.valueOf(line.replace("HCPOWER;", ""));
 				   }
 				   
+				   if (line.startsWith("HCPOWER2;"))
+				   {
+					   hc.cardPower2 = Icon.valueOf(line.replace("HCPOWER2;", ""));
+				   }
+				   
 				   if (line.startsWith("HCATTACK;"))
 				   {
 					   hc.attack = line.replace("HCATTACK;", "");
@@ -514,6 +526,11 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("HCIMAGEOFFSETY;"))
 				   {
 					   hc.imageOffsetY = Integer.parseInt(line.replace("HCIMAGEOFFSETY;", ""));
+				   }
+				   
+				   if (line.startsWith("HCNUMBERINDECK;"))
+				   {
+					   hc.numberInDeck = Integer.parseInt(line.replace("HCNUMBERINDECK;", ""));
 				   }
 				   
 				   if (!ignoreGenerate && line.startsWith("HCGENERATE;"))
@@ -952,6 +969,10 @@ public class LegendaryCardMaker {
 		str += "EXPANSIONSTYLE;" + expansionStyle;
 		str += "\n\n";
 		
+		str += "EXPANSIONNAME;" + expansionName;
+		str += "\n\n";
+		str += "RULES;" + rules;
+		str += "\n\n";
 		str += "KEYWORDS;" + keywords;
 		str += "\n\n";
 		

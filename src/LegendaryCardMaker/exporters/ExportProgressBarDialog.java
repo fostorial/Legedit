@@ -1,10 +1,11 @@
-package LegendaryCardMaker;
+package LegendaryCardMaker.exporters;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 
+import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;

@@ -1,4 +1,4 @@
-package LegendaryCardMaker;
+package LegendaryCardMaker.exporters;
 
 /*
  * To change this template, choose Tools | Templates

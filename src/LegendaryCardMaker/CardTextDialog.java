@@ -56,6 +56,7 @@ public class CardTextDialog extends JDialog implements ActionListener {
 
 	public CardTextDialog(String text)
 	{
+		
 		this.setModal(true);
 		this.setSize(500, 300);
 		
@@ -82,7 +83,10 @@ public class CardTextDialog extends JDialog implements ActionListener {
 		textArea = new JTextArea();
 		textArea.setWrapStyleWord(true);
 		textArea.setLineWrap(true);
-		textArea.setText(text.replace(" <g> ", "\n"));
+		if (text != null)
+		{
+			textArea.setText(text.replace(" <g> ", "\n"));
+		}
 		scroll = new JScrollPane();
 		scroll.setViewportView(textArea);
 		this.add(scroll, BorderLayout.CENTER);

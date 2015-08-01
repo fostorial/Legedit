@@ -16,12 +16,12 @@ import javax.xml.crypto.dsig.spec.HMACParameterSpec;
 
 import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.CardMakerToolbar;
-import LegendaryCardMaker.ExportHomeprintProgressBarDialog;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker;
+import LegendaryCardMaker.exporters.ExportHomeprintProgressBarDialog;
 
 public class VillainSelectorMenu extends JMenu implements ActionListener{
 	

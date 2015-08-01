@@ -815,6 +815,8 @@ public class LegendaryCardMakerFrame extends JFrame {
 	
 	public void createNewExpansion()
 	{
+		lcm.expansionName = "";
+		lcm.rules = "";
 		lcm.keywords = "";
 		
 		lcm.heroes = new ArrayList<Hero>();

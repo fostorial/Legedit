@@ -1,4 +1,4 @@
-package LegendaryCardMaker;
+package LegendaryCardMaker.exporters;
 
 import java.io.File;
 import java.io.FileInputStream;

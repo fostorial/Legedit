@@ -18,8 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import LegendaryCardMaker.CardMaker;
-import LegendaryCardMaker.ExportHomeprintProgressBarDialog;
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
+import LegendaryCardMaker.exporters.ExportHomeprintProgressBarDialog;
 
 public class HeroCardSelectorToolbar extends JMenuBar implements ActionListener{
 
@@ -185,8 +185,15 @@ public class HeroCardSelectorToolbar extends JMenuBar implements ActionListener{
 						HeroMaker hm = new HeroMaker();
 						hm.setCard(hc);
 						
-						for (int i = 0; i < hc.rarity.getCount(); i++)
-						cardMakers.add(hm);
+						int count = hc.rarity.getCount();
+            			if (hc.numberInDeck > 0)
+        				{
+        					count = hc.numberInDeck;
+        				}
+            			for (int i = 0; i < count; i++)
+            			{
+            				cardMakers.add(hm); 
+            			}
 					}
 					
 					hm.lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());

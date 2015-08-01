@@ -52,6 +52,9 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 	JMenu power = new JMenu("Power");
 	List<JCheckBoxMenuItem> powerItems = new ArrayList<JCheckBoxMenuItem>();
 	
+	JMenu secondaryPower = new JMenu("Secondary Power");
+	List<JCheckBoxMenuItem> secondaryPowerItems = new ArrayList<JCheckBoxMenuItem>();
+	
 	JMenuItem setCost = new JMenuItem("Set Cost...");
 	JMenuItem setRecruit = new JMenuItem("Set Recruit...");
 	JMenuItem setAttack = new JMenuItem("Set Attack...");
@@ -90,6 +93,8 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 	
 	JMenuItem resetTemplate = new JMenuItem("Reset Template");
 	
+	JMenuItem setNumberInDeck = new JMenuItem("Set Number In Deck...");
+	
 	static HeroMakerToolbar tb = null;
 	
 	public HeroMakerToolbar(HeroMaker hm, HeroMakerFrame hmf)
@@ -124,6 +129,8 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 		rarityRare.addActionListener(this);
 		rarity.add(rarityRare);
 		edit.add(rarity);
+		
+		edit.addSeparator();
 		
 		if (!hmf.templateMode)
 		{
@@ -260,6 +267,41 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 					powerItems.add(m);
 					power.add(m);
 				}
+				
+				if (icon.getIconType().equals(Icon.ICON_TYPE.POWER) || icon.getIconType().equals(Icon.ICON_TYPE.NONE))
+				{
+					String s = icon.toString().substring(0, 1).toUpperCase() + icon.toString().substring(1).toLowerCase();
+					s.replace("_", " ");
+					JCheckBoxMenuItem m = new JCheckBoxMenuItem(s);
+					m.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							
+							String enumValue = ((JCheckBoxMenuItem)e.getSource()).getText().replace(" ", "_").toUpperCase();
+							Icon icon = Icon.valueOf(enumValue);
+							tb.hm.card.cardPower2 = icon;
+							
+							for (JCheckBoxMenuItem item : tb.powerItems)
+							{
+								if (item.getText().replace(" ", "_").toUpperCase().equals(enumValue))
+								{
+									item.setSelected(true);
+								}
+								else
+								{
+									item.setSelected(false);
+								}
+							}
+							
+							tb.hmf.reRenderCard();
+							tb.hm.card.changed = true;
+						}
+					});
+					
+					secondaryPowerItems.add(m);
+					secondaryPower.add(m);
+				}
 			}
 			
 			for (JCheckBoxMenuItem item : teamItems)
@@ -288,6 +330,8 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			}
 			edit.add(secondaryTeam);
 			
+			edit.addSeparator();
+			
 			for (JCheckBoxMenuItem item : powerItems)
 			{
 				if (hm.card.cardPower != null && item.getText().replace(" ", "_").toUpperCase().equals(hm.card.cardPower.toString()))
@@ -301,6 +345,21 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			}
 			edit.add(power);
 			
+			for (JCheckBoxMenuItem item : secondaryPowerItems)
+			{
+				if (hm.card.cardPower2 != null && item.getText().replace(" ", "_").toUpperCase().equals(hm.card.cardPower2.toString()))
+				{
+					item.setSelected(true);
+				}
+				else
+				{
+					item.setSelected(false);
+				}
+			}
+			edit.add(secondaryPower);
+			
+			edit.addSeparator();
+			
 			setCardName.addActionListener(this);
 			edit.add(setCardName);
 			
@@ -309,6 +368,8 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			
 			setHeroNameSize.addActionListener(this);
 			edit.add(setHeroNameSize);
+			
+			edit.addSeparator();
 			
 			setRecruit.addActionListener(this);
 			edit.add(setRecruit);
@@ -319,17 +380,26 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			setCost.addActionListener(this);
 			edit.add(setCost);
 			
+			edit.addSeparator();
+			
 			setAbilityText.addActionListener(this);
 			edit.add(setAbilityText);
 			
 			setAbilityTextSize.addActionListener(this);
 			edit.add(setAbilityTextSize);
 			
+			edit.addSeparator();
+			
 			setBackgroundImage.addActionListener(this);
 			edit.add(setBackgroundImage);
 			
 			setBackgroundZoom.addActionListener(this);
 			edit.add(setBackgroundZoom);
+			
+			edit.addSeparator();
+			
+			setNumberInDeck.addActionListener(this);
+			edit.add(setNumberInDeck);
 		}
 		else
 		{
@@ -1162,6 +1232,22 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			hmf.reRenderCard();
 			hm.card.changed = true;
 			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		if (e.getSource().equals(setNumberInDeck))
+		{
+			String s = JOptionPane.showInputDialog(hmf, "Enter the Number in Deck", hm.card.numberInDeck);
+			if (s == null) { s = "" + hm.card.numberInDeck; }
+			if (s != null && s.isEmpty()) { s = "" + hm.card.numberInDeck; }
+			try
+			{
+				hm.card.numberInDeck = Integer.parseInt(s);
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			hm.card.changed = true;
 		}
 	}
 

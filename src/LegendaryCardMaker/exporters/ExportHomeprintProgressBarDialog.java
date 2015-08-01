@@ -1,4 +1,4 @@
-package LegendaryCardMaker;
+package LegendaryCardMaker.exporters;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,8 +29,8 @@ import javax.swing.SwingWorker;
 
 import org.w3c.dom.Element;
 
-import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMaker;
-import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMaker;
+import LegendaryCardMaker.CardMaker;
+import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker;
@@ -40,7 +40,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.Villain;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainCard;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
  
-public class ExportDividersHomeprintProgressBarDialog extends JPanel
+public class ExportHomeprintProgressBarDialog extends JPanel
                              implements ActionListener, 
                                         PropertyChangeListener {
  
@@ -55,11 +55,13 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
     
     private JDialog frame;
     
-    private String exportFileName = "dividers_";
+    private String exportFileName = "export_";
+    
+    private List<CardMaker> cardMakers;
  
     class Task extends SwingWorker<Void, Void> {
     	
-    	private ExportDividersHomeprintProgressBarDialog bar;
+    	private ExportHomeprintProgressBarDialog bar;
     	
         /*
          * Main task. Executed in background thread.
@@ -67,53 +69,79 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
         @Override
         public Void doInBackground() throws Exception
         {
-        	List<DividerMaker> cardMakers = new ArrayList<DividerMaker>();
-        	
         	int max = 0;
-        	
-        	for (Hero h : lcm.heroes)
-    		{
-        		HeroDividerMaker hm = new HeroDividerMaker(h, LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal);
-        		cardMakers.add(hm);
-        		max++;
-    		}
-    		
-        	
-    		for (Villain v : lcm.villains)
-    		{
-    			if (!v.name.toLowerCase().equals("system_bystander_villain") 
-    					&& !v.name.toLowerCase().equals("system_wound_villain"))
-    			{
-    				VillainDividerMaker hm = new VillainDividerMaker(v, LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal);
-        			cardMakers.add(hm);
-        			max++;
-    			}
-    		}
-    		
-    		/*
-    		for (SchemeCard s : lcm.schemes)
-    		{
-    			
-    		}
-    		*/
+        	if (cardMakers == null)
+        	{
+        		cardMakers = new ArrayList<CardMaker>();
+        		
+        		for (Hero h : lcm.heroes)
+        		{
+            		for (HeroCard hc : h.cards)
+            		{
+            			HeroMaker hm = new HeroMaker();
+            			hm.setCard(hc);
+            			
+            			int count = hc.rarity.getCount();
+            			if (hc.numberInDeck > 0)
+        				{
+        					count = hc.numberInDeck;
+        				}
+            			for (int i = 0; i < count; i++)
+            			{
+            				cardMakers.add(hm);
+            				max++; 
+            			}
+            		}
+        		}
+        		
+        		for (Villain v : lcm.villains)
+        		{
+        			for (VillainCard vc : v.cards)
+        			{
+        				VillainMaker vm = new VillainMaker();
+        				vm.setCard(vc);
+        				
+        				int count = vc.cardType.getCount();
+        				if (vc.numberInDeck > 0)
+        				{
+        					count = vc.numberInDeck;
+        				}
+        				for (int i = 0; i < count; i++)
+            			{
+        					cardMakers.add(vm);
+        					max++;
+            			}
+        			}
+        		}
+        		
+        		for (SchemeCard s : lcm.schemes)
+        		{
+        			SchemeMaker sm = new SchemeMaker();
+        			sm.setCard(s);
+        			
+        			for (int i = 0; i < s.numberInDeck; i++)
+        			{
+    					cardMakers.add(sm);
+    					max++;
+        			}
+        		}
+        	}
+        	else
+        	{
+        		max = cardMakers.size();
+        	}
     		
     		setMaxValue(max);
-    		
     		double progressDouble = 0d;
     		double progressIncrement = (100d / (double)max);
     		progressBar.setMaximum(100);
     		
-    		int cardWidth = DividerMaker.getWidth();
-    		int cardHeight = DividerMaker.getHeight();
+    		int cardWidth = 750;
+    		int cardHeight = 1050;
     		int dpi = 300;
     		
-    		double xPadding = 0.00;
+    		double xPadding = 0.02;
     		double yPadding = 0.02;
-    		if (!LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal)
-    		{
-    			xPadding = 0.00;
-    		}
-    		
     		int w = cardWidth;
 			int xPad = (int)((cardWidth) * xPadding);
 			int fullW = w + xPad + xPad;
@@ -125,32 +153,29 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
     		int j = 1;
     		
     		int type = BufferedImage.TYPE_INT_RGB;
-            BufferedImage image = new BufferedImage(fullW * DividerMaker.getDividersPerRow(), fullH * DividerMaker.getDividerRows(), type);
+            BufferedImage image = new BufferedImage(fullW * 3, fullH * 3, type);
             Graphics g = image.getGraphics();
             
             g.setColor(Color.white);
             g.fillRect(0, 0, image.getWidth(), image.getHeight());
             
             int x = xPad; int y = yPad;
-    		for (DividerMaker cm : cardMakers)
+    		for (CardMaker cm : cardMakers)
     		{
     			
-    			BufferedImage bi = cm.generateDivider();
+    			BufferedImage bi = cm.generateCard();
     			
     			g.drawImage(bi, x, y, null);
     			
-    			g.setColor(Color.LIGHT_GRAY);
-    			g.drawRect(x, y, bi.getWidth(), bi.getHeight());
-    			
     			x += bi.getWidth() + xPad + xPad;
-    			if (x >= (xPad + xPad + bi.getWidth()) * DividerMaker.getDividersPerRow())
+    			if (x >= (xPad + xPad + bi.getWidth()) * 3)
     			{
     				y += bi.getHeight() + yPad + yPad;
     				x = xPad;
     			}
     				
     			i++;
-    			if (i == (DividerMaker.getDividersPerRow() * DividerMaker.getDividerRows()))
+    			if (i == 9)
     			{
     				i=0;
     				x = xPad; y = yPad;
@@ -163,7 +188,7 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
     				catch (Exception e) { e.printStackTrace(); }
     				
     				g.dispose();
-    				image = new BufferedImage(fullW * DividerMaker.getDividersPerRow(), fullH * DividerMaker.getDividerRows(), type);
+    				image = new BufferedImage(fullW * 3, fullH * 3, type);
     		        g = image.getGraphics();
     		        g.setColor(Color.white);
     		        g.fillRect(0, 0, image.getWidth(), image.getHeight());
@@ -177,7 +202,7 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
     		
     		}
     		
-    		if (i < (DividerMaker.getDividersPerRow() * DividerMaker.getDividerRows()) && i > 0)
+    		if (i < 9)
     		{
     			i=0;
     			try
@@ -202,22 +227,23 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
             bar.hideGUI();
         }
 
-		public ExportDividersHomeprintProgressBarDialog getBar() {
+		public ExportHomeprintProgressBarDialog getBar() {
 			return bar;
 		}
 
-		public void setBar(ExportDividersHomeprintProgressBarDialog bar) {
+		public void setBar(ExportHomeprintProgressBarDialog bar) {
 			this.bar = bar;
 		}
         
         
     }
  
-    public ExportDividersHomeprintProgressBarDialog(int maxValue, LegendaryCardMaker lcm, File folder) {
+    public ExportHomeprintProgressBarDialog(int maxValue, LegendaryCardMaker lcm, File folder, List<CardMaker> cardMakers) {
         super(new BorderLayout());
         
         this.lcm = lcm;
         this.folder = folder;
+        this.cardMakers = cardMakers;
         
         this.maxValue = maxValue;
  
@@ -330,10 +356,5 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
         imageWriter.write(null, new IIOImage(image, null, imageMetaData), jpegParams);
         ios.close();
         imageWriter.dispose();
-	}
-	
-	private void exportVerticalDividers()
-	{
-		
 	}
 }

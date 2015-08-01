@@ -5,9 +5,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
-import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -17,17 +15,10 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
@@ -272,100 +263,100 @@ public class HeroMaker extends CardMaker {
 	
 	Color teamPowerUnderlayColor = Color.BLACK;
 	
-	int teamIconX = 54;
-	int teamIconY = 60;
-	int teamMaxWidth = 54;
-	int teamMaxHeight = 54;
-	boolean includeBlurredBGTeam = true;
-	int expandTeam = 1;
-	int teamBlurRadius = 5;
-	boolean teamBlurDouble = true;
+	public int teamIconX = 54;
+	public int teamIconY = 60;
+	public int teamMaxWidth = 54;
+	public int teamMaxHeight = 54;
+	public boolean includeBlurredBGTeam = true;
+	public int expandTeam = 1;
+	public int teamBlurRadius = 5;
+	public boolean teamBlurDouble = true;
 	
-	int powerIconX = 54;
-	int powerIconY = 120;
-	int powerMaxWidth = 54;
-	int powerMaxHeight = 54;
-	boolean includeBlurredBGPower = true;
-	int expandPower = 1;
-	int powerBlurRadius = 5;
-	boolean powerBlurDouble = true;
+	public int powerIconX = 54;
+	public int powerIconY = 120;
+	public int powerMaxWidth = 54;
+	public int powerMaxHeight = 54;
+	public boolean includeBlurredBGPower = true;
+	public int expandPower = 1;
+	public int powerBlurRadius = 5;
+	public boolean powerBlurDouble = true;
 	
 	public String nameHighlight = "Blur";
 	
 	public String cardNameFontName = null;
 	public int cardNameFontStyle = Font.PLAIN;
 	public int cardNameSize = 40;
-	int cardNameMinSize = 30;
-	int cardNameY = 50;
-	Color cardNameColor = new Color (255,186,20);
-	boolean includeBlurredBGName = true;
-	int expandCardName = 2;
-	int cardNameBlurRadius = 5;
-	boolean cardNameBlurDouble = true;
+	public int cardNameMinSize = 30;
+	public int cardNameY = 15;
+	public Color cardNameColor = new Color (255,186,20);
+	public boolean includeBlurredBGName = true;
+	public int expandCardName = 2;
+	public int cardNameBlurRadius = 5;
+	public boolean cardNameBlurDouble = true;
 	
 	public String heroNameFontName = null;
 	public int heroNameFontStyle = Font.PLAIN;
 	public int heroNameSize = 33;
-	int heroNameMinSize = 30;
-	int heroNameY = 85;
-	Color heroNameColor = new Color (255,186,20);
-	boolean includeBlurredBGHeroName = true;
-	int expandHeroName = 2;
-	int heroNameBlurRadius = 5;
-	boolean heroNameBlurDouble = true;
+	public int heroNameMinSize = 30;
+	public int heroNameY = 55;
+	public Color heroNameColor = new Color (255,186,20);
+	public boolean includeBlurredBGHeroName = true;
+	public int expandHeroName = 2;
+	public int heroNameBlurRadius = 5;
+	public boolean heroNameBlurDouble = true;
 	
 	public String costFontName = null;
 	public int costFontStyle = Font.PLAIN;
 	public int costSize = 120;
-	int costX = 635;
-	int costY = 950;
-	Color costColor = Color.WHITE;
-	boolean includeBlurredBGCost = true;
-	int expandCost = 5;
-	int costBlurRadius = 5;
-	boolean costBlurDouble = false;
+	public int costX = 635;
+	public int costY = 950;
+	public Color costColor = Color.WHITE;
+	public boolean includeBlurredBGCost = true;
+	public int expandCost = 5;
+	public int costBlurRadius = 5;
+	public boolean costBlurDouble = false;
 	
 	public String recruitFontName = null;
 	public int recruitFontStyle = Font.PLAIN;
-	int recruitSize = 80;
-	int recruitX = 98;
-	int recruitY = 760;
-	Color recruitColor = Color.WHITE;
-	boolean includeBlurredBGRecruit = true;
-	int expandRecruit = 3;
-	int recruitBlurRadius = 3;
-	boolean recruitBlurDouble = false;
+	public int recruitSize = 80;
+	public int recruitX = 98;
+	public int recruitY = 760;
+	public Color recruitColor = Color.WHITE;
+	public boolean includeBlurredBGRecruit = true;
+	public int expandRecruit = 3;
+	public int recruitBlurRadius = 3;
+	public boolean recruitBlurDouble = false;
 	
 	public String attackFontName = null;
 	public int attackFontStyle = Font.PLAIN;
-	int attackSize = 80;
-	int attackX = 87;
-	int attackY = 917;
-	Color attackColor = Color.WHITE;
-	boolean includeBlurredBGAttack = true;
-	int expandAttack = 3;
-	int attackBlurRadius = 3;
-	boolean attackBlurDouble = false;
-	HashMap<String, Integer> costOffsets = new HashMap<String, Integer>();
+	public int attackSize = 80;
+	public int attackX = 87;
+	public int attackY = 917;
+	public Color attackColor = Color.WHITE;
+	public boolean includeBlurredBGAttack = true;
+	public int expandAttack = 3;
+	public int attackBlurRadius = 3;
+	public boolean attackBlurDouble = false;
+	public HashMap<String, Integer> costOffsets = new HashMap<String, Integer>();
 	
 	public String textFontName = null;
 	public int textFontStyle = Font.PLAIN;
 	public int textSize = 27;
-	int textX = 154;
-	int textY = 805;
-	Color textColor = Color.BLACK;
-	boolean includeBlurredBGText = false;
-	int expandText = 0;
-	int textBlurRadius = 0;
-	boolean textBlurDouble = false;
-	double textIconHeight = 1.2d;
-	double textGapHeight = 0.6d;
-	double textDefaultGapHeight = 0.2d;
-	int expandTextIcon = 0;
-	int textIconBlurRadius = 5;
-	boolean textIconBlurDouble = true;
-	double rarePaddingRatio = 0.06d;
-	int rareBlurRadius = 25;
+	public int textX = 154;
+	public int textY = 805;
+	public Color textColor = Color.BLACK;
+	public boolean includeBlurredBGText = false;
+	public int expandText = 0;
+	public int textBlurRadius = 0;
+	public boolean textBlurDouble = false;
+	public double textIconHeight = 1.2d;
+	public double textGapHeight = 0.6d;
+	public double textDefaultGapHeight = 0.2d;
+	public int expandTextIcon = 0;
+	public int textIconBlurRadius = 5;
+	public boolean textIconBlurDouble = true;
+	public double rarePaddingRatio = 0.06d;
+	public int rareBlurRadius = 25;
 	public int textStartOffset = 0;
 	
 	public HeroCard card;
@@ -548,27 +539,8 @@ public class HeroMaker extends CardMaker {
 	    		g2.setFont(font);
 	    	}
 	        FontMetrics metrics = g2.getFontMetrics(font);
-	        int nameHeight = metrics.getHeight();
-	        FontRenderContext frc = g.getFontRenderContext();
-	    	int nameAscent = (int)font.getLineMetrics(card.name.toUpperCase(), frc).getAscent();
+	    	int nameAscent = (int)metrics.getLineMetrics(card.name.toUpperCase(), g2).getAscent();
 	    	
-	        
-	        try
-	    	{
-	    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
-	        font = font.deriveFont((float)40);
-	        g2.setFont(font);
-	    	}
-	    	catch (Exception e)
-	    	{
-	    		e.printStackTrace();
-	    		
-	    		font = new Font("Percolator", Font.PLAIN, 40);
-	    		g2.setFont(font);
-	    	}
-	        metrics = g2.getFontMetrics(font);
-	        int originalNameHeight = metrics.getHeight();
-	        int nameHeightDifference = nameHeight - originalNameHeight;
 	        
 	        try
 	    	{
@@ -585,31 +557,12 @@ public class HeroMaker extends CardMaker {
 	    	}
 	        g2.setFont(font);
 	        metrics = g2.getFontMetrics(font);
-	        int heroHeight = metrics.getHeight();
-	        int heroAscent = (int)font.getLineMetrics(card.name.toUpperCase(), frc).getAscent();
+	        int heroDescent = (int)metrics.getLineMetrics(card.name.toUpperCase(), g2).getDescent();
 	        
-	        try
-	    	{
-	    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
-	        font = font.deriveFont((float)33);
-	        g2.setFont(font);
-	    	}
-	    	catch (Exception e)
-	    	{
-	    		e.printStackTrace();
-	    		
-	    		font = new Font("Percolator", Font.PLAIN, 33);
-	    		g2.setFont(font);
-	    	}
-	        g2.setFont(font);
-	        metrics = g2.getFontMetrics(font);
-	        int originalHeroHeight = metrics.getHeight();
-	        int heroHeightDifference = heroHeight - originalHeroHeight;
-	        
-	        int bannerHeight = (heroNameY + (nameHeightDifference / 2) + (heroHeightDifference / 2)) - (cardNameY - nameAscent);
-	        bannerHeight = bannerHeight + getPercentage(bannerHeight, 0.15d);
+	        int bannerHeight = (heroNameY + heroDescent) - (cardNameY - nameAscent);
+	        bannerHeight = bannerHeight + getPercentage(cardHeight, 0.01d);
 			g2.setColor(Color.black);
-			g2.fillRect((cardWidth / 2), cardNameY - nameAscent, getPercentage(cardWidth, 0.15d), bannerHeight);
+			g2.fillRect((cardWidth / 2), cardNameY - nameAscent - getPercentage(cardHeight, 0.005d), getPercentage(cardWidth, 0.15d), bannerHeight);
 	    	
 			MotionBlurOp op = new MotionBlurOp();
 			op.setDistance(200f);
@@ -631,7 +584,7 @@ public class HeroMaker extends CardMaker {
 	    }
 	    
 	    // Card Name
-	    int nameHeightDifference = 0;
+	    int cardNameEndPos = 0;
 	    if (card.name != null)
 	    {
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
@@ -641,22 +594,6 @@ public class HeroMaker extends CardMaker {
 	        //Font font = new Font("Percolator", Font.PLAIN, cardNameSize);
 	    	
 	    	Font font = null;
-	    	//Determine base value to offset y values
-	    	try
-	    	{
-	    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
-	        font = font.deriveFont((float)40);
-	        g2.setFont(font);
-	    	}
-	    	catch (Exception e)
-	    	{
-	    		e.printStackTrace();
-	    		
-	    		font = new Font("Percolator", Font.PLAIN, 40);
-	    		g2.setFont(font);
-	    	}
-	        FontMetrics metrics = g2.getFontMetrics(font);
-	        int originalNameHeight = metrics.getHeight();
 	        
 	    	try
 	    	{
@@ -676,29 +613,23 @@ public class HeroMaker extends CardMaker {
     			font = new Font(cardNameFontName, cardNameFontStyle, cardNameSize);
     			g2.setFont(font);
     		}
-	        metrics = g2.getFontMetrics(font);
-	        int newNameHeight = metrics.getHeight();
-	        nameHeightDifference = newNameHeight - originalNameHeight;
+	        FontMetrics metrics = g2.getFontMetrics(font);
 	        
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.name.toUpperCase());
 	        int x = (cardWidth / 2) - (stringLength / 2);
 	        
-	        g2.drawString(card.name.toUpperCase(), x, cardNameY + (nameHeightDifference / 2));
+	        LineMetrics lm = metrics.getLineMetrics(card.name.toUpperCase(), g2);
+	        
+	        g2.drawString(card.name.toUpperCase(), x, cardNameY + (int)lm.getAscent());
 	    	if (includeBlurredBGName && nameHighlight != null && nameHighlight.equals("Blur"))
 	    	{
 	    		drawUnderlay(bi, g2, type, 0, 0, cardNameBlurRadius, cardNameBlurDouble, expandCardName, Color.black);
 	    	}
 	    	
-	    	g2.drawString(card.name.toUpperCase(), x, cardNameY + (nameHeightDifference / 2));
+	    	g2.drawString(card.name.toUpperCase(), x, cardNameY + (int)lm.getAscent());
 	    	
-	    	/*
-	    	g2.setColor(Color.red);
-	    	g2.drawLine(0, cardNameY + (nameHeightDifference / 2), cardWidth, cardNameY + (nameHeightDifference / 2));
-	    	g2.setColor(Color.GREEN);
-	    	FontRenderContext frc = g.getFontRenderContext();
-	    	g2.drawLine(0, cardNameY - (int)font.getLineMetrics(card.name.toUpperCase(), frc).getAscent(), cardWidth, cardNameY - (int)font.getLineMetrics(card.name.toUpperCase(), frc).getAscent());
-	    	*/
-	    	
+	    	cardNameEndPos = cardNameY + (int)lm.getHeight();
+	    			
 	    	g.drawImage(bi, 0, 0, null);
 	    	
 	    	g2.dispose();
@@ -711,27 +642,8 @@ public class HeroMaker extends CardMaker {
 	        Graphics g2 = bi.getGraphics();
 	        
 	    	g2.setColor(heroNameColor);
-	        //Font font = new Font("Percolator", Font.PLAIN, heroNameSize);
 	    	
-	    	//Get default hero size for comparison
 	    	Font font = null;
-	    	try
-	    	{
-	    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
-	        font = font.deriveFont((float)33);
-	        g2.setFont(font);
-	    	}
-	    	catch (Exception e)
-	    	{
-	    		e.printStackTrace();
-	    		
-	    		font = new Font("Percolator", Font.PLAIN, 33);
-	    		g2.setFont(font);
-	    	}
-	        g2.setFont(font);
-	        FontMetrics metrics = g2.getFontMetrics(font);
-	        int originalHeroHeight = metrics.getHeight();
-	        
 	        try
 	    	{
 	    	font = Font.createFont(Font.TRUETYPE_FONT, new File("Percolator.otf"));
@@ -750,28 +662,25 @@ public class HeroMaker extends CardMaker {
     			font = new Font(heroNameFontName, heroNameFontStyle, heroNameSize);
     		}
 	        g2.setFont(font);
-	        metrics = g2.getFontMetrics(font);
-	        int newHeroHeight = metrics.getHeight();
-	        int heroHeightDifference = newHeroHeight - originalHeroHeight;
+	        FontMetrics metrics = g2.getFontMetrics(font);
+	        LineMetrics lm = metrics.getLineMetrics(card.heroName.toUpperCase(), g2);
 	        
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.heroName.toUpperCase());
 	        int x = (cardWidth / 2) - (stringLength / 2);
 	        
-	        g2.drawString(card.heroName.toUpperCase(), x, heroNameY + (nameHeightDifference / 2) + (heroHeightDifference / 2));
+	        int modifiedY = heroNameY;
+	        if (cardNameEndPos > heroNameY)
+	        {
+	        	modifiedY = cardNameEndPos;
+	        }
+	        	
+	        g2.drawString(card.heroName.toUpperCase(), x, modifiedY + (int)lm.getAscent());
 	    	if (includeBlurredBGHeroName && nameHighlight != null && nameHighlight.equals("Blur"))
 	    	{
 	    		drawUnderlay(bi, g2, type, 0, 0, heroNameBlurRadius, heroNameBlurDouble, expandHeroName, Color.black);
 	    	}
 	    	
-	    	g2.drawString(card.heroName.toUpperCase(), x, heroNameY + (nameHeightDifference / 2) + (heroHeightDifference / 2));
-	    	
-	    	/*
-	    	g2.setColor(Color.red);
-	    	g2.drawLine(0, heroNameY + (nameHeightDifference / 2) + (heroHeightDifference / 2), cardWidth, heroNameY + (nameHeightDifference / 2) + (heroHeightDifference / 2));
-	    	g2.setColor(Color.GREEN);
-	    	FontRenderContext frc = g.getFontRenderContext();
-	    	g2.drawLine(0, heroNameY - (int)font.getLineMetrics(card.heroName.toUpperCase(), frc).getAscent(), cardWidth, heroNameY - (int)font.getLineMetrics(card.heroName.toUpperCase(), frc).getAscent());
-	    	*/
+	    	g2.drawString(card.heroName.toUpperCase(), x, modifiedY + (int)lm.getAscent());
 	    	
 	    	g.drawImage(bi, 0, 0, null);
 	    	
@@ -815,16 +724,35 @@ public class HeroMaker extends CardMaker {
 	    // Card Power
 	    if (card.cardPower != null && card.cardPower.getImagePath() != null)
 	    {
-	    	BufferedImage bi = getIcon(card.cardPower, powerMaxWidth, powerMaxHeight);
-	    	int x = powerIconX - (bi.getWidth() / 2);
-	    	int y = powerIconY - (bi.getWidth() / 2);
-	    	
-	    	if (includeBlurredBGPower)
+	    	if (card.cardPower2 != null && card.cardPower != null && !card.cardPower2.equals(Icon.valueOf("NONE")))
 	    	{
-	    		drawUnderlay(bi, g, type, x, y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
+	    		BufferedImage bi1 = getIcon(card.cardPower, powerMaxWidth, powerMaxHeight);
+	    		BufferedImage bi2 = getIcon(card.cardPower2, powerMaxWidth, powerMaxHeight);
+		    	int x = powerIconX - (bi1.getWidth() / 2);
+		    	int y = powerIconY - (bi1.getWidth() / 2);
+		    	
+		    	if (includeBlurredBGTeam)
+		    	{
+		    		drawUnderlay(bi1, g, type, x, y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
+		    		drawUnderlay(bi2, g, type, x + bi1.getWidth(), y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
+		    	}
+		    	
+		    	g.drawImage(bi1, x, y, null);
+		    	g.drawImage(bi2, x + bi1.getWidth(), y, null);
 	    	}
+	    	else
+	    	{
+	    		BufferedImage bi = getIcon(card.cardPower, powerMaxWidth, powerMaxHeight);
+		    	int x = powerIconX - (bi.getWidth() / 2);
+		    	int y = powerIconY - (bi.getWidth() / 2);
+		    	
+		    	if (includeBlurredBGPower)
+		    	{
+		    		drawUnderlay(bi, g, type, x, y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
+		    	}
 
-	    	g.drawImage(bi, x, y, null);
+		    	g.drawImage(bi, x, y, null);
+	    	}
 	    }
 	    
 	    // Recruit

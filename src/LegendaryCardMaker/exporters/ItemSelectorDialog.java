@@ -1,4 +1,4 @@
-package LegendaryCardMaker;
+package LegendaryCardMaker.exporters;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -7,6 +7,8 @@ import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 
+import LegendaryCardMaker.LegendaryCardMakerFrame;
+import LegendaryCardMaker.LegendaryItem;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;

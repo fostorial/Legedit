@@ -46,6 +46,11 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainCardType;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.WoundSelectorMenu;
+import LegendaryCardMaker.exporters.ExportDividersHomeprintProgressBarDialog;
+import LegendaryCardMaker.exporters.ExportFullProgressBarDialog;
+import LegendaryCardMaker.exporters.ExportHomeprintProgressBarDialog;
+import LegendaryCardMaker.exporters.ExportProgressBarDialog;
+import LegendaryCardMaker.exporters.ItemSelectorDialog;
 
 public class CardMakerToolbar extends JMenuBar implements ActionListener{
 
@@ -88,6 +93,8 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	JMenu expansion = new JMenu("Expansion");
 	JMenu style = new JMenu("Style");
 	List<JCheckBoxMenuItem> styleItems = new ArrayList<JCheckBoxMenuItem>();
+	JMenuItem expansionName = new JMenuItem("Expansion Name...");
+	JMenuItem rules = new JMenuItem("Edit Rules...");
 	JMenuItem keywords = new JMenuItem("Edit Keywords...");
 	
 	JMenu tools = new JMenu("Tools");
@@ -211,6 +218,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		//populateExpansionMenu();
 		//expansion.add(style);
 		
+		expansionName.addActionListener(this);
+		expansion.add(expansionName);
+		rules.addActionListener(this);
+		expansion.add(rules);
 		keywords.addActionListener(this);
 		expansion.add(keywords);
 		
@@ -775,6 +786,22 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			if (s != null && s.isEmpty()) { s = null; }
 			lcmf.lcm.keywords = s;
 		}
+		
+		if (e.getSource().equals(rules))
+		{
+			String s = new CardTextDialog(lcmf.lcm.rules).showInputDialog();
+			if (s == null) { s = lcmf.lcm.rules; }
+			if (s != null && s.isEmpty()) { s = null; }
+			lcmf.lcm.rules = s;
+		}
+		
+		if (e.getSource().equals(expansionName))
+		{
+			String s = JOptionPane.showInputDialog(lcmf, "Enter the Expansion Name", lcmf.lcm.expansionName);
+			if (s == null) { s = lcmf.lcm.expansionName; }
+			if (s != null && s.isEmpty()) { s = null; }
+			lcmf.lcm.expansionName = s;
+		}
 	}
 	
 	public String analyseExpansion()
@@ -1077,7 +1104,12 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
         		{
         			HeroMaker hm = new HeroMaker();
         			hm.setCard(hc);
-        			for (int i = 0; i < hc.rarity.getCount(); i++)
+        			int count = hc.rarity.getCount();
+        			if (hc.numberInDeck > 0)
+    				{
+    					count = hc.numberInDeck;
+    				}
+        			for (int i = 0; i < count; i++)
         			{
         				makers.add(hm);
         			}

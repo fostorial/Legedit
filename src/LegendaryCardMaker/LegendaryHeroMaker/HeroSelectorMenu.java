@@ -19,11 +19,11 @@ import javax.swing.JPopupMenu;
 
 import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.CardMakerToolbar;
-import LegendaryCardMaker.ExportHomeprintProgressBarDialog;
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
+import LegendaryCardMaker.exporters.ExportHomeprintProgressBarDialog;
 
 public class HeroSelectorMenu extends JMenu implements ActionListener{
 	
@@ -240,8 +240,15 @@ public class HeroSelectorMenu extends JMenu implements ActionListener{
 						HeroMaker hm = new HeroMaker();
 						hm.setCard(hc);
 						
-						for (int i = 0; i < hc.rarity.getCount(); i++)
-						cardMakers.add(hm);
+						int count = hc.rarity.getCount();
+            			if (hc.numberInDeck > 0)
+        				{
+        					count = hc.numberInDeck;
+        				}
+            			for (int i = 0; i < count; i++)
+            			{
+            				cardMakers.add(hm);
+            			}
 					}
 					
 					lcmf.applicationProps.put("lastExportDirectory", chooser.getSelectedFile().getAbsolutePath());
