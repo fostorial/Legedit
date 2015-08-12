@@ -24,7 +24,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.9";
+	public static String version = "0.10";
 
 	public String inputFile = null;
 	
@@ -384,6 +384,11 @@ public class LegendaryCardMaker {
 				   if (line.startsWith("HCTRECRUITCOLOUR;"))
 				   {
 					   HeroMaker.recruitColorTemplate = new Color(Integer.parseInt(line.replace("HCTRECRUITCOLOUR;", "")));
+				   }
+				   
+				   if (line.startsWith("HCTDUALCLASSSTYLE;"))
+				   {
+					   HeroMaker.dualClassStyle = HeroMaker.DUAL_CLASS_STYLE.valueOf(line.replace("HCTDUALCLASSSTYLE;", ""));
 				   }
 				   
 				   

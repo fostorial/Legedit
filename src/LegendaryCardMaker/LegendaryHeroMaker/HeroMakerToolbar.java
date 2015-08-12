@@ -23,6 +23,7 @@ import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.JFontChooser;
 import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
+import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker.DUAL_CLASS_STYLE;
 
 public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 
@@ -54,6 +55,10 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 	
 	JMenu secondaryPower = new JMenu("Secondary Power");
 	List<JCheckBoxMenuItem> secondaryPowerItems = new ArrayList<JCheckBoxMenuItem>();
+	
+	JMenu dualStyle = new JMenu("Dual Power Icon Style");
+	JCheckBoxMenuItem dualStyleSideBySide = new JCheckBoxMenuItem("Side by Side");
+	JCheckBoxMenuItem dualStyleHalfAndHalf = new JCheckBoxMenuItem("Half and Half");
 	
 	JMenuItem setCost = new JMenuItem("Set Cost...");
 	JMenuItem setRecruit = new JMenuItem("Set Recruit...");
@@ -94,6 +99,8 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 	JMenuItem resetTemplate = new JMenuItem("Reset Template");
 	
 	JMenuItem setNumberInDeck = new JMenuItem("Set Number In Deck...");
+	
+	JCheckBoxMenuItem multiClass = new JCheckBoxMenuItem("Multi-Class Preview");
 	
 	static HeroMakerToolbar tb = null;
 	
@@ -282,7 +289,7 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 							Icon icon = Icon.valueOf(enumValue);
 							tb.hm.card.cardPower2 = icon;
 							
-							for (JCheckBoxMenuItem item : tb.powerItems)
+							for (JCheckBoxMenuItem item : tb.secondaryPowerItems)
 							{
 								if (item.getText().replace(" ", "_").toUpperCase().equals(enumValue))
 								{
@@ -403,13 +410,23 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 		}
 		else
 		{
-			edit.addSeparator();
 			
 			setTeamPowerColour.addActionListener(this);
 			edit.add(setTeamPowerColour);
 			
 			setTeamPowerRadius.addActionListener(this);
 			edit.add(setTeamPowerRadius);
+			
+			multiClass.addActionListener(this);
+			edit.add(multiClass);
+			
+			if (HeroMaker.dualClassStyle.equals(HeroMaker.DUAL_CLASS_STYLE.SIDE_BY_SIDE)) { dualStyleSideBySide.setSelected(true); }
+			dualStyleSideBySide.addActionListener(this);
+			dualStyle.add(dualStyleSideBySide);
+			if (HeroMaker.dualClassStyle.equals(HeroMaker.DUAL_CLASS_STYLE.HALF_AND_HALF)) { dualStyleHalfAndHalf.setSelected(true); }
+			dualStyleHalfAndHalf.addActionListener(this);
+			dualStyle.add(dualStyleHalfAndHalf);
+			edit.add(dualStyle);
 			
 			edit.addSeparator();
 			
@@ -549,6 +566,11 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 							hm.exportToJPEG(bi, chooser.getSelectedFile());
 						}
 					}
+					else
+					{
+						hm.exportToJPEG(bi, chooser.getSelectedFile());
+					}
+					
 				}
 				catch (Exception ex)
 				{
@@ -1248,6 +1270,68 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 				JOptionPane.showMessageDialog(null, ex.getMessage());
 			}
 			hm.card.changed = true;
+		}
+		
+		if (e.getSource().equals(dualStyleHalfAndHalf))
+		{
+			dualStyleHalfAndHalf.setSelected(true);
+			dualStyleSideBySide.setSelected(false);
+			HeroMaker.dualClassStyle = DUAL_CLASS_STYLE.HALF_AND_HALF;
+			
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			try
+			{	
+				hmf.reRenderCard();
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		if (e.getSource().equals(dualStyleSideBySide))
+		{
+			dualStyleHalfAndHalf.setSelected(false);
+			dualStyleSideBySide.setSelected(true);
+			HeroMaker.dualClassStyle = DUAL_CLASS_STYLE.SIDE_BY_SIDE;
+			
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			try
+			{	
+				hmf.reRenderCard();
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		if (e.getSource().equals(multiClass))
+		{
+			if (!multiClass.isSelected())
+			{
+				hm.card.cardPower2 = null;
+			}
+			else
+			{
+				hm.card.cardPower2 = Icon.valueOf("INSTINCT");
+			}
+			
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			try
+			{	
+				hmf.reRenderCard();
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 

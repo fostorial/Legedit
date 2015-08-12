@@ -323,6 +323,7 @@ public class SchemeMaker extends CardMaker {
 			    				g2.setFont(fontBold);
 			    				metrics = g2.getFontMetrics(fontBold);
 			    				s = s.replace("<k>", "");
+			    				continue;
 			    			}
 			    			
 			    			if (s.startsWith("<r>"))
@@ -330,6 +331,7 @@ public class SchemeMaker extends CardMaker {
 			    				g2.setFont(font);
 			    				metrics = g2.getFontMetrics(font);
 			    				s = s.replace("<r>", "");
+			    				continue;
 			    			}
 			    			
 			    			boolean gap = false;

@@ -328,6 +328,10 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 							hm.exportToJPEG(bi, chooser.getSelectedFile());
 						}
 					}
+					else
+					{
+						hm.exportToJPEG(bi, chooser.getSelectedFile());
+					}
 				}
 				catch (Exception ex)
 				{
@@ -360,6 +364,10 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 						{
 							hm.exportToPNG(bi, chooser.getSelectedFile());
 						}
+					}
+					else
+					{
+						hm.exportToPNG(bi, chooser.getSelectedFile());
 					}
 				}
 				catch (Exception ex)
@@ -394,6 +402,10 @@ public class VillainMakerToolbar extends JMenuBar implements ActionListener{
 						{
 							hm.exportToPNG(bi, chooser.getSelectedFile());
 						}
+					}
+					else
+					{
+						hm.exportToPNG(bi, chooser.getSelectedFile());
 					}
 				}
 				catch (Exception ex)

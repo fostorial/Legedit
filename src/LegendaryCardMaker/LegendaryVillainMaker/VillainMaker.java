@@ -351,7 +351,7 @@ public class VillainMaker extends CardMaker {
 		    }
 		    if (card.cardType != null && card.cardType.equals(VillainCardType.HENCHMEN))
 		    {
-		    	villainGroup = "Villain - Henchmen";
+		    	villainGroup = "Henchmen Villain";
 		    	villainGroup = villainGroup.toUpperCase();
 		    }
 		    if (card.cardType != null && card.cardType.equals(VillainCardType.MASTERMIND))
@@ -587,6 +587,7 @@ public class VillainMaker extends CardMaker {
 	    					g2.setFont(fontBold);
 	    					metrics = g2.getFontMetrics(fontBold);
 	    					s = s.replace("<k>", "");
+	    					continue;
 	    				}
 	    				
 	    				if (s.startsWith("<r>"))
@@ -594,6 +595,7 @@ public class VillainMaker extends CardMaker {
 	    					g2.setFont(font);
 	    					metrics = g2.getFontMetrics(font);
 	    					s = s.replace("<r>", "");
+	    					continue;
 	    				}
 	    				
 	    				boolean gap = false;
@@ -616,6 +618,7 @@ public class VillainMaker extends CardMaker {
 	    						}
 	    					}
 	    					y += g2.getFontMetrics(font).getHeight() + getPercentage(g2.getFontMetrics(font).getHeight(), textGapHeight);
+	    					continue;
 	    				}
 	    				else if (icon == null)
 	    				{
@@ -623,7 +626,8 @@ public class VillainMaker extends CardMaker {
 	    					Color color = null;
 	    					try
 	    					{
-	    						color = new Color(overlay.getRGB(x + stringLength, y), true);
+	    						
+	    						color = new Color(overlay.getRGB(x + 50, y), true);
 	    					}
 	    					catch (ArrayIndexOutOfBoundsException e)
 	    					{
@@ -650,6 +654,7 @@ public class VillainMaker extends CardMaker {
 	    					}
 	    					g2.drawString(s + " ", x, y);
 	    					x += stringLength + SwingUtilities.computeStringWidth(metrics, spaceChar);
+	    					continue;
 	    				}
 	    				else if (icon != null)
 	    				{
@@ -688,6 +693,7 @@ public class VillainMaker extends CardMaker {
 	    					}
 	    					g2.drawImage(i, x, modifiedY, null);
 	    					x += i.getWidth() + SwingUtilities.computeStringWidth(metrics, spaceChar);
+	    					continue;
 	    				}
 	    			}
 	    		}

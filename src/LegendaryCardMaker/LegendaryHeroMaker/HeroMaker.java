@@ -1,5 +1,6 @@
 package LegendaryCardMaker.LegendaryHeroMaker;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -8,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
@@ -30,6 +32,8 @@ import LegendaryCardMaker.WordDefinition;
 
 public class HeroMaker extends CardMaker {
 	
+	public enum DUAL_CLASS_STYLE { HALF_AND_HALF, SIDE_BY_SIDE};
+	
 	//Template values
 	public static int cardNameSizeTemplate = 40;
 	public static String cardNameFontNameTemplate = null;
@@ -46,6 +50,7 @@ public class HeroMaker extends CardMaker {
 	public static Color teamPowerUnderlayColorTemplate = Color.BLACK;
 	public static int teamPowerBlurRadiusTemplate = 5;
 	public static String nameHighlightTemplate = "Blur";
+	public static DUAL_CLASS_STYLE dualClassStyle = DUAL_CLASS_STYLE.SIDE_BY_SIDE;
 	
 	public static int costSizeTemplate = 120;
 	public static String costFontNameTemplate = null;
@@ -94,6 +99,8 @@ public class HeroMaker extends CardMaker {
 		recruitFontNameTemplate = null;
 		recruitFontStyleTemplate = Font.PLAIN;
 		recruitColorTemplate = Color.WHITE;
+		
+		dualClassStyle = DUAL_CLASS_STYLE.SIDE_BY_SIDE;
 	}
 	
 	public void resetTemplateValuesInstance()
@@ -244,6 +251,8 @@ public class HeroMaker extends CardMaker {
 			str += "HCTRECRUITFONTNAME;" + recruitFontNameTemplate + "\n";
 		
 		str += "HCTRECRUITFONTSTYLE;" + recruitFontStyleTemplate + "\n";
+		
+		str += "HCTDUALCLASSSTYLE;" + dualClassStyle.name();
 		
 		str +="\n";
 		
@@ -483,8 +492,22 @@ public class HeroMaker extends CardMaker {
 	    	}
 	    	else
 	    	{
-	    		ii = new ImageIcon(templateFolder + File.separator + "hero_common" + File.separator + "back_" + card.cardPower.toString() + ".png");
-		    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+	    		
+		    	
+		    	if (card.cardPower2 != null && card.cardPower != null && !card.cardPower2.equals(Icon.valueOf("NONE")))
+		    	{
+		    		ii = new ImageIcon(templateFolder + File.separator + "hero_common" + File.separator + "back_" + card.cardPower2.toString() + ".png");
+		    		g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+		    		
+		    		ii = new ImageIcon(templateFolder + File.separator + "hero_common" + File.separator + "back_" + card.cardPower.toString() + ".png");
+		    		BufferedImage bi = getFadedBackground(ii);
+		    		g.drawImage(resizeImage(new ImageIcon(bi), cardWidth, cardHeight), 0, 0, null);
+		    	}
+		    	else
+		    	{
+		    		ii = new ImageIcon(templateFolder + File.separator + "hero_common" + File.separator + "back_" + card.cardPower.toString() + ".png");
+			    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+		    	}
 	    	}
 	    }
 	    if (card.rarity != null && card.rarity.equals(CardRarity.UNCOMMON))
@@ -501,8 +524,20 @@ public class HeroMaker extends CardMaker {
 	    	}
 	    	else
 	    	{
-	    		ii = new ImageIcon(templateFolder + File.separator + "hero_uncommon" + File.separator + "back_" + card.cardPower.toString() + ".png");
-		    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+	    		if (card.cardPower2 != null && card.cardPower != null && !card.cardPower2.equals(Icon.valueOf("NONE")))
+		    	{
+	    			ii = new ImageIcon(templateFolder + File.separator + "hero_uncommon" + File.separator + "back_" + card.cardPower2.toString() + ".png");
+			    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+			    	
+		    		ii = new ImageIcon(templateFolder + File.separator + "hero_uncommon" + File.separator + "back_" + card.cardPower.toString() + ".png");
+			    	BufferedImage bi = getFadedBackground(ii);
+			    	g.drawImage(resizeImage(new ImageIcon(bi), cardWidth, cardHeight), 0, 0, null);
+		    	}
+		    	else
+		    	{
+		    		ii = new ImageIcon(templateFolder + File.separator + "hero_uncommon" + File.separator + "back_" + card.cardPower.toString() + ".png");
+			    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+		    	}
 	    	}
 	    	
 	    }
@@ -540,7 +575,7 @@ public class HeroMaker extends CardMaker {
 	    	}
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	    	int nameAscent = (int)metrics.getLineMetrics(card.name.toUpperCase(), g2).getAscent();
-	    	
+	    	int nameDescent = (int)metrics.getLineMetrics(card.name.toUpperCase(), g2).getDescent();
 	        
 	        try
 	    	{
@@ -562,7 +597,7 @@ public class HeroMaker extends CardMaker {
 	        int bannerHeight = (heroNameY + heroDescent) - (cardNameY - nameAscent);
 	        bannerHeight = bannerHeight + getPercentage(cardHeight, 0.01d);
 			g2.setColor(Color.black);
-			g2.fillRect((cardWidth / 2), cardNameY - nameAscent - getPercentage(cardHeight, 0.005d), getPercentage(cardWidth, 0.15d), bannerHeight);
+			g2.fillRect((cardWidth / 2), cardNameY - getPercentage(cardHeight, 0.005d), getPercentage(cardWidth, 0.15d), bannerHeight);
 	    	
 			MotionBlurOp op = new MotionBlurOp();
 			op.setDistance(200f);
@@ -731,14 +766,25 @@ public class HeroMaker extends CardMaker {
 		    	int x = powerIconX - (bi1.getWidth() / 2);
 		    	int y = powerIconY - (bi1.getWidth() / 2);
 		    	
+		    	int offset = 0;
+		    	if (dualClassStyle.equals(DUAL_CLASS_STYLE.SIDE_BY_SIDE))
+		    	{
+		    		offset = bi1.getWidth();
+		    	}
+		    	if (dualClassStyle.equals(DUAL_CLASS_STYLE.HALF_AND_HALF))
+		    	{
+		    		bi1 = clearHalfImage(bi1, true);
+		    		bi2 = clearHalfImage(bi2, false);
+		    	}
+		    	
 		    	if (includeBlurredBGTeam)
 		    	{
 		    		drawUnderlay(bi1, g, type, x, y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
-		    		drawUnderlay(bi2, g, type, x + bi1.getWidth(), y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
+		    		drawUnderlay(bi2, g, type, x + offset, y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
 		    	}
 		    	
 		    	g.drawImage(bi1, x, y, null);
-		    	g.drawImage(bi2, x + bi1.getWidth(), y, null);
+		    	g.drawImage(bi2, x + offset, y, null);
 	    	}
 	    	else
 	    	{
@@ -960,6 +1006,7 @@ public class HeroMaker extends CardMaker {
 	    				g2.setFont(fontBold);
 	    				metrics = g2.getFontMetrics(fontBold);
 	    				s = s.replace("<k>", "");
+	    				continue;
 	    			}
 	    			
 	    			if (s.startsWith("<r>"))
@@ -967,6 +1014,7 @@ public class HeroMaker extends CardMaker {
 	    				g2.setFont(font);
 	    				metrics = g2.getFontMetrics(font);
 	    				s = s.replace("<r>", "");
+	    				continue;
 	    			}
 	    			
 	    			boolean gap = false;
@@ -1620,5 +1668,72 @@ public class HeroMaker extends CardMaker {
 		} while (finished == false);
 		
 		return yOffset;
+	}
+	
+	private BufferedImage getFadedBackground(ImageIcon ii)
+	{
+		BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = bi.getGraphics();
+		g.drawImage(ii.getImage(), 0, 0, cardWidth, cardHeight, null);
+		
+		int width = bi.getWidth();
+		int height = bi.getHeight();
+		
+		int fadeHeight = getPercentage(cardHeight, 0.14d);
+		double increment = 255d / (double)fadeHeight;
+		
+		int alpha = 0;
+		for (int xx = 0; xx < width; xx++) {
+            for (int yy = 0; yy < height; yy++) {
+                Color originalColor = new Color(bi.getRGB(xx, yy), true);
+                if (originalColor.getAlpha() > 0) {
+                	
+                	if (yy <= ((cardHeight / 2) + (fadeHeight / 2)))
+                    {
+                		
+                    	alpha = (int)((((cardHeight / 2) + (fadeHeight / 2)) - yy) * increment);
+                    	if (alpha > 255)
+                    	{
+                    		alpha = 255;
+                    	}
+                    	
+                    	if (yy <= ((cardHeight / 2) + (fadeHeight / 2)) && xx == 0)
+                		{
+                			System.out.println(yy + ":" + alpha);
+                		}
+                    }
+                	
+                    else
+                    {
+                    	alpha = 0;
+                    }
+                	
+                    int col = (alpha << 24) | (originalColor.getRed() << 16) | (originalColor.getGreen() << 8) | originalColor.getBlue();
+                    bi.setRGB(xx, yy, col);
+                }
+            }
+        }
+		
+		g.dispose();
+		
+		return bi;
+	}
+	
+	private BufferedImage clearHalfImage(BufferedImage bi, boolean leftHalf)
+	{
+		Graphics2D g2D = (Graphics2D)bi.getGraphics();
+		g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+		Rectangle2D.Double rect = null;
+		if (!leftHalf)
+		{
+			rect = new Rectangle2D.Double(0,0,bi.getWidth() / 2, bi.getHeight());
+		}
+		else
+		{
+			rect = new Rectangle2D.Double(bi.getWidth() / 2,0,bi.getWidth(), bi.getHeight());
+		}
+		g2D.fill(rect);
+		g2D.dispose();
+		return bi;
 	}
 }
