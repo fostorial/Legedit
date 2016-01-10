@@ -46,6 +46,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainCardType;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 import LegendaryCardMaker.LegendaryVillainMaker.VillainSelectorMenu;
 import LegendaryCardMaker.LegendaryVillainMaker.WoundSelectorMenu;
+import LegendaryCardMaker.LegendaryVillainMaker.BindingsSelectorMenu;
 import LegendaryCardMaker.exporters.ExportDividersHomeprintProgressBarDialog;
 import LegendaryCardMaker.exporters.ExportFullProgressBarDialog;
 import LegendaryCardMaker.exporters.ExportHomeprintProgressBarDialog;
@@ -79,6 +80,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	TeamIconSelectorMenu teamSelectorMenu = null;
 	BystanderSelectorMenu bystanderSelectorMenu = null;
 	WoundSelectorMenu woundSelectorMenu = null;
+	BindingsSelectorMenu bindingsSelectorMenu = null;
 	SchemeTypeSelectorMenu schemeTypeSelectorMenu = null;
 	
 	JMenu divider = new JMenu("Templates");
@@ -186,6 +188,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		woundSelectorMenu = new WoundSelectorMenu(lcmf, tb);
 		this.add(woundSelectorMenu);
+		
+		bindingsSelectorMenu = new BindingsSelectorMenu(lcmf, tb);
+		this.add(bindingsSelectorMenu);
 		
 		schemeTypeSelectorMenu = new SchemeTypeSelectorMenu(lcmf, tb);
 		this.add(schemeTypeSelectorMenu);
@@ -639,6 +644,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 				{
 					str += "WOUNDS\n\n";
 				}
+				else if (v.name.equals("system_bindings_villain"))
+				{
+					str += "BINDINGS\n\n";
+				}
 				else
 				{
 					str += v.name + "\n\n";
@@ -1029,6 +1038,10 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		{
 			woundSelectorMenu.setVisible(true);
 		}
+		if (str.equals("Bindings"))
+		{
+			bindingsSelectorMenu.setVisible(true);
+		}
 		if (str.equals("Scheme Types"))
 		{
 			schemeTypeSelectorMenu.setVisible(true);
@@ -1043,6 +1056,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		teamSelectorMenu.setVisible(false);
 		bystanderSelectorMenu.setVisible(false);
 		woundSelectorMenu.setVisible(false);
+		bindingsSelectorMenu.setVisible(false);
 		schemeTypeSelectorMenu.setVisible(false);
 	}
 	

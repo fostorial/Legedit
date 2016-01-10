@@ -8,6 +8,7 @@ public enum VillainCardType {
 	MASTERMIND_TACTIC (1),
 	BYSTANDER (1),
 	WOUND (1),
+	BINDINGS (1),
 	;
 	
 	private int count;

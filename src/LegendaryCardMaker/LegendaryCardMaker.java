@@ -38,6 +38,7 @@ public class LegendaryCardMaker {
 	public List<SchemeCard> schemes = new ArrayList<SchemeCard>();
 	public Villain bystanderVillain = new Villain();
 	public Villain woundVillain = new Villain();
+	public Villain bindingsVillain = new Villain();
 	
 	public boolean ignoreGenerate = true;
 	
@@ -90,6 +91,9 @@ public class LegendaryCardMaker {
 		
 		woundVillain.name = "system_wound_villain";
 		villains.add(woundVillain);
+		
+		bindingsVillain.name = "system_bindings_villain";
+		villains.add(bindingsVillain);
 	}
 	
 	public void processInput(String inputFile)
@@ -105,6 +109,10 @@ public class LegendaryCardMaker {
 		woundVillain = new Villain();
 		woundVillain.name = "system_wound_villain";
 		villains.add(woundVillain);
+		
+		bindingsVillain = new Villain();
+		bindingsVillain.name = "system_bindings_villain";
+		villains.add(bindingsVillain);
 		
 		expansionName = "";
 		keywords = "";
@@ -576,6 +584,10 @@ public class LegendaryCardMaker {
 					   else if (line.replace("VILLAIN;", "").equals("system_wound_villain"))
 					   {
 						   v = woundVillain;
+					   }
+					   else if (line.replace("VILLAIN;", "").equals("system_bindings_villain"))
+					   {
+						   v = bindingsVillain;
 					   }
 					   else
 					   {
