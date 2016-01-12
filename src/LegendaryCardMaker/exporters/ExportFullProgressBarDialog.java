@@ -7,6 +7,10 @@ import javax.swing.*;
 
 import LegendaryCardMaker.LegendaryCardMaker;
 import LegendaryCardMaker.LegendaryCardMakerFrame;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomCard;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomElement;
+import LegendaryCardMaker.CustomCardMaker.structure.ElementBackgroundImage;
+import LegendaryCardMaker.CustomCardMaker.structure.ElementImage;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
@@ -150,6 +154,45 @@ public class ExportFullProgressBarDialog extends JPanel
             			} catch (IOException e1) {
             				s.imagePath = null;
             			}
+        			}
+        			
+        			frame.setTitle("Exporting (" + (getCurrentValue()+1) + "/" + getMaxValue() + ")...");
+        			 setProgress(currentValue++);
+        		}
+        		
+        		for (CustomCard s : lcm.customCards)
+        		{
+        			for (CustomElement el : s.template.elements)
+        			{
+        				if (el instanceof ElementImage)
+        				{
+        					ElementImage eli = (ElementImage)el;
+        					if (eli.path != null)
+        					{
+        						File newFile = new File(tempFolder.getAbsolutePath() + File.separator + new File(eli.path).getName());
+                    			try {
+                    				copyFile(new File(eli.path), newFile);
+                    				eli.path = new File(eli.path).getName();
+                    			} catch (IOException e1) {
+                    				eli.path = null;
+                    			}
+        					}
+        				}
+        				
+        				if (el instanceof ElementBackgroundImage)
+        				{
+        					ElementBackgroundImage eli = (ElementBackgroundImage)el;
+        					if (eli.path != null)
+        					{
+        						File newFile = new File(tempFolder.getAbsolutePath() + File.separator + new File(eli.path).getName());
+                    			try {
+                    				copyFile(new File(eli.path), newFile);
+                    				eli.path = new File(eli.path).getName();
+                    			} catch (IOException e1) {
+                    				eli.path = null;
+                    			}
+        					}
+        				}
         			}
         			
         			frame.setTitle("Exporting (" + (getCurrentValue()+1) + "/" + getMaxValue() + ")...");

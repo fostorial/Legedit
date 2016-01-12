@@ -31,6 +31,11 @@ import org.w3c.dom.Element;
 
 import LegendaryCardMaker.CardMaker;
 import LegendaryCardMaker.LegendaryCardMaker;
+import LegendaryCardMaker.CustomCardMaker.CustomCardMaker;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomCard;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomElement;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomProperties;
+import LegendaryCardMaker.CustomCardMaker.structure.ElementProperty;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroMaker;
@@ -120,6 +125,31 @@ public class ExportHomeprintProgressBarDialog extends JPanel
         			sm.setCard(s);
         			
         			for (int i = 0; i < s.numberInDeck; i++)
+        			{
+    					cardMakers.add(sm);
+    					max++;
+        			}
+        		}
+        		
+        		for (CustomCard s : lcm.customCards)
+        		{
+        			CustomCardMaker sm = new CustomCardMaker();
+        			sm.setCard(s);
+        			
+        			int numberInDeck = 1;
+        			ElementProperty numberInDeckProp = s.template.getProperty(CustomProperties.NUMBERINDECK);
+        			if (numberInDeckProp != null)
+        			{
+        				try
+        				{
+        					numberInDeck = Integer.parseInt(numberInDeckProp.getValue());
+        				}
+        				catch (Exception e)
+        				{
+        					numberInDeck = 1;
+        				}
+        			}
+        			for (int i = 0; i < numberInDeck; i++)
         			{
     					cardMakers.add(sm);
     					max++;

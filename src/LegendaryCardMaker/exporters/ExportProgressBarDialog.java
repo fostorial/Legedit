@@ -6,6 +6,10 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import LegendaryCardMaker.LegendaryCardMaker;
+import LegendaryCardMaker.CustomCardMaker.CustomCardMaker;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomCard;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomProperties;
+import LegendaryCardMaker.CustomCardMaker.structure.ElementProperty;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendarySchemeMaker.SchemeCard;
 import LegendaryCardMaker.LegendaryVillainMaker.Villain;
@@ -70,6 +74,17 @@ public class ExportProgressBarDialog extends JPanel
     				lcm.exportSchemeToJpeg(s, folder);
     			else
     				lcm.exportSchemeToPng(s, folder);
+    			
+    			frame.setTitle("Exporting (" + (getCurrentValue()+1) + "/" + getMaxValue() + ")...");
+    			 setProgress(currentValue++);
+    		}
+    		
+    		for (CustomCard s : lcm.customCards)
+    		{
+    			if (jpegMode)
+    				lcm.exportCustomCardToJpeg(s, folder);
+    			else
+    				lcm.exportCustomCardToPng(s, folder);
     			
     			frame.setTitle("Exporting (" + (getCurrentValue()+1) + "/" + getMaxValue() + ")...");
     			 setProgress(currentValue++);

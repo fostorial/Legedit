@@ -95,6 +95,24 @@ public class JCheckList<E> extends javax.swing.JPanel {
 
         this.repaint();
     }
+    
+    public void setSelectAll()
+    {
+
+        for (int i = 0; i < listaModel.getSize(); i++)
+            ((CheckListItem) listaModel.get(i)).setSelected(true);
+
+        this.repaint();
+    }
+    
+    public void setDeselectAll() 
+    {
+
+        for (int i = 0; i < listaModel.getSize(); i++)
+            ((CheckListItem) listaModel.get(i)).setSelected(false);
+
+        this.repaint();
+    }
 
     @Override
     public void setEnabled(boolean enabled) {

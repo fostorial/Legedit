@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -28,6 +29,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import LegendaryCardMaker.Icon;
 import LegendaryCardMaker.CampaignManager.CampaignManagerFrame;
+import LegendaryCardMaker.CustomCardMaker.CustomCardMakerFrame;
+import LegendaryCardMaker.CustomCardMaker.gui.CustomTemplateList;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomCard;
 import LegendaryCardMaker.LegendaryDividerMaker.HeroDividerMakerFrame;
 import LegendaryCardMaker.LegendaryDividerMaker.VillainDividerMakerFrame;
 import LegendaryCardMaker.LegendaryHeroMaker.CardRarity;
@@ -80,6 +84,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	BystanderSelectorMenu bystanderSelectorMenu = null;
 	WoundSelectorMenu woundSelectorMenu = null;
 	SchemeTypeSelectorMenu schemeTypeSelectorMenu = null;
+	
+	JMenu editMenu = new JMenu("Edit");
+	
 	
 	JMenu divider = new JMenu("Templates");
 	
@@ -169,28 +176,29 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		add(file);
 		
 		
+		this.add(editMenu);
+		
 		heroSelectorMenu = new HeroSelectorMenu(lcmf, tb);
-		this.add(heroSelectorMenu);
+		//this.add(heroSelectorMenu);
 		
 		villainSelectorMenu = new VillainSelectorMenu(lcmf, tb);
-		this.add(villainSelectorMenu);
+		//this.add(villainSelectorMenu);
 		
 		schemeSelectorMenu = new SchemeSelectorMenu(lcmf, tb);
-		this.add(schemeSelectorMenu);
+		//this.add(schemeSelectorMenu);
 		
 		teamSelectorMenu = new TeamIconSelectorMenu(lcmf, tb);
-		this.add(teamSelectorMenu);
+		//this.add(teamSelectorMenu);
 		
 		bystanderSelectorMenu = new BystanderSelectorMenu(lcmf, tb);
-		this.add(bystanderSelectorMenu);
+		//this.add(bystanderSelectorMenu);
 		
 		woundSelectorMenu = new WoundSelectorMenu(lcmf, tb);
-		this.add(woundSelectorMenu);
+		//this.add(woundSelectorMenu);
 		
 		schemeTypeSelectorMenu = new SchemeTypeSelectorMenu(lcmf, tb);
-		this.add(schemeTypeSelectorMenu);
+		//this.add(schemeTypeSelectorMenu);
 		
-		removeEditMenus();
 		setEditMenu();
 		
 		editHeroTemplate.addActionListener(this);
@@ -297,6 +305,14 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 							lcmf.woundListModel.addElement(vc);
 						}
 					}
+				}
+				
+				Set<Entry<String, CustomTemplateList>> entrySet = lcmf.customTemplateListSet.entrySet();
+				for (Entry<String, CustomTemplateList> entry : entrySet)
+				{
+					entry.getValue().cardListModel.removeAllElements();
+					Collections.sort(lcmf.lcm.customCards, new CustomCard());
+					entry.getValue().loadList(lcmf.lcm.customCards);
 				}
 				
 				lcmf.applicationProps.put("lastExpansion", chooser.getSelectedFile().getAbsolutePath());
@@ -1003,47 +1019,56 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	{
 		String str = lcmf.tabs.getTitleAt(lcmf.tabs.getSelectedIndex());
 		
-		removeEditMenus();
-		
 		if (str.equals("Heroes"))
 		{
-			heroSelectorMenu.setVisible(true);
+			remove(1);
+			add(heroSelectorMenu, 1);
+			return;
 		}
 		if (str.equals("Villains"))
 		{
-			villainSelectorMenu.setVisible(true);
+			remove(1);
+			add(villainSelectorMenu, 1);
+			return;
 		}
 		if (str.equals("Schemes"))
 		{
-			schemeSelectorMenu.setVisible(true);
+			remove(1);
+			add(schemeSelectorMenu, 1);
+			return;
 		}
 		if (str.equals("Teams"))
 		{
-			teamSelectorMenu.setVisible(true);
+			remove(1);
+			add(teamSelectorMenu, 1);
+			return;
 		}
 		if (str.equals("Bystanders"))
 		{
-			bystanderSelectorMenu.setVisible(true);
+			remove(1);
+			add(bystanderSelectorMenu, 1);
+			return;
 		}
 		if (str.equals("Wounds"))
 		{
-			woundSelectorMenu.setVisible(true);
+			remove(1);
+			add(woundSelectorMenu, 1);
+			return;
 		}
 		if (str.equals("Scheme Types"))
 		{
-			schemeTypeSelectorMenu.setVisible(true);
+			remove(1);
+			add(schemeTypeSelectorMenu, 1);
+			return;
 		}
-	}
-	
-	public void removeEditMenus()
-	{
-		heroSelectorMenu.setVisible(false);
-		villainSelectorMenu.setVisible(false);
-		schemeSelectorMenu.setVisible(false);
-		teamSelectorMenu.setVisible(false);
-		bystanderSelectorMenu.setVisible(false);
-		woundSelectorMenu.setVisible(false);
-		schemeTypeSelectorMenu.setVisible(false);
+		
+		CustomTemplateList list = LegendaryCardMakerFrame.lcmf.customTemplateListSet.get(str);
+		if (list != null)
+		{
+			remove(1);
+			add(list.menu, 1);
+			return;
+		}
 	}
 	
 	public void populateExpansionMenu()

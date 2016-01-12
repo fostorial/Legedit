@@ -32,7 +32,7 @@ import LegendaryCardMaker.WordDefinition;
 
 public class HeroMaker extends CardMaker {
 	
-	public enum DUAL_CLASS_STYLE { HALF_AND_HALF, SIDE_BY_SIDE};
+	public enum DUAL_CLASS_STYLE { HALF_AND_HALF, SIDE_BY_SIDE, TOP_AND_BOTTOM};
 	
 	//Template values
 	public static int cardNameSizeTemplate = 40;
@@ -767,6 +767,7 @@ public class HeroMaker extends CardMaker {
 		    	int y = powerIconY - (bi1.getWidth() / 2);
 		    	
 		    	int offset = 0;
+		    	int yoffset = 0;
 		    	if (dualClassStyle.equals(DUAL_CLASS_STYLE.SIDE_BY_SIDE))
 		    	{
 		    		offset = bi1.getWidth();
@@ -776,15 +777,19 @@ public class HeroMaker extends CardMaker {
 		    		bi1 = clearHalfImage(bi1, true);
 		    		bi2 = clearHalfImage(bi2, false);
 		    	}
+		    	if (dualClassStyle.equals(DUAL_CLASS_STYLE.TOP_AND_BOTTOM))
+		    	{
+		    		yoffset = bi1.getHeight();
+		    	}
 		    	
 		    	if (includeBlurredBGTeam)
 		    	{
 		    		drawUnderlay(bi1, g, type, x, y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
-		    		drawUnderlay(bi2, g, type, x + offset, y, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
+		    		drawUnderlay(bi2, g, type, x + offset, y+yoffset, powerBlurRadius, powerBlurDouble, expandPower, teamPowerUnderlayColor);
 		    	}
 		    	
 		    	g.drawImage(bi1, x, y, null);
-		    	g.drawImage(bi2, x + offset, y, null);
+		    	g.drawImage(bi2, x + offset, y+yoffset, null);
 	    	}
 	    	else
 	    	{
@@ -1696,11 +1701,7 @@ public class HeroMaker extends CardMaker {
                     	{
                     		alpha = 255;
                     	}
-                    	
-                    	if (yy <= ((cardHeight / 2) + (fadeHeight / 2)) && xx == 0)
-                		{
-                			System.out.println(yy + ":" + alpha);
-                		}
+              
                     }
                 	
                     else

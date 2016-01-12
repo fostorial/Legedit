@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -31,6 +33,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import LegendaryCardMaker.CustomCardMaker.CustomCardMakerFrame;
+import LegendaryCardMaker.CustomCardMaker.gui.CustomTemplateList;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomCard;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomTemplate;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCardSelector;
@@ -78,6 +84,8 @@ public class LegendaryCardMakerFrame extends JFrame {
 	public JList teamList;
 	public DefaultListModel teamListModel;
 	JScrollPane teamScroll = new JScrollPane();
+	
+	public HashMap<String, CustomTemplateList> customTemplateListSet = new HashMap<String, CustomTemplateList>();
 	
 	public Properties applicationProps = new Properties();
 	
@@ -314,6 +322,26 @@ public class LegendaryCardMakerFrame extends JFrame {
 		tabs.add("Schemes", schemeScroll);
 		
 		
+		for (CustomTemplate ct : lcm.allTemplates)
+		{
+			CustomTemplateList list = customTemplateListSet.get(ct.tab);
+			if (list == null)
+			{
+				list = new CustomTemplateList(ct, lcm.customCards, lcm.customStructures);
+				customTemplateListSet.put(ct.tab, list);
+			}
+			else
+			{
+				list.addTemplate(ct, lcm.customCards);
+			}
+		}
+		Set<Entry<String, CustomTemplateList>> entrySet = customTemplateListSet.entrySet();
+		for (Entry<String, CustomTemplateList> entry : entrySet)
+		{
+			tabs.add(entry.getKey(), entry.getValue());
+		}
+		
+		
 		teamListModel = new DefaultListModel();
 		List<Icon> icons = Icon.values();
 		Collections.sort(icons, new Icon());
@@ -443,6 +471,11 @@ public class LegendaryCardMakerFrame extends JFrame {
 		
 		this.setSize(500, 500);
 		this.setVisible(true);
+		
+		//CustomCard cust = new CustomCard();
+		//cust.templateName = "ambition";
+		
+		//CustomCardMakerFrame f = new CustomCardMakerFrame(cust);
 	}
 	
 	public class HeroListRenderer extends DefaultListCellRenderer {
@@ -822,6 +855,7 @@ public class LegendaryCardMakerFrame extends JFrame {
 		lcm.heroes = new ArrayList<Hero>();
 		lcm.villains = new ArrayList<Villain>();
 		lcm.schemes = new ArrayList<SchemeCard>();
+		lcm.customCards = new ArrayList<CustomCard>();
 		
 		lcm.dividerHorizontal = true;
 		lcm.dbImageOffsetX = 0;
@@ -843,6 +877,12 @@ public class LegendaryCardMakerFrame extends JFrame {
 		schemeListModel.clear();
 		bystanderListModel.clear();
 		woundListModel.clear();
+		
+		Set<Entry<String, CustomTemplateList>> entrySet = LegendaryCardMakerFrame.lcmf.customTemplateListSet.entrySet();
+		for (Entry<String, CustomTemplateList> entry : entrySet)
+		{
+			entry.getValue().cardListModel.clear();
+		}
 		
 		setTitle(LegendaryCardMakerFrame.FRAME_NAME + " - [Untitled]");
 		

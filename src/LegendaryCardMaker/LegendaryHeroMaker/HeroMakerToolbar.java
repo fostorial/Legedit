@@ -59,6 +59,7 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 	JMenu dualStyle = new JMenu("Dual Power Icon Style");
 	JCheckBoxMenuItem dualStyleSideBySide = new JCheckBoxMenuItem("Side by Side");
 	JCheckBoxMenuItem dualStyleHalfAndHalf = new JCheckBoxMenuItem("Half and Half");
+	JCheckBoxMenuItem dualStyleTopAndBottom = new JCheckBoxMenuItem("Top and Bottom");
 	
 	JMenuItem setCost = new JMenuItem("Set Cost...");
 	JMenuItem setRecruit = new JMenuItem("Set Recruit...");
@@ -426,6 +427,9 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 			if (HeroMaker.dualClassStyle.equals(HeroMaker.DUAL_CLASS_STYLE.HALF_AND_HALF)) { dualStyleHalfAndHalf.setSelected(true); }
 			dualStyleHalfAndHalf.addActionListener(this);
 			dualStyle.add(dualStyleHalfAndHalf);
+			if (HeroMaker.dualClassStyle.equals(HeroMaker.DUAL_CLASS_STYLE.TOP_AND_BOTTOM)) { dualStyleTopAndBottom.setSelected(true); }
+			dualStyleTopAndBottom.addActionListener(this);
+			dualStyle.add(dualStyleTopAndBottom);
 			edit.add(dualStyle);
 			
 			edit.addSeparator();
@@ -1276,6 +1280,7 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 		{
 			dualStyleHalfAndHalf.setSelected(true);
 			dualStyleSideBySide.setSelected(false);
+			dualStyleTopAndBottom.setSelected(false);
 			HeroMaker.dualClassStyle = DUAL_CLASS_STYLE.HALF_AND_HALF;
 			
 			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -1295,7 +1300,28 @@ public class HeroMakerToolbar extends JMenuBar implements ActionListener{
 		{
 			dualStyleHalfAndHalf.setSelected(false);
 			dualStyleSideBySide.setSelected(true);
+			dualStyleTopAndBottom.setSelected(false);
 			HeroMaker.dualClassStyle = DUAL_CLASS_STYLE.SIDE_BY_SIDE;
+			
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			try
+			{	
+				hmf.reRenderCard();
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, ex.getMessage());
+			}
+			
+			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		if (e.getSource().equals(dualStyleTopAndBottom))
+		{
+			dualStyleHalfAndHalf.setSelected(false);
+			dualStyleSideBySide.setSelected(false);
+			dualStyleTopAndBottom.setSelected(true);
+			HeroMaker.dualClassStyle = DUAL_CLASS_STYLE.TOP_AND_BOTTOM;
 			
 			hmf.setCursor (Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			try

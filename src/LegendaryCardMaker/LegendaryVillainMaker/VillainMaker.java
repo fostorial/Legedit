@@ -351,7 +351,7 @@ public class VillainMaker extends CardMaker {
 		    }
 		    if (card.cardType != null && card.cardType.equals(VillainCardType.HENCHMEN))
 		    {
-		    	villainGroup = "Henchmen Villain";
+		    	villainGroup = "Henchman Villain";
 		    	villainGroup = villainGroup.toUpperCase();
 		    }
 		    if (card.cardType != null && card.cardType.equals(VillainCardType.MASTERMIND))

@@ -42,6 +42,7 @@ public class CardTextDialog extends JDialog implements ActionListener {
 	private JButton keywordButton = new JButton("Keyword");
 	private JButton regularButton = new JButton("Regular");
 	private JButton headingButton = new JButton("Heading");
+	private JButton focusButton = new JButton("Focus");
 	private JButton headerIconButton = new JButton("Header Icon");
 	private JComboBox iconCombo;
 	private ComboBoxModel iconListModel;
@@ -64,12 +65,14 @@ public class CardTextDialog extends JDialog implements ActionListener {
 		
 		keywordButton.addActionListener(this);
 		regularButton.addActionListener(this);
+		focusButton.addActionListener(this);
 		headingButton.addActionListener(this);
 		headerIconButton.addActionListener(this);
 		addButton.addActionListener(this);
 		optionsBar.setFloatable(false);
 		optionsBar.add(keywordButton);
 		optionsBar.add(regularButton);
+		optionsBar.add(focusButton);
 		
 		List<Icon> icons = Icon.values();
 		Collections.sort(icons, new Icon());
@@ -138,6 +141,11 @@ public class CardTextDialog extends JDialog implements ActionListener {
 		if (e.getSource().equals(regularButton))
 		{
 			textArea.insert("<r>", textArea.getCaretPosition());
+		}
+		
+		if (e.getSource().equals(focusButton))
+		{
+			textArea.insert("⟶", textArea.getCaretPosition());
 		}
 		
 		if (e.getSource().equals(headingButton))

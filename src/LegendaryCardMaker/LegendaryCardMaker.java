@@ -7,9 +7,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import LegendaryCardMaker.CustomCardMaker.CustomCardMaker;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomCard;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomElement;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomStructure;
+import LegendaryCardMaker.CustomCardMaker.structure.CustomTemplate;
 import LegendaryCardMaker.LegendaryHeroMaker.CardRarity;
 import LegendaryCardMaker.LegendaryHeroMaker.Hero;
 import LegendaryCardMaker.LegendaryHeroMaker.HeroCard;
@@ -24,7 +30,8 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.10";
+	public static String version = "0.11";
+	public static boolean debug = true;
 
 	public String inputFile = null;
 	
@@ -36,8 +43,13 @@ public class LegendaryCardMaker {
 	public List<Hero> heroes = new ArrayList<Hero>();
 	public List<Villain> villains = new ArrayList<Villain>();
 	public List<SchemeCard> schemes = new ArrayList<SchemeCard>();
+	public List<CustomCard> customCards = new ArrayList<CustomCard>();
 	public Villain bystanderVillain = new Villain();
 	public Villain woundVillain = new Villain();
+	public List<CustomStructure> customStructures = new ArrayList<CustomStructure>();
+	
+	public List<CustomTemplate> allTemplates = new ArrayList<CustomTemplate>();
+	public List<CustomStructure> allStructures = new ArrayList<CustomStructure>();
 	
 	public boolean ignoreGenerate = true;
 	
@@ -71,16 +83,8 @@ public class LegendaryCardMaker {
 	
 	public static void main(String[] args)
 	{
-		/*
-		HeroMaker hm = new HeroMaker();
-		hm.populateHeroCard();
-		hm.generateCard();
-		*/
-		
 		LegendaryCardMaker lcm = new LegendaryCardMaker();
 		new LegendaryCardMakerFrame(lcm);
-		
-		//new LegendaryCardMakerBasicFrame(new LegendaryCardMaker());
 	}
 	
 	public LegendaryCardMaker()
@@ -90,6 +94,9 @@ public class LegendaryCardMaker {
 		
 		woundVillain.name = "system_wound_villain";
 		villains.add(woundVillain);
+		
+		loadTemplates();
+		loadStructures();
 	}
 	
 	public void processInput(String inputFile)
@@ -97,6 +104,7 @@ public class LegendaryCardMaker {
 		heroes = new ArrayList<Hero>();
 		villains = new ArrayList<Villain>();
 		schemes = new ArrayList<SchemeCard>();
+		customCards = new ArrayList<CustomCard>();
 		
 		bystanderVillain = new Villain();
 		bystanderVillain.name = "system_bystander_villain";
@@ -120,6 +128,8 @@ public class LegendaryCardMaker {
 		
 		SchemeCard sc = new SchemeCard();
 		SchemeMaker sm = new SchemeMaker();
+		
+		CustomCard cc = new CustomCard();
 		
 		try
 		{
@@ -822,6 +832,74 @@ public class LegendaryCardMaker {
 						   }
 					   }
 				   }
+				   
+				   
+				   // Load Custom Card Information
+				   if (line.startsWith("CUSTOMCARD;"))
+				   {
+					   cc = new CustomCard();
+					   customCards.add(cc);
+				   }
+				   
+				   if (line.startsWith("TEMPLATE;"))
+				   {
+					   cc.templateName = line.replace("TEMPLATE;", "");
+					   for (CustomTemplate t : allTemplates)
+					   {
+						   if (t.templateName.equals(cc.templateName))
+						   {
+							   cc.template = t.getCopy();
+							   break;
+						   }
+					   }
+				   }
+				   
+				   if (line.startsWith("CUSTOMVALUE;"))
+				   {
+					   String[] split = line.split(";");
+					   
+					   CustomElement element = null;
+					   element = cc.template.getElement(split[1]);
+					   
+					   if (element != null)
+					   {
+						   Field field = element.getClass().getField(split[2]);
+						   if (field != null)
+						   {
+							   Object value = null;
+							   String splitVal = "";
+							   try
+							   {
+								   value = split[3];
+								   splitVal = split[3];
+							   }
+							   catch (Exception e)
+							   {
+								   value = null;
+								   splitVal = "";
+							   }
+							   if (field.getType().getSimpleName().equals("Icon"))
+							   {
+								   value = Icon.valueOf(splitVal);
+							   }
+							   if (field.getType().getSimpleName().equals("boolean"))
+							   {
+								   value = Boolean.valueOf(splitVal);
+							   }
+							   
+							   if (field.getType().getSimpleName().equals("int"))
+							   {
+								   value = Integer.valueOf(splitVal);
+							   }
+							   
+							   if (field.getType().getSimpleName().equals("double"))
+							   {
+								   value = Double.valueOf(splitVal);
+							   }
+							   field.set(element, value);
+						   }
+					   }
+				   }
 			   }
 			}
 			
@@ -1039,6 +1117,12 @@ public class LegendaryCardMaker {
 			str += "\n\n";
 		}
 		
+		for (CustomCard s : customCards)
+		{
+			str += s.generateOutputString();
+			str += "\n\n";
+		}
+		
 		FileWriter fw = new FileWriter(new File(saveFile));
 		BufferedWriter bw = new BufferedWriter(fw);
 		
@@ -1071,6 +1155,11 @@ public class LegendaryCardMaker {
 		}
 		
 		for (SchemeCard s : schemes)
+		{
+			s.changed = flag;
+		}
+		
+		for (CustomCard s : customCards)
 		{
 			s.changed = flag;
 		}
@@ -1118,6 +1207,14 @@ public class LegendaryCardMaker {
 				}
 		}
 		
+		for (CustomCard cc : customCards)
+		{
+			if (cc.changed)
+			{
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	
@@ -1156,6 +1253,12 @@ public class LegendaryCardMaker {
 		{
 			count++;
 		}
+		
+		for (CustomCard cc : customCards)
+		{
+			count++;
+		}
+		
 		return count;
 	}
 	
@@ -1226,5 +1329,86 @@ public class LegendaryCardMaker {
 		sm.setCard(s);
 		BufferedImage image = sm.generateCard();
 		sm.exportImage(image);
+	}
+	
+	public void exportCustomCardToJpeg(CustomCard s, File folder) throws Exception
+	{
+		CustomCardMaker sm = new CustomCardMaker();
+		sm.exportToPNG = false;
+		sm.exportFolder = folder.getAbsolutePath();
+		sm.setCard(s);
+		BufferedImage image = sm.generateCard();
+		sm.exportImage(image);
+	}
+	
+	public void exportCustomCardToPng(CustomCard s, File folder) throws Exception
+	{
+		CustomCardMaker sm = new CustomCardMaker();
+		sm.exportFolder = folder.getAbsolutePath();
+		sm.setCard(s);
+		BufferedImage image = sm.generateCard();
+		sm.exportImage(image);
+	}
+	
+	public static void debug(String message)
+	{
+		if (debug)
+		{
+			System.out.println(message);
+		}
+	}
+	
+	public void loadTemplates()
+	{
+		System.out.println("Loading Custom Templates");
+		
+		allTemplates = new ArrayList<CustomTemplate>();
+		
+		String templateFolder = "legendary" + File.separator + "templates" + File.separator + "custom";
+		File dir = new File(templateFolder);
+		for (File f : dir.listFiles())
+		{
+			if (f.isDirectory())
+			{
+				File templateFile = getTemplateFile(f);
+				if (templateFile != null)
+				{
+					CustomTemplate template = CustomTemplate.parseCustomTemplate(templateFolder, f.getName());
+					allTemplates.add(template);
+					System.out.println("Loaded: " + template.templateName);
+				}
+			}
+		}
+	}
+	
+	public void loadStructures()
+	{
+		System.out.println("Loading Custom Templates");
+		
+		allStructures = new ArrayList<CustomStructure>();
+		
+		String templateFolder = "legendary" + File.separator + "structures";
+		File dir = new File(templateFolder);
+		for (File f : dir.listFiles())
+		{
+			if (f.getName().endsWith(".xml"))
+			{
+				CustomStructure template = CustomStructure.parseCustomStructure(f);
+				allStructures.add(template);
+				System.out.println("Loaded: " + template.name);
+			}
+		}
+	}
+	
+	private File getTemplateFile(File f)
+	{
+		for (File file : f.listFiles())
+		{
+			if (file.getName().toLowerCase().equals("template.xml"))
+			{
+				return file;
+			}
+		}
+		return null;
 	}
 }
