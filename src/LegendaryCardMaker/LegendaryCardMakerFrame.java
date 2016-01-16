@@ -73,6 +73,10 @@ public class LegendaryCardMakerFrame extends JFrame {
 	public DefaultListModel woundListModel;
 	JScrollPane woundScroll = new JScrollPane();
 	
+	public JList bindingsList;
+	public DefaultListModel bindingsListModel;
+	JScrollPane bindingsScroll = new JScrollPane();
+	
 	public JList schemeList;
 	public DefaultListModel schemeListModel;
 	JScrollPane schemeScroll = new JScrollPane();
@@ -196,7 +200,7 @@ public class LegendaryCardMakerFrame extends JFrame {
 		Collections.sort(lcm.villains, new Villain());
 		for (Villain v : lcm.villains)
 		{
-			if (!v.name.equals("system_bystander_villain") && !v.name.equals("system_wound_villain"))
+			if (!v.name.equals("system_bystander_villain") && !v.name.equals("system_wound_villain") && !v.name.equals("system_bindings_villain"))
 			{
 				villainListModel.addElement(v);
 			}
@@ -291,6 +295,43 @@ public class LegendaryCardMakerFrame extends JFrame {
 		woundScroll.setViewportView(woundList);
 		this.add(woundScroll);
 		tabs.add("Wounds", woundScroll);
+		
+		//Bindings
+		bindingsListModel = new DefaultListModel();
+		Collections.sort(lcm.villains, new Villain());
+		for (Villain v : lcm.villains)
+		{
+			for (VillainCard vc : v.cards)
+			{
+				if (vc.cardType != null && vc.cardType.equals(VillainCardType.BINDINGS))
+				{
+					bindingsListModel.addElement(vc);
+				}
+			}
+		}
+		bindingsList = new JList(bindingsListModel);
+		bindingsList.setCellRenderer(new BindingsListRenderer());
+		bindingsList.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent evt) {
+		        JList list = (JList)evt.getSource();
+		        if (evt.getClickCount() == 2) {
+
+		            // Double-click detected
+		            int index = list.locationToIndex(evt.getPoint());
+		            if (index >= 0)
+		            {
+		            	VillainMakerFrame vmf = new VillainMakerFrame((VillainCard)list.getSelectedValue());
+		            	//new WoundCardSelector((Wound)list.getSelectedValue(), lcmf);
+		            }
+		        }
+		    }
+		});
+		
+		bindingsScroll.setViewportView(bindingsList);
+		this.add(bindingsScroll);
+		tabs.add("Bindings", bindingsScroll);
+		
+		//Schemes
 		
 		
 		schemeListModel = new DefaultListModel();
@@ -723,6 +764,28 @@ public class LegendaryCardMakerFrame extends JFrame {
     }
 	
 	public class WoundListRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(
+                JList list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+        	
+        	VillainCard villain = (VillainCard)value;
+
+            JLabel label = (JLabel) super.getListCellRendererComponent(
+                    list, value, index, isSelected, cellHasFocus);
+            //label.setIcon(new ImageIcon(getImageSummary(villain)));
+            label.setHorizontalTextPosition(JLabel.RIGHT);
+            
+            String s = villain.name;
+            if (villain.changed) { s += " *"; }
+            label.setText(s);
+            
+            return label;
+        }
+    }
+	
+	public class BindingsListRenderer extends DefaultListCellRenderer {
 
         @Override
         public Component getListCellRendererComponent(

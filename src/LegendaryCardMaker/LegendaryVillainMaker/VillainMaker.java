@@ -254,6 +254,11 @@ public class VillainMaker extends CardMaker {
 	    	ImageIcon ii = new ImageIcon(templateFolder + File.separator + "wound" + File.separator + "back_underlay.png");
 	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    }
+	    if (card.cardType != null && card.cardType.equals(VillainCardType.BINDINGS))
+	    {
+	    	ImageIcon ii = new ImageIcon(templateFolder + File.separator + "bindings" + File.separator + "back_underlay.png");
+	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
+	    }
 	    
 	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
 	    
@@ -301,6 +306,10 @@ public class VillainMaker extends CardMaker {
 		    	g2.setColor(Color.WHITE);
 		    }
 	    	if (card.cardType != null && card.cardType.equals(VillainCardType.WOUND))
+		    {
+		    	g2.setColor(Color.WHITE);
+		    }
+	    	if (card.cardType != null && card.cardType.equals(VillainCardType.BINDINGS))
 		    {
 		    	g2.setColor(Color.WHITE);
 		    }
@@ -369,6 +378,10 @@ public class VillainMaker extends CardMaker {
 		    	villainGroup = null;
 		    }
 		    if (card.cardType != null && card.cardType.equals(VillainCardType.WOUND))
+		    {
+		    	villainGroup = null;
+		    }
+		    if (card.cardType != null && card.cardType.equals(VillainCardType.BINDINGS))
 		    {
 		    	villainGroup = null;
 		    }
@@ -508,6 +521,12 @@ public class VillainMaker extends CardMaker {
 	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.WOUND))
 		    {
 	    		ii = new ImageIcon(templateFolder + File.separator + "wound" + File.separator + "back_text_overlay.png");
+		    	overlay = resizeImage(ii, cardWidth, cardHeight);
+		    	//g.drawImage(overlay, 0, 0, null);
+		    }
+	    	else if (card.cardType != null && card.cardType.equals(VillainCardType.BINDINGS))
+		    {
+	    		ii = new ImageIcon(templateFolder + File.separator + "bindings" + File.separator + "back_text_overlay.png");
 		    	overlay = resizeImage(ii, cardWidth, cardHeight);
 		    	//g.drawImage(overlay, 0, 0, null);
 		    }
