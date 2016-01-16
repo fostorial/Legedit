@@ -199,7 +199,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		//this.add(woundSelectorMenu);
 		
 		bindingsSelectorMenu = new BindingsSelectorMenu(lcmf, tb);
-		this.add(bindingsSelectorMenu);
+		//this.add(bindingsSelectorMenu);
 		
 		schemeTypeSelectorMenu = new SchemeTypeSelectorMenu(lcmf, tb);
 		//this.add(schemeTypeSelectorMenu);
@@ -1066,7 +1066,9 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		}
 		if (str.equals("Bindings"))
 		{
-			bindingsSelectorMenu.setVisible(true);
+			remove(1);
+			add(bindingsSelectorMenu, 1);
+			return;
 		}
 		if (str.equals("Scheme Types"))
 		{
