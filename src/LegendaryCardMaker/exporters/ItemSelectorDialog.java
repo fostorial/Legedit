@@ -51,6 +51,13 @@ public class ItemSelectorDialog extends JDialog {
 					checklist.addCheckListItem("Wound - " + h.name, h);
 				}
 			}
+			else if (h.name.equals("system_bindings_villain"))
+			{
+				for (VillainCard vc : h.cards)
+				{
+					checklist.addCheckListItem("Bindings - " + h.name, h);
+				}
+			}
 			else
 			{
 				checklist.addCheckListItem("Villain - " + h.name, h);

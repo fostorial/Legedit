@@ -85,7 +85,8 @@ public class ExportDividersHomeprintProgressBarDialog extends JPanel
     		for (Villain v : lcm.villains)
     		{
     			if (!v.name.toLowerCase().equals("system_bystander_villain") 
-    					&& !v.name.toLowerCase().equals("system_wound_villain"))
+    					&& !v.name.toLowerCase().equals("system_wound_villain")
+    					&& !v.name.toLowerCase().equals("system_bindings_villain"))
     			{
     				VillainDividerMaker hm = new VillainDividerMaker(v, LegendaryCardMakerFrame.lcmf.lcm.dividerHorizontal);
         			cardMakers.add(hm);

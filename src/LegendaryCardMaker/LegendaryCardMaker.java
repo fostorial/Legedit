@@ -46,6 +46,8 @@ public class LegendaryCardMaker {
 	public List<CustomCard> customCards = new ArrayList<CustomCard>();
 	public Villain bystanderVillain = new Villain();
 	public Villain woundVillain = new Villain();
+	public Villain bindingsVillain = new Villain();
+
 	public List<CustomStructure> customStructures = new ArrayList<CustomStructure>();
 	
 	public List<CustomTemplate> allTemplates = new ArrayList<CustomTemplate>();
@@ -95,6 +97,9 @@ public class LegendaryCardMaker {
 		woundVillain.name = "system_wound_villain";
 		villains.add(woundVillain);
 		
+		bindingsVillain.name = "system_bindings_villain";
+		villains.add(bindingsVillain);
+		
 		loadTemplates();
 		loadStructures();
 	}
@@ -113,6 +118,10 @@ public class LegendaryCardMaker {
 		woundVillain = new Villain();
 		woundVillain.name = "system_wound_villain";
 		villains.add(woundVillain);
+		
+		bindingsVillain = new Villain();
+		bindingsVillain.name = "system_bindings_villain";
+		villains.add(bindingsVillain);
 		
 		expansionName = "";
 		keywords = "";
@@ -586,6 +595,10 @@ public class LegendaryCardMaker {
 					   else if (line.replace("VILLAIN;", "").equals("system_wound_villain"))
 					   {
 						   v = woundVillain;
+					   }
+					   else if (line.replace("VILLAIN;", "").equals("system_bindings_villain"))
+					   {
+						   v = bindingsVillain;
 					   }
 					   else
 					   {
