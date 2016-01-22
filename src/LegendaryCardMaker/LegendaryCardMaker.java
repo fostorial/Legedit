@@ -1379,18 +1379,22 @@ public class LegendaryCardMaker {
 		
 		String templateFolder = "legendary" + File.separator + "templates" + File.separator + "custom";
 		File dir = new File(templateFolder);
-		for (File f : dir.listFiles())
+		if (dir.exists())
 		{
-			if (f.isDirectory())
+			for (File f : dir.listFiles())
 			{
-				File templateFile = getTemplateFile(f);
-				if (templateFile != null)
+				if (f.isDirectory())
 				{
-					CustomTemplate template = CustomTemplate.parseCustomTemplate(templateFolder, f.getName());
-					allTemplates.add(template);
-					System.out.println("Loaded: " + template.templateName);
+					File templateFile = getTemplateFile(f);
+					if (templateFile != null)
+					{
+						CustomTemplate template = CustomTemplate.parseCustomTemplate(templateFolder, f.getName());
+						allTemplates.add(template);
+						System.out.println("Loaded: " + template.templateName);
+					}
 				}
 			}
+			
 		}
 	}
 	
@@ -1402,13 +1406,16 @@ public class LegendaryCardMaker {
 		
 		String templateFolder = "legendary" + File.separator + "structures";
 		File dir = new File(templateFolder);
-		for (File f : dir.listFiles())
+		if (dir.exists())
 		{
-			if (f.getName().endsWith(".xml"))
+			for (File f : dir.listFiles())
 			{
-				CustomStructure template = CustomStructure.parseCustomStructure(f);
-				allStructures.add(template);
-				System.out.println("Loaded: " + template.name);
+				if (f.getName().endsWith(".xml"))
+				{
+					CustomStructure template = CustomStructure.parseCustomStructure(f);
+					allStructures.add(template);
+					System.out.println("Loaded: " + template.name);
+				}
 			}
 		}
 	}

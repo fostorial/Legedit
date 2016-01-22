@@ -695,7 +695,11 @@ public class LegendaryCardMakerFrame extends JFrame {
             //label.setIcon(new ImageIcon(getImageSummary(villain)));
             label.setHorizontalTextPosition(JLabel.RIGHT);
             
-            String s = villain.name + " (" +  villain.cardType.toString() + ")";
+            String s = villain.name;
+            if (villain.cardType != null)
+            {
+            	s +=  " (" +  villain.cardType.toString() + ")";
+            }
             if (villain.changed) { s += " *"; }
             label.setText(s);
             
