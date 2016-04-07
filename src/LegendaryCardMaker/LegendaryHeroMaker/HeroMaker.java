@@ -17,8 +17,10 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -296,7 +298,7 @@ public class HeroMaker extends CardMaker {
 	public int cardNameFontStyle = Font.PLAIN;
 	public int cardNameSize = 40;
 	public int cardNameMinSize = 30;
-	public int cardNameY = 15;
+	public int cardNameY = 20;
 	public Color cardNameColor = new Color (255,186,20);
 	public boolean includeBlurredBGName = true;
 	public int expandCardName = 2;
@@ -307,7 +309,7 @@ public class HeroMaker extends CardMaker {
 	public int heroNameFontStyle = Font.PLAIN;
 	public int heroNameSize = 33;
 	public int heroNameMinSize = 30;
-	public int heroNameY = 55;
+	public int heroNameY = 60;
 	public Color heroNameColor = new Color (255,186,20);
 	public boolean includeBlurredBGHeroName = true;
 	public int expandHeroName = 2;
@@ -456,15 +458,20 @@ public class HeroMaker extends CardMaker {
 	    BufferedImage image = new BufferedImage(cardWidth, cardHeight, type);
 	    Graphics2D g = (Graphics2D)image.getGraphics();
 	    
+	    g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+	    
 	    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
 	    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 				
-		//g.setRenderingHint(
-		 //       RenderingHints.KEY_TEXT_ANTIALIASING,
-		  //      RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		g.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		
 	    
 	    if (card.imagePath != null)
 	    {
@@ -623,7 +630,7 @@ public class HeroMaker extends CardMaker {
 	    if (card.name != null)
 	    {
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	        Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(cardNameColor);
 	        //Font font = new Font("Percolator", Font.PLAIN, cardNameSize);
@@ -650,10 +657,12 @@ public class HeroMaker extends CardMaker {
     		}
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        
+	        g2 = setGraphicsHints(g2);
+	        
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.name.toUpperCase());
 	        int x = (cardWidth / 2) - (stringLength / 2);
 	        
-	        LineMetrics lm = metrics.getLineMetrics(card.name.toUpperCase(), g2);
+	        LineMetrics lm = metrics.getLineMetrics(card.name.toUpperCase(), g2);       
 	        
 	        g2.drawString(card.name.toUpperCase(), x, cardNameY + (int)lm.getAscent());
 	    	if (includeBlurredBGName && nameHighlight != null && nameHighlight.equals("Blur"))
@@ -674,7 +683,7 @@ public class HeroMaker extends CardMaker {
 	    if (card.heroName != null)
 	    {
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	        Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(heroNameColor);
 	    	
@@ -699,6 +708,8 @@ public class HeroMaker extends CardMaker {
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        LineMetrics lm = metrics.getLineMetrics(card.heroName.toUpperCase(), g2);
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.heroName.toUpperCase());
 	        int x = (cardWidth / 2) - (stringLength / 2);
@@ -813,7 +824,7 @@ public class HeroMaker extends CardMaker {
 	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	        Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(recruitColor);
 	        //Font font = new Font("Sylfaen", Font.PLAIN, recruitSize);
@@ -841,6 +852,7 @@ public class HeroMaker extends CardMaker {
 	        LineMetrics lm = metrics.getLineMetrics(card.recruit, g2);
 	        int recruitYModified = recruitY + (int)((lm.getAscent() - lm.getDescent()) / 2); 
 	   
+	        g2 = setGraphicsHints(g2);
 	        
 	        g2.drawString(card.recruit.toUpperCase(), x, recruitYModified);
 	    	if (includeBlurredBGRecruit)
@@ -863,7 +875,7 @@ public class HeroMaker extends CardMaker {
 	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	        Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(attackColor);
 	        //Font font = new Font("Sylfaen", Font.PLAIN, attackSize);
@@ -887,6 +899,8 @@ public class HeroMaker extends CardMaker {
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.attack.toUpperCase());
 	        int x = attackX - (stringLength / 2);
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        LineMetrics lm = metrics.getLineMetrics(card.attack, g2);
 	        int attackYModified = attackY + (int)((lm.getAscent() - lm.getDescent()) / 2);
@@ -931,7 +945,7 @@ public class HeroMaker extends CardMaker {
 		    }
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	        Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(textColor);
 	    	try
@@ -948,6 +962,8 @@ public class HeroMaker extends CardMaker {
 	    		fontBold = fontBold.deriveFont((float)textSize);
 	    		
 	    		FontMetrics metrics = g2.getFontMetrics(font);
+	    		
+	    		g2 = setGraphicsHints(g2);
 	    		
 	    		int x = textX;
 	    		int y = textY;
@@ -1010,6 +1026,7 @@ public class HeroMaker extends CardMaker {
 	    			{
 	    				g2.setFont(fontBold);
 	    				metrics = g2.getFontMetrics(fontBold);
+	    				g2 = setGraphicsHints(g2);
 	    				s = s.replace("<k>", "");
 	    				continue;
 	    			}
@@ -1018,6 +1035,7 @@ public class HeroMaker extends CardMaker {
 	    			{
 	    				g2.setFont(font);
 	    				metrics = g2.getFontMetrics(font);
+	    				g2 = setGraphicsHints(g2);
 	    				s = s.replace("<r>", "");
 	    				continue;
 	    			}
@@ -1130,7 +1148,7 @@ public class HeroMaker extends CardMaker {
 	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	        Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(costColor);
 	        //Font font = new Font("Sylfaen", Font.PLAIN, costSize);
@@ -1170,6 +1188,8 @@ public class HeroMaker extends CardMaker {
 	        metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.cost.toUpperCase());
 	        int newHeight = metrics.getHeight();
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        Integer offset = costOffsets.get("");
 	        int primitiveOffset = 0; 
@@ -1302,7 +1322,7 @@ public class HeroMaker extends CardMaker {
 	        }
 	        
 	        BufferedImage image = new BufferedImage(w, h, type);
-	        Graphics g = image.getGraphics();
+	        Graphics2D g = getGraphics(image);
 	        
 	        g.drawImage(imageIcon.getImage(), 0, 0, w, h, 
 	        		0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
@@ -1317,7 +1337,7 @@ public class HeroMaker extends CardMaker {
 	        int type = BufferedImage.TYPE_INT_ARGB;
 	        
 	        BufferedImage image = new BufferedImage(width, height, type);
-	        Graphics g = image.getGraphics();
+	        Graphics2D g = getGraphics(image);
 	        
 	        g.drawImage(imageIcon.getImage(), 0, 0, width, height, 
 	        		0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
@@ -1377,10 +1397,10 @@ public class HeroMaker extends CardMaker {
         return image;
     }
 	
-	private void drawUnderlay(BufferedImage bi, Graphics g, int type, int x, int y, int blurRadius, boolean doubleBlur, int expandBlackout, Color underlayColour)
+	private void drawUnderlay(BufferedImage bi, Graphics2D g, int type, int x, int y, int blurRadius, boolean doubleBlur, int expandBlackout, Color underlayColour)
 	{
 		BufferedImage blackout = new BufferedImage(cardWidth, cardHeight, type);
-    	blackout.getGraphics().drawImage(bi, x, y, null);
+    	getGraphics(blackout).drawImage(bi, x, y, null);
     	
     	blackout = blackoutImage(blackout, teamPowerUnderlayColor);
     	
@@ -1523,7 +1543,7 @@ public class HeroMaker extends CardMaker {
         	type = BufferedImage.TYPE_INT_RGB;
         }
         BufferedImage image = new BufferedImage(fullW, fullH, type);
-        Graphics g = image.getGraphics();
+        Graphics2D g = getGraphics(image);
         
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, fullW, fullH);
@@ -1736,5 +1756,43 @@ public class HeroMaker extends CardMaker {
 		g2D.fill(rect);
 		g2D.dispose();
 		return bi;
+	}
+	
+	private Graphics2D getGraphics(BufferedImage bi)
+	{
+		Graphics2D g2 = (Graphics2D)bi.getGraphics();
+        
+        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
+	}
+	
+	private Graphics2D setGraphicsHints(Graphics2D g2)
+	{
+		g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
 	}
 }

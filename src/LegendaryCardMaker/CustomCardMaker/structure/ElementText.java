@@ -40,7 +40,8 @@ public class ElementText extends CustomElement {
 		if (getValue() != null && visible == true)
 		{
 			BufferedImage bi = new BufferedImage(CustomCardMaker.cardWidth, CustomCardMaker.cardHeight, BufferedImage.TYPE_INT_ARGB);
-			Graphics g2 = bi.getGraphics();
+			Graphics2D g2 = getGraphics(bi);
+			g2 = setGraphicsHints(g2);
 			
 			if (colour != null)
 			{
@@ -66,6 +67,8 @@ public class ElementText extends CustomElement {
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, getValueForDraw());
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        int newx = x;
 	        if (alignment.equals(ALIGNMENT.CENTER))

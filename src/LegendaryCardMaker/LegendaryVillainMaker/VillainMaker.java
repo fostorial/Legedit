@@ -70,7 +70,7 @@ public class VillainMaker extends CardMaker {
 	
 	public int cardNameSize = 40;
 	int cardNameMinSize = 30;
-	int cardNameY = 50;
+	int cardNameY = 55;
 	Color cardNameColor = new Color (255,186,20);
 	boolean includeBlurredBGName = true;
 	int expandCardName = 2;
@@ -79,7 +79,7 @@ public class VillainMaker extends CardMaker {
 	
 	public int villainGroupSize = 33;
 	int villainGroupMinSize = 30;
-	int villainGroupY = 85;
+	int villainGroupY = 90;
 	Color villainGroupColor = new Color (255,186,20);
 	boolean includeBlurredBGvillainGroup = true;
 	int expandvillainGroup = 2;
@@ -204,17 +204,7 @@ public class VillainMaker extends CardMaker {
 	    BufferedImage image = new BufferedImage(cardWidth, cardHeight, type);
 	    Graphics2D g = (Graphics2D)image.getGraphics();
 	    
-	    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-
-	    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-	    
-	    //System.out.println("TIMING " + timeCount++ + ": " + new Date().getTime());
-				
-		//g.setRenderingHint(
-		 //       RenderingHints.KEY_TEXT_ANTIALIASING,
-		  //      RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+	    g = setGraphicsHints(g);
 	    
 	    if (card.imagePath != null)
 	    {
@@ -297,7 +287,7 @@ public class VillainMaker extends CardMaker {
 	    if (card.name != null)
 	    {
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	    	Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(cardNameColor);
 	    	
@@ -333,6 +323,8 @@ public class VillainMaker extends CardMaker {
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.name.toUpperCase());
 	        int x = (cardWidth / 2) - (stringLength / 2);
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        g2.drawString(card.name.toUpperCase(), x, cardNameY);
 	    	if (includeBlurredBGName)
@@ -389,7 +381,7 @@ public class VillainMaker extends CardMaker {
 		    if (villainGroup != null)
 		    {
 		    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-		        Graphics g2 = bi.getGraphics();
+		    	Graphics2D g2 = getGraphics(bi);
 		        
 		    	g2.setColor(villainGroupColor);
 		        //Font font = new Font("Percolator", Font.PLAIN, villainGroupSize);
@@ -411,6 +403,8 @@ public class VillainMaker extends CardMaker {
 		        FontMetrics metrics = g2.getFontMetrics(font);
 		        int stringLength = SwingUtilities.computeStringWidth(metrics, villainGroup);
 		        int x = (cardWidth / 2) - (stringLength / 2);
+		        
+		        g2 = setGraphicsHints(g2);
 		        
 		        g2.drawString(villainGroup, x, villainGroupY);
 		    	if (includeBlurredBGvillainGroup)
@@ -451,7 +445,7 @@ public class VillainMaker extends CardMaker {
 	    	}
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	    	Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(vpColor);
 	        //Font font = new Font("Sylfaen", Font.PLAIN, vpSize);
@@ -471,6 +465,8 @@ public class VillainMaker extends CardMaker {
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.victory.toUpperCase());
 	        int x = vpX - (stringLength / 2);
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        g2.drawString(card.victory.toUpperCase(), x, vpY);
 	    	if (includeBlurredBGVP)
@@ -532,7 +528,7 @@ public class VillainMaker extends CardMaker {
 		    }
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	    	Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(textColor);
 	    	
@@ -547,6 +543,8 @@ public class VillainMaker extends CardMaker {
 	    		fontBold = fontBold.deriveFont((float)textSize);
 	    		
 	    		FontMetrics metrics = g2.getFontMetrics(font);
+	    		
+	    		g2 = setGraphicsHints(g2);
 	    		
 	    		Integer x = textX;
 	    		y = textY;
@@ -605,6 +603,7 @@ public class VillainMaker extends CardMaker {
 	    				{
 	    					g2.setFont(fontBold);
 	    					metrics = g2.getFontMetrics(fontBold);
+	    					g2 = setGraphicsHints(g2);
 	    					s = s.replace("<k>", "");
 	    					continue;
 	    				}
@@ -613,6 +612,7 @@ public class VillainMaker extends CardMaker {
 	    				{
 	    					g2.setFont(font);
 	    					metrics = g2.getFontMetrics(font);
+	    					g2 = setGraphicsHints(g2);
 	    					s = s.replace("<r>", "");
 	    					continue;
 	    				}
@@ -802,7 +802,7 @@ public class VillainMaker extends CardMaker {
 	    	}
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	    	Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(attackColor);
 	       // Font font = new Font("Sylfaen", Font.PLAIN, attackSize);
@@ -822,6 +822,8 @@ public class VillainMaker extends CardMaker {
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.attack.toUpperCase());
 	        int x = attackX - (stringLength / 2);
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        g2.drawString(card.attack.toUpperCase(), x, attackY);
 	    	if (includeBlurredBGAttack)
@@ -846,7 +848,7 @@ public class VillainMaker extends CardMaker {
 	    	g.drawImage(resizeImage(ii, cardWidth, cardHeight), 0, 0, null);
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	    	Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(costColor);
 	        //Font font = new Font("Sylfaen", Font.PLAIN, costSize);
@@ -865,6 +867,8 @@ public class VillainMaker extends CardMaker {
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.cost.toUpperCase());
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        Integer offset = costOffsets.get("");
 	        int primitiveOffset = 0; 
@@ -1060,10 +1064,10 @@ public class VillainMaker extends CardMaker {
         return image;
     }
 	
-	private void drawUnderlay(BufferedImage bi, Graphics g, int type, int x, int y, int blurRadius, boolean doubleBlur, int expandBlackout)
+	private void drawUnderlay(BufferedImage bi, Graphics2D g, int type, int x, int y, int blurRadius, boolean doubleBlur, int expandBlackout)
 	{
 		BufferedImage blackout = new BufferedImage(cardWidth, cardHeight, type);
-    	blackout.getGraphics().drawImage(bi, x, y, null);
+		getGraphics(blackout).drawImage(bi, x, y, null);
     	
     	blackout = blackoutImage(blackout);
     	
@@ -1171,7 +1175,7 @@ public class VillainMaker extends CardMaker {
 	private BufferedImage createRareBacking(int x, int y, int x2, int y2)
 	{
 		BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics g2 = bi.getGraphics();
+		Graphics2D g2 = getGraphics(bi);
         
         //System.out.println(x +":"+y+":"+x2+":"+y2+":"+(x2-x)+":"+(y2-y));
         
@@ -1221,7 +1225,7 @@ public class VillainMaker extends CardMaker {
         	type = BufferedImage.TYPE_INT_RGB;
         }
         BufferedImage image = new BufferedImage(fullW, fullH, type);
-        Graphics g = image.getGraphics();
+        Graphics2D g = getGraphics(image);
         
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, fullW, fullH);
@@ -1232,5 +1236,43 @@ public class VillainMaker extends CardMaker {
         g.dispose();
         
         return image;
+	}
+	
+	private Graphics2D getGraphics(BufferedImage bi)
+	{
+		Graphics2D g2 = (Graphics2D)bi.getGraphics();
+        
+        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
+	}
+	
+	private Graphics2D setGraphicsHints(Graphics2D g2)
+	{
+		g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
 	}
 }

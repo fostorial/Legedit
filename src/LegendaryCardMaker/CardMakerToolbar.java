@@ -56,6 +56,7 @@ import LegendaryCardMaker.exporters.ExportFullProgressBarDialog;
 import LegendaryCardMaker.exporters.ExportHomeprintProgressBarDialog;
 import LegendaryCardMaker.exporters.ExportProgressBarDialog;
 import LegendaryCardMaker.exporters.ItemSelectorDialog;
+import LegendaryCardMaker.tools.bleeder.LegeditBleeder;
 
 public class CardMakerToolbar extends JMenuBar implements ActionListener{
 
@@ -108,6 +109,7 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 	
 	JMenu tools = new JMenu("Tools");
 	JMenuItem campaignManager = new JMenuItem("Campaign Manager...");
+	JMenuItem bleeder = new JMenuItem("Bleeder...");
 	
 	JMenu help = new JMenu("Help");
 	
@@ -240,9 +242,13 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 		
 		this.add(expansion);
 		
-		campaignManager.addActionListener(this);
-		tools.add(campaignManager);
-		//this.add(tools);
+		//campaignManager.addActionListener(this);
+		//tools.add(campaignManager);
+		
+		bleeder.addActionListener(this);
+		tools.add(bleeder);
+		
+		this.add(tools);
 		
 		JMenuItem version = new JMenuItem("Version: " + LegendaryCardMaker.version);
 		version.setEnabled(false);
@@ -826,6 +832,11 @@ public class CardMakerToolbar extends JMenuBar implements ActionListener{
 			if (s == null) { s = lcmf.lcm.expansionName; }
 			if (s != null && s.isEmpty()) { s = null; }
 			lcmf.lcm.expansionName = s;
+		}
+		
+		if (e.getSource().equals(bleeder))
+		{
+			new LegeditBleeder();
 		}
 	}
 	

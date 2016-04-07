@@ -61,7 +61,8 @@ public class ElementTextArea extends CustomElement {
 		if (getValue() != null)
 		{
 			BufferedImage bi = new BufferedImage(CustomCardMaker.cardWidth, CustomCardMaker.cardHeight, BufferedImage.TYPE_INT_ARGB);
-			Graphics g2 = bi.getGraphics();
+			Graphics2D g2 = getGraphics(bi);
+			g2 = setGraphicsHints(g2);
 			
 			if (debug)
 			{
@@ -79,6 +80,7 @@ public class ElementTextArea extends CustomElement {
 	    			font = new Font(fontName, fontStyle, textSize);
 	    		}
 	    		g2.setFont(font);
+	    		g2 = setGraphicsHints(g2);
 	    		
 	    		Font fontBold = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Black Condensed.ttf"));
 	    		fontBold = fontBold.deriveFont((float)textSizeBold);
@@ -119,6 +121,7 @@ public class ElementTextArea extends CustomElement {
 	    				g2.setFont(fontBold);
 	    				metrics = g2.getFontMetrics(fontBold);
 	    				s = s.replace("<k>", "");
+	    				g2 = setGraphicsHints(g2);
 	    				continue;
 	    			}
 	    			
@@ -127,6 +130,7 @@ public class ElementTextArea extends CustomElement {
 	    				g2.setFont(font);
 	    				metrics = g2.getFontMetrics(font);
 	    				s = s.replace("<r>", "");
+	    				g2 = setGraphicsHints(g2);
 	    				continue;
 	    			}
 	    			

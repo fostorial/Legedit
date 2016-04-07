@@ -3,6 +3,7 @@ package LegendaryCardMaker.CustomCardMaker.structure;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
@@ -76,7 +77,7 @@ public class CustomElement implements Cloneable {
 	        }
 	        
 	        BufferedImage image = new BufferedImage(w, h, type);
-	        Graphics g = image.getGraphics();
+	        Graphics2D g = getGraphics(image);
 	        
 	        g.drawImage(imageIcon.getImage(), 0, 0, w, h, 
 	        		0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
@@ -91,7 +92,7 @@ public class CustomElement implements Cloneable {
 	        int type = BufferedImage.TYPE_INT_ARGB;
 	        
 	        BufferedImage image = new BufferedImage(width, height, type);
-	        Graphics g = image.getGraphics();
+	        Graphics2D g = getGraphics(image);
 	        
 	        g.drawImage(imageIcon.getImage(), 0, 0, width, height, 
 	        		0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
@@ -154,7 +155,7 @@ public class CustomElement implements Cloneable {
 	public void drawUnderlay(BufferedImage bi, Graphics g, int type, int x, int y, int blurRadius, boolean doubleBlur, int expandBlackout, Color underlayColour)
 	{
 		BufferedImage blackout = new BufferedImage(CustomCardMaker.cardWidth, CustomCardMaker.cardHeight, type);
-    	blackout.getGraphics().drawImage(bi, x, y, null);
+    	getGraphics(blackout).drawImage(bi, x, y, null);
     	
     	blackout = blackoutImage(blackout, underlayColour);
     	
@@ -261,5 +262,43 @@ public class CustomElement implements Cloneable {
 	public String generateOutputString(boolean fullExport)
 	{
 		return "";
+	}
+	
+	public Graphics2D getGraphics(BufferedImage bi)
+	{
+		Graphics2D g2 = (Graphics2D)bi.getGraphics();
+        
+        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
+	}
+	
+	public Graphics2D setGraphicsHints(Graphics2D g2)
+	{
+		g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
 	}
 }

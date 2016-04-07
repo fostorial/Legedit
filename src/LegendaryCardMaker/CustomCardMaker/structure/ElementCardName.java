@@ -53,13 +53,8 @@ public class ElementCardName extends CustomElement implements Cloneable {
 		if (getValue() != null)
 		{
 			BufferedImage bi = new BufferedImage(CustomCardMaker.cardWidth, CustomCardMaker.cardHeight, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2 = (Graphics2D)bi.getGraphics();
-			/*
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			RenderingHints.VALUE_ANTIALIAS_ON);
-			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			*/
+			Graphics2D g2 = getGraphics(bi);
+			g2 = setGraphicsHints(g2);
 			
 			if (colour != null)
 			{
@@ -85,6 +80,8 @@ public class ElementCardName extends CustomElement implements Cloneable {
 	        g2.setFont(font);
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, getValueForDraw());
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        int newx = x;
 	        if (alignment.equals(ALIGNMENT.CENTER))
@@ -151,6 +148,8 @@ public class ElementCardName extends CustomElement implements Cloneable {
 	        
 	        if (highlight.equals(HIGHLIGHT.BLUR))
 	        {
+	        	g2 = setGraphicsHints(g2);
+	        	
 	        	g2.drawString(getValueForDraw(), newx, yModified);
 	        	
 	        	if (includeSubname)
@@ -158,10 +157,14 @@ public class ElementCardName extends CustomElement implements Cloneable {
 	        		g2.setFont(fontSubname);
 			        metrics = g2.getFontMetrics(fontSubname);
 			        
+			        g2 = setGraphicsHints(g2);
+			        
 	        		g2.drawString(getSubnameValueForDraw(), newxSubname, yModifiedSubname);
 	        		
 	        		g2.setFont(font);
 			        metrics = g2.getFontMetrics(font);
+			        
+			        g2 = setGraphicsHints(g2);
 	        	}
 	        	
 		    	drawUnderlay(bi, g2, BufferedImage.TYPE_INT_ARGB, 0, 0, blurRadius, blurDouble, blurExpand, highlightColour);
@@ -193,6 +196,8 @@ public class ElementCardName extends CustomElement implements Cloneable {
 				g2.drawImage(bi2, 0, 0, null);
 	        }
 	    	
+	        g2 = setGraphicsHints(g2);
+	        
 	    	g2.drawString(getValueForDraw(), newx, yModified);
 	    	
 	    	if (includeSubname)
@@ -200,10 +205,14 @@ public class ElementCardName extends CustomElement implements Cloneable {
 	    		g2.setFont(fontSubname);
 		        metrics = g2.getFontMetrics(fontSubname);
 		        
+		        g2 = setGraphicsHints(g2);
+		        
         		g2.drawString(getSubnameValueForDraw(), newxSubname, yModifiedSubname);
         		
         		g2.setFont(font);
 		        metrics = g2.getFontMetrics(font);
+		        
+		        g2 = setGraphicsHints(g2);
         	}
 
 	    	g.drawImage(bi, 0, 0, null);

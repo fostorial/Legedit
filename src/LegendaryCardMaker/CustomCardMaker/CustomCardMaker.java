@@ -91,14 +91,9 @@ public class CustomCardMaker extends CardMaker {
 	    BufferedImage image = new BufferedImage(cardWidth, cardHeight, type);
 	    Graphics2D g = (Graphics2D)image.getGraphics();
 	    
-	    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-
-	    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 	    
-	    g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	    g = setGraphicsHints(g);
 
 	    
 	    if (template != null)
@@ -508,5 +503,43 @@ public class CustomCardMaker extends CardMaker {
 		g2D.fill(rect);
 		g2D.dispose();
 		return bi;
+	}
+	
+	private Graphics2D getGraphics(BufferedImage bi)
+	{
+		Graphics2D g2 = (Graphics2D)bi.getGraphics();
+        
+        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
+	}
+	
+	private Graphics2D setGraphicsHints(Graphics2D g2)
+	{
+		g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
 	}
 }

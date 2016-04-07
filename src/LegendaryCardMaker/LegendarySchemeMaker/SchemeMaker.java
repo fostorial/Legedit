@@ -159,11 +159,7 @@ public class SchemeMaker extends CardMaker {
 	    BufferedImage image = new BufferedImage(cardWidth, cardHeight, type);
 	    Graphics2D g = (Graphics2D)image.getGraphics();
 	    
-	    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-
-	    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    g = setGraphicsHints(g);
 	    
 	    if (card.imagePath != null)
 	    {
@@ -195,7 +191,7 @@ public class SchemeMaker extends CardMaker {
 	    	double scale = (double)((double)cardWidth / (double)ii.getIconWidth());
 	    	
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	    	Graphics2D g2 = getGraphics(bi);
 	        g2.drawImage(ii.getImage(), 0, 0, cardWidth, cardHeight, null);
 	        
 	        int y = textY;
@@ -206,6 +202,8 @@ public class SchemeMaker extends CardMaker {
 	    		Font font = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Light Condensed.ttf"));
 	    		font = font.deriveFont((float)textSize);
 	    		g2.setFont(font);
+	    		
+	    		g2 = setGraphicsHints(g2);
 	    		
 	    		Font fontBold = Font.createFont(Font.TRUETYPE_FONT, new File("Swiss 721 Black Condensed.ttf"));
 	    		fontBold = fontBold.deriveFont((float)textSize);
@@ -323,6 +321,7 @@ public class SchemeMaker extends CardMaker {
 			    				g2.setFont(fontBold);
 			    				metrics = g2.getFontMetrics(fontBold);
 			    				s = s.replace("<k>", "");
+			    				g2 = setGraphicsHints(g2);
 			    				continue;
 			    			}
 			    			
@@ -331,6 +330,7 @@ public class SchemeMaker extends CardMaker {
 			    				g2.setFont(font);
 			    				metrics = g2.getFontMetrics(font);
 			    				s = s.replace("<r>", "");
+			    				g2 = setGraphicsHints(g2);
 			    				continue;
 			    			}
 			    			
@@ -424,7 +424,7 @@ public class SchemeMaker extends CardMaker {
 	    if (card.name != null)
 	    {
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	    	Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(cardNameColor);
 	    	Font font = null;
@@ -444,6 +444,8 @@ public class SchemeMaker extends CardMaker {
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.name.toUpperCase());
 	        int x = (cardWidth / 2) - (stringLength / 2);
 	        
+	        g2 = setGraphicsHints(g2);
+	        
 	        g2.drawString(card.name.toUpperCase(), x, cardNameY);
 	    	if (includeBlurredBGName)
 	    	{
@@ -462,7 +464,7 @@ public class SchemeMaker extends CardMaker {
 	    {
 		    
 	    	BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-	        Graphics g2 = bi.getGraphics();
+	    	Graphics2D g2 = getGraphics(bi);
 	        
 	    	g2.setColor(subCategoryColor);
 	    	Font font = null;
@@ -481,6 +483,8 @@ public class SchemeMaker extends CardMaker {
 	        FontMetrics metrics = g2.getFontMetrics(font);
 	        int stringLength = SwingUtilities.computeStringWidth(metrics, card.subCategory.toUpperCase());
 	        int x = (cardWidth / 2) - (stringLength / 2);
+	        
+	        g2 = setGraphicsHints(g2);
 	        
 	        g2.drawString(card.subCategory.toUpperCase(), x, subCategoryY);
 	    	if (includeBlurredBGsubCategory)
@@ -583,7 +587,7 @@ public class SchemeMaker extends CardMaker {
 	        int type = BufferedImage.TYPE_INT_ARGB;
 	        
 	        BufferedImage image = new BufferedImage(w, h, type);
-	        Graphics g = image.getGraphics();
+	        Graphics2D g = getGraphics(image);
 	        
 	        g.drawImage(imageIcon.getImage(), 0, 0, w, h, 
 	        		0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
@@ -598,7 +602,7 @@ public class SchemeMaker extends CardMaker {
 	        int type = BufferedImage.TYPE_INT_ARGB;
 	        
 	        BufferedImage image = new BufferedImage(width, height, type);
-	        Graphics g = image.getGraphics();
+	        Graphics2D g = getGraphics(image);
 	        
 	        g.drawImage(imageIcon.getImage(), 0, 0, width, height, 
 	        		0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
@@ -658,10 +662,10 @@ public class SchemeMaker extends CardMaker {
         return image;
     }
 	
-	private void drawUnderlay(BufferedImage bi, Graphics g, int type, int x, int y, int blurRadius, boolean doubleBlur, int expandBlackout)
+	private void drawUnderlay(BufferedImage bi, Graphics2D g, int type, int x, int y, int blurRadius, boolean doubleBlur, int expandBlackout)
 	{
 		BufferedImage blackout = new BufferedImage(cardWidth, cardHeight, type);
-    	blackout.getGraphics().drawImage(bi, x, y, null);
+    	getGraphics(blackout).drawImage(bi, x, y, null);
     	
     	blackout = blackoutImage(blackout);
     	
@@ -769,7 +773,7 @@ public class SchemeMaker extends CardMaker {
 	private BufferedImage createRareBacking(int x, int y, int x2, int y2)
 	{
 		BufferedImage bi = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics g2 = bi.getGraphics();
+		Graphics2D g2 = getGraphics(bi);
         
         //System.out.println(x +":"+y+":"+x2+":"+y2+":"+(x2-x)+":"+(y2-y));
         
@@ -797,10 +801,10 @@ public class SchemeMaker extends CardMaker {
 		return bi;
 	}
 	
-	private void drawHeader(Graphics g, String header, Font font, Color color, int y, int height, int blurRadius, HeaderIcon headerIcon)
+	private void drawHeader(Graphics2D g, String header, Font font, Color color, int y, int height, int blurRadius, HeaderIcon headerIcon)
 	{
 		BufferedImage bi1 = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-		Graphics g2 = bi1.getGraphics();
+		Graphics2D g2 = getGraphics(bi1);
 		
 		g2.setColor(color);
 		g2.fillRect(0, y, getPercentage(cardWidth, 0.8d), height);
@@ -814,7 +818,7 @@ public class SchemeMaker extends CardMaker {
         	makeTransparent(bi1, 0.7d);
     	}
     	
-    	g2 = bi1.getGraphics();
+    	g2 = getGraphics(bi1);
     	
     	if (headerIcon != null && headerIcon.icon != null)
 	    {
@@ -826,10 +830,13 @@ public class SchemeMaker extends CardMaker {
 	    }
     	
     	BufferedImage bi2 = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
-		Graphics g3 = bi2.getGraphics();	
+		Graphics2D g3 = getGraphics(bi2);	
 		
     	g3.setColor(Color.WHITE);
     	g3.setFont(font);
+    	
+    	g3 = setGraphicsHints(g3);
+    	
 		g3.drawString(header, getPercentage(cardWidth, 0.04d), y + g.getFontMetrics(font).getHeight() - (g.getFontMetrics(font).getHeight() / 6));
 		
 		if (headerIcon != null && headerIcon.value != null)
@@ -838,11 +845,16 @@ public class SchemeMaker extends CardMaker {
 			
 			font = font.deriveFont((float)(g.getFontMetrics(originalFont).getHeight() * 1.6f));
 			g3.setFont(font);
+			
+			g3 = setGraphicsHints(g3);
+			
 			int stringLength = SwingUtilities.computeStringWidth(g.getFontMetrics(font), headerIcon.value.toUpperCase());
 			g3.drawString(headerIcon.value, cardWidth - getPercentage(cardWidth, 0.09d) - stringLength + (stringLength / 2), y + g.getFontMetrics(font).getHeight() - (int)(g.getFontMetrics(font).getHeight() / 2.6d));
 			
 			font = originalFont;
 			g3.setFont(originalFont);
+			
+			g3 = setGraphicsHints(g3);
 		}
 		
 		drawUnderlay(bi2, g3, BufferedImage.TYPE_INT_ARGB, 0, 0, 5, true, 3);
@@ -855,11 +867,13 @@ public class SchemeMaker extends CardMaker {
 			
 			font = font.deriveFont((float)(g.getFontMetrics(originalFont).getHeight() * 1.6f));
 			g3.setFont(font);
+			g3 = setGraphicsHints(g3);
 			int stringLength = SwingUtilities.computeStringWidth(g.getFontMetrics(font), headerIcon.value.toUpperCase());
 			g3.drawString(headerIcon.value, cardWidth - getPercentage(cardWidth, 0.09d) - stringLength + (stringLength / 2), y + g.getFontMetrics(font).getHeight() - (int)(g.getFontMetrics(font).getHeight() / 2.6d));
 			
 			font = originalFont;
 			g3.setFont(originalFont);
+			g3 = setGraphicsHints(g3);
 		}
 		
 		g.drawImage(bi1, 0, 0, null);
@@ -891,7 +905,7 @@ public class SchemeMaker extends CardMaker {
         	type = BufferedImage.TYPE_INT_RGB;
         }
         BufferedImage image = new BufferedImage(fullW, fullH, type);
-        Graphics g = image.getGraphics();
+        Graphics2D g = getGraphics(image);
         
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, fullW, fullH);
@@ -902,5 +916,43 @@ public class SchemeMaker extends CardMaker {
         g.dispose();
         
         return image;
+	}
+	
+	private Graphics2D getGraphics(BufferedImage bi)
+	{
+		Graphics2D g2 = (Graphics2D)bi.getGraphics();
+        
+        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
+	}
+	
+	private Graphics2D setGraphicsHints(Graphics2D g2)
+	{
+		g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		return g2;
 	}
 }

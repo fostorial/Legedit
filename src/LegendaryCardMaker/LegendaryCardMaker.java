@@ -30,7 +30,7 @@ import LegendaryCardMaker.LegendaryVillainMaker.VillainMaker;
 
 public class LegendaryCardMaker {
 	
-	public static String version = "0.11";
+	public static String version = "0.12";
 	public static boolean debug = true;
 
 	public String inputFile = null;
