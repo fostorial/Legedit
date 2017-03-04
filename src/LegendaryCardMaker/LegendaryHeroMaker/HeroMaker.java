@@ -450,6 +450,7 @@ public class HeroMaker extends CardMaker {
 	
 	public BufferedImage generateCard()
 	{
+		this.nameHighlight = nameHighlightTemplate;
 		int type = BufferedImage.TYPE_INT_ARGB;
 		if (exportToPNG)
 		{
