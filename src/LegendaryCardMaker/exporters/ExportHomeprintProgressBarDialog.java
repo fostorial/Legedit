@@ -384,7 +384,10 @@ public class ExportHomeprintProgressBarDialog extends JPanel
         
       //new Write and clean up
         imageWriter.write(null, new IIOImage(image, null, imageMetaData), jpegParams);
+        ios.flush();
         ios.close();
+        fos.flush();
+        fos.close();
         imageWriter.dispose();
 	}
 }
